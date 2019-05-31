@@ -11,13 +11,14 @@ namespace BayesNet {
 
     class Node {
     public:
-        Node(int label, int states);
+        explicit Node(int label, int states);
 
         virtual ~Node() = default;
 
-        dai::Var &discrete();
-        dai::VarSet &conditionalDiscrete();
-        dai::Factor &factor();
+        dai::Var &discrete() {return _discrete;}
+        dai::VarSet &conditionalDiscrete() {return _conditionalDiscrete;}
+        dai::Factor &factor() {return _factor;}
+
         void addChild(Node *node);
     private:
         dai::Var _discrete;

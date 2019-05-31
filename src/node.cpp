@@ -11,18 +11,6 @@ namespace BayesNet {
         this->_conditionalDiscrete = dai::VarSet(this->_discrete);
     }
 
-    dai::Var &Node::discrete() {
-        return this->_discrete;
-    }
-
-    dai::VarSet &Node::conditionalDiscrete() {
-        return this->_conditionalDiscrete;
-    }
-
-    dai::Factor &Node::factor() {
-        return this->_factor;
-    }
-
     void Node::refreshConditionalDiscrete(const dai::VarSet& conditionalDiscrete) {
         this->_conditionalDiscrete |= conditionalDiscrete;
 
