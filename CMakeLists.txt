@@ -2,19 +2,16 @@ cmake_minimum_required(VERSION 3.13)
 project(BayesNet_Framework)
 
 # Compiler settings and flags
-set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Search paths for includes and libraries
-include_directories(/usr/local/opt/llvm/include /usr/local/include include)
-link_directories(/usr/local/opt/llvm/lib /usr/local/lib)
+include_directories(/usr/local/include include)
+link_directories(/usr/local/lib)
 
-#take all .cpp files from src folder and add them to the SOURCE_FILE variable
+# Add source files to SOURCE_FILES variable
 file(GLOB SOURCE_FILES src/*.cpp)
-#take all .h files from include folder and add them to the HEADER_FILES variable
-file(GLOB HEADER_FILES include/bayesnet/*.h)
 
 # Qt5 configuration
 #set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
@@ -22,13 +19,11 @@ file(GLOB HEADER_FILES include/bayesnet/*.h)
 #include_directories("${Qt5Core_INCLUDE_DIRS} ${Qt5GUI_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}")
 #link_directories("${Qt5Core_LINK_DIRS} ${Qt5GUI_LINK_DIRS} ${Qt5Widgets_LINK_DIRS}")
 
-# Library info for linker
+# Linked system librariers: LibGMP, LibGMPXX, LibDai (Bayesian inference lib)
 link_libraries(gmp gmpxx dai)
 
-# Executable to compile
+# Add compilable executables
 add_executable(bayesnet_example example.cpp ${SOURCE_FILES})
-#add_executable(bayesnet_example_springkler example_sprinkler.cpp)
-#add_executable(bayesnet_example_dai example_dai.cpp)
 
 # Link QT5
 # target_link_libraries(bayesnet_builder Qt5::Core Qt5::Widgets)
