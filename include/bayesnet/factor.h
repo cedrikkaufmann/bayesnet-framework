@@ -6,7 +6,6 @@
 #define BAYESNET_FRAMEWORK_FACTOR_H
 
 #include <dai/factor.h>
-#include <bayesnet/factor.h>
 
 namespace BayesNet {
 
