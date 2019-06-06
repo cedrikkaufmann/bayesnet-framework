@@ -6,27 +6,36 @@
 #define BAYESNET_FRAMEWORK_NODE_H
 
 #include <dai/factorgraph.h>
+#include <bayesnet/factor.h>
 
 namespace BayesNet {
 
     class Node {
     public:
-        explicit Node(int label, int states);
+        explicit Node(size_t label, size_t states);
 
         virtual ~Node() = default;
 
-        dai::Var &discrete() {return _discrete;}
-        dai::VarSet &conditionalDiscrete() {return _conditionalDiscrete;}
-        dai::Factor &factor() {return _factor;}
+        dai::Var &discrete() { return _discrete; }
+
+        dai::VarSet &conditionalDiscrete() { return _conditionalDiscrete; }
+
+        Factor &factor();
 
         void addChild(Node *node);
+
+        void setEvidence(size_t state);
+
+        void clearEvidence();
+
     private:
         dai::Var _discrete;
         dai::VarSet _conditionalDiscrete;
-        dai::Factor _factor;
-        std::vector<Node*> _children;
+        Factor _factor;
+        size_t _factorGraphIndex;
+        std::vector<Node *> _children;
 
-        void refreshConditionalDiscrete(const dai::VarSet& conditionalDiscrete);
+        void refreshConditionalDiscrete(const dai::VarSet &conditionalDiscrete);
     };
 }
 
