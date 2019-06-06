@@ -14,6 +14,8 @@ namespace BayesNet {
         Factor() : dai::Factor(), _isEvidence(false) {}
         explicit Factor(dai::VarSet &vars) : dai::Factor(vars), _isEvidence(false), _backupFactor(vars.nrStates().get_ui()) {}
 
+        virtual ~Factor() = default;
+
         void setEvidence(size_t state);
 
         void clearEvidence();
