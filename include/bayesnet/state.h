@@ -5,12 +5,14 @@
 #ifndef BAYESNET_FRAMEWORK_STATE_H
 #define BAYESNET_FRAMEWORK_STATE_H
 
-namespace BayesNet{
+#define BAYESNET_STATES 4
+
+namespace BayesNet {
     /**
      * Enumeration for better readability of bayes node prediction states
      */
-    enum PredictionState {
-        PredictionGood = 0, PredictionProbablyGood = 1, PredictionProbablyBad = 2, PredictionBad = 3
+    enum BeliefState {
+        BeliefGood = 0, BeliefProbablyGood = 1, BeliefProbablyBad = 2, BeliefBad = 3
     };
 }
 
