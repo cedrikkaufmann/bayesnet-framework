@@ -34,8 +34,6 @@ namespace BayesNet {
         Factor _factor;
         size_t _factorGraphIndex;
         std::vector<Node *> _children;
-
-        void refreshConditionalDiscrete(const dai::VarSet &conditionalDiscrete);
     };
 }
 
