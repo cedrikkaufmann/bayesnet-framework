@@ -17,7 +17,7 @@ namespace BayesNet {
         node->_conditionalDiscrete |= this->_discrete;
     }
 
-    Factor &Node::factor() {
+    Factor &Node::getFactor() {
         if (this->_factor.vars() != this->_conditionalDiscrete) {
             this->_factor = Factor(this->_conditionalDiscrete);
         }
@@ -26,10 +26,10 @@ namespace BayesNet {
     }
 
     void Node::setEvidence(size_t state) {
-        this->factor().setEvidence(state);
+        this->getFactor().setEvidence(state);
     }
 
     void Node::clearEvidence() {
-        this->factor().clearEvidence();
+        this->getFactor().clearEvidence();
     }
 }

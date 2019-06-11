@@ -16,17 +16,21 @@ namespace BayesNet {
 
         virtual ~Node() = default;
 
-        dai::Var &discrete() { return _discrete; }
+        dai::Var &getDiscrete() { return _discrete; };
 
-        dai::VarSet &conditionalDiscrete() { return _conditionalDiscrete; }
+        dai::VarSet &getConditionalDiscrete() { return _conditionalDiscrete; };
 
-        Factor &factor();
+        Factor &getFactor();
 
         void addChild(Node *node);
 
         void setEvidence(size_t state);
 
         void clearEvidence();
+
+        void setFactorGraphIndex(size_t index) { this->_factorGraphIndex = index; };
+
+        size_t getFactorGraphIndex() { return this->_factorGraphIndex; };
 
     private:
         dai::Var _discrete;
