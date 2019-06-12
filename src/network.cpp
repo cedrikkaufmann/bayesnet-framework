@@ -2,7 +2,10 @@
 // Created by Cedrik Kaufmann on 2019-06-06.
 //
 
+#include <exception>
+
 #include <bayesnet/network.h>
+#include <bayesnet/exception.h>
 #include <bayesnet/state.h>
 
 namespace BayesNet {
@@ -21,7 +24,7 @@ namespace BayesNet {
         auto search = this->_registry.find(name);
 
         if (search != this->_registry.end()) {
-            return;
+            throw BayesNodeAlreadyDefinedException();
         }
 
         size_t nodeValue = this->_nodeCounter++;
@@ -59,33 +62,42 @@ namespace BayesNet {
             node.setFactorGraphIndex(factorIndex);
         }
 
-        this->_init = true;
-
         createInferenceInstance(algorithm);
+        this->_inferenceInstance->init();
+
+        this->_init = true;
     }
 
     void Network::setEvidence(const std::string &name, size_t state) {
         if (!this->_init) {
-            // TODO: own exception
-            return;
+            throw NotInitializedException();
         }
 
-        size_t nodeValue = this->_registry.at(name);
-        Node &node = this->_nodes.at(nodeValue);
-        node.setEvidence(state);
-        this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
+        try {
+            size_t nodeValue = this->_registry.at(name);
+            Node &node = this->_nodes.at(nodeValue);
+            node.setEvidence(state);
+            this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
+            this->_inferenceInstance->init(node.getConditionalDiscrete());
+        } catch (const std::exception&) {
+            throw BayesNodeNotFoundException();
+        }
     }
 
     void Network::clearEvidence(const std::string &name) {
         if (!this->_init) {
-            // TODO: own exception
-            return;
+            throw NotInitializedException();
         }
 
-        size_t nodeValue = this->_registry.at(name);
-        Node &node = this->_nodes.at(nodeValue);
-        node.clearEvidence();
-        this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
+        try {
+            size_t nodeValue = this->_registry.at(name);
+            Node &node = this->_nodes.at(nodeValue);
+            node.clearEvidence();
+            this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
+            this->_inferenceInstance->init(node.getConditionalDiscrete());
+        } catch (const std::exception&) {
+            throw BayesNodeNotFoundException();
+        }
     }
 
     void Network::createInferenceInstance(InferenceAlgorithm algorithm) {
@@ -122,18 +134,15 @@ namespace BayesNet {
 
     void Network::doInference() {
         if (!this->_init) {
-            // TODO: own exception
-            return;
+            throw NotInitializedException();
         }
 
-        this->_inferenceInstance->init();
         this->_inferenceInstance->run();
     }
 
     dai::TFactor<dai::Real> Network::getBelief(const std::string &name) {
         if (!this->_init) {
-            // TODO: own exception
-            throw 0;
+            throw NotInitializedException();
         }
 
         size_t nodeValue = this->_registry.at(name);
