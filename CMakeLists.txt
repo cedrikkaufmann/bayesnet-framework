@@ -10,9 +10,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 include_directories(/usr/local/include include)
 link_directories(/usr/local/lib)
 
-# Add source files to SOURCE_FILES variable
-file(GLOB SOURCE_FILES src/*.cpp)
-
 # Qt5 configuration
 #set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
 #find_package(Qt5 COMPONENTS Core GUI Widgets)
@@ -23,7 +20,7 @@ file(GLOB SOURCE_FILES src/*.cpp)
 link_libraries(gmp gmpxx dai)
 
 # Add compilable executables
-add_executable(bayesnet_example example.cpp ${SOURCE_FILES})
+add_executable(bayesnet_example example.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp)
 
 # Link QT5
 # target_link_libraries(bayesnet_builder Qt5::Core Qt5::Widgets)
