@@ -6,18 +6,22 @@
 
 #include <bayesnet/network.h>
 #include <bayesnet/exception.h>
-#include <bayesnet/state.h>
+#include <bayesnet/inference.h>
+
+#include <dai/bp.h>
+#include <dai/cbp.h>
+#include <dai/fbp.h>
+#include <dai/trwbp.h>
+#include <dai/decmap.h>
+#include <dai/bbp.h>
 
 namespace BayesNet {
 
     Network::Network() : _nodeCounter(0), _init(false), _properties(), _inferenceInstance(nullptr) {
         // TODO: properties not working for every algo
-        this->_properties.set("maxiter", size_t(BP_MAXIMUM_ITERATIONS));  // Maximum number of iterations
-        this->_properties.set("tol", dai::Real(BP_TOLERANCE));          // Tolerance for convergence
-        this->_properties.set("verbose", size_t(BP_VERBOSE));     // Verbosity (amount of output generated)
-        this->_properties.set("updates", std::string(BP_UPDATES)); // Update method
-        this->_properties.set("inference", std::string(BP_INFERENCE)); // Inference algorithm
-        this->_properties.set("logdomain", BP_LOG_DOMAIN);
+        this->_properties.set("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS));  // Maximum number of iterations
+        this->_properties.set("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE));          // Tolerance for convergence
+        this->_properties.set("verbose", size_t(CONFIG_INFERENCE_VERBOSE));     // Verbosity (amount of output generated)
     }
 
     void Network::newNode(const std::string &name) {
@@ -48,7 +52,7 @@ namespace BayesNet {
         return this->_nodes.at(nodeValue);
     }
     
-    void Network::init(InferenceAlgorithm algorithm) {
+    void Network::init(InferenceProperties algorithm) {
         std::vector<dai::Factor> factors;
 
         for (auto& node : this->_nodes) {
@@ -100,35 +104,36 @@ namespace BayesNet {
         }
     }
 
-    void Network::createInferenceInstance(InferenceAlgorithm algorithm) {
+    void Network::createInferenceInstance(InferenceProperties inf) {
 
-        switch (algorithm) {
+        switch (inf) {
 
-            case LOOPY_BELIEF_PROPAGATION: {
-                this->_inferenceInstance = new dai::BP(this->_factorGraph, this->_properties);
+            case LOOPY_BELIEF_PROPAGATION_MAXPROD: {
+                auto opts = getInferenceProperties(inf);
+                this->_inferenceInstance = new dai::BP(this->_factorGraph, opts);
                 break;
             }
 
+            case LOOPY_BELIEF_PROPAGATION_SUMPROD: {
+                auto opts = getInferenceProperties(inf);
+                this->_inferenceInstance = new dai::BP(this->_factorGraph, opts);
+                break;
+            }
+
+
             case CONDITIONED_BELIEF_PROPAGATION: {
-                this->_inferenceInstance = new dai::CBP(this->_factorGraph, this->_properties);
+                auto opts = getInferenceProperties(inf);
+                this->_inferenceInstance = new dai::CBP(this->_factorGraph, opts);
                 break;
             }
 
             case FRACTIONAL_BELIEF_PROPAGATION: {
-                this->_inferenceInstance = new dai::FBP(this->_factorGraph, this->_properties);
+                auto opts = getInferenceProperties(inf);
+                this->_inferenceInstance = new dai::FBP(this->_factorGraph, opts);
                 break;
             }
 
-            case TREE_REWEIGHTED_BELIEF_PROPAGATION: {
-                this->_inferenceInstance = new dai::TRWBP(this->_factorGraph, this->_properties);
-                break;
-            }
-
-            case DECIMATION: {
-                this->_inferenceInstance = new dai::DecMAP(this->_factorGraph, this->_properties);
-                break;
-            }
-
+            default: throw InferencePropertyNotImplementedException();
         }
     }
 
@@ -140,7 +145,7 @@ namespace BayesNet {
         this->_inferenceInstance->run();
     }
 
-    dai::TFactor<dai::Real> Network::getBelief(const std::string &name) {
+    BayesBelief Network::getBelief(const std::string &name) {
         if (!this->_init) {
             throw NotInitializedException();
         }
@@ -148,6 +153,13 @@ namespace BayesNet {
         size_t nodeValue = this->_registry.at(name);
         Node &node = this->_nodes.at(nodeValue);
 
-        return this->_inferenceInstance->belief(node.getDiscrete());
+        auto belief = this->_inferenceInstance->belief(node.getDiscrete());
+        BayesBelief bayesBelief;
+
+        for (int j = 0; j < belief.nrStates(); ++j) {
+            bayesBelief[j] = belief[j];
+        }
+
+        return bayesBelief;
     }
 }
