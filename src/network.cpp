@@ -21,7 +21,8 @@ namespace BayesNet {
         // TODO: properties not working for every algo
         this->_properties.set("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS));  // Maximum number of iterations
         this->_properties.set("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE));          // Tolerance for convergence
-        this->_properties.set("verbose", size_t(CONFIG_INFERENCE_VERBOSE));     // Verbosity (amount of output generated)
+        this->_properties.set("verbose",
+                              size_t(CONFIG_INFERENCE_VERBOSE));     // Verbosity (amount of output generated)
     }
 
     void Network::newNode(const std::string &name) {
@@ -51,17 +52,17 @@ namespace BayesNet {
         size_t nodeValue = this->_registry.at(name);
         return this->_nodes.at(nodeValue);
     }
-    
+
     void Network::init(InferenceProperties algorithm) {
         std::vector<dai::Factor> factors;
 
-        for (auto& node : this->_nodes) {
+        for (auto &node : this->_nodes) {
             factors.push_back(node.getFactor());
         }
 
         this->_factorGraph = dai::FactorGraph(factors);
 
-        for (auto& node : this->_nodes) {
+        for (auto &node : this->_nodes) {
             size_t factorIndex = this->_factorGraph.findFactor(node.getConditionalDiscrete());
             node.setFactorGraphIndex(factorIndex);
         }
@@ -83,7 +84,7 @@ namespace BayesNet {
             node.setEvidence(state);
             this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
             this->_inferenceInstance->init(node.getConditionalDiscrete());
-        } catch (const std::exception&) {
+        } catch (const std::exception &) {
             throw BayesNodeNotFoundException();
         }
     }
@@ -99,7 +100,7 @@ namespace BayesNet {
             node.clearEvidence();
             this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
             this->_inferenceInstance->init(node.getConditionalDiscrete());
-        } catch (const std::exception&) {
+        } catch (const std::exception &) {
             throw BayesNodeNotFoundException();
         }
     }
@@ -133,7 +134,8 @@ namespace BayesNet {
                 break;
             }
 
-            default: throw InferencePropertyNotImplementedException();
+            default:
+                throw InferencePropertyNotImplementedException();
         }
     }
 

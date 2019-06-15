@@ -30,7 +30,7 @@ namespace BayesNet {
         return this->_beliefs[index];
     }
 
-    std::ostream & operator<<(std::ostream &os, const BayesBelief &bayesBelief) {
+    std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief) {
         os << "{";
 
         for (int i = 0; i < BAYESNET_STATES; ++i) {
@@ -55,7 +55,8 @@ namespace BayesNet {
                     break;
                 }
 
-                default: os << "UNKNOWN STATE: "; // should never happen
+                default:
+                    os << "UNKNOWN STATE: "; // should never happen
             }
 
             os << bayesBelief.get(static_cast<BeliefState>(i)) << "; ";

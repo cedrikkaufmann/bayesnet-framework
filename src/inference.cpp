@@ -44,8 +44,10 @@ namespace BayesNet {
                         ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
                         ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
                         ("updates", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_UPDATES))
-                        ("rec_tol", dai::Real(CONFIG_CONDITIONED_BELIEF_PROPAGATION_REC_TOL)) // Tolerance used for controlling recursion depth
-                        ("min_max_adj", dai::Real(CONFIG_CONDITIONED_BELIEF_PROPAGATION_MIN_MAX_ADJ)) // Maximum number of levels of recursion
+                        ("rec_tol", dai::Real(
+                                CONFIG_CONDITIONED_BELIEF_PROPAGATION_REC_TOL)) // Tolerance used for controlling recursion depth
+                        ("min_max_adj", dai::Real(
+                                CONFIG_CONDITIONED_BELIEF_PROPAGATION_MIN_MAX_ADJ)) // Maximum number of levels of recursion
                         ("choose", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_CHOOSE))
                         ("recursion", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_RECURSION))
                         ("clamp", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_CLAMP))
@@ -67,7 +69,8 @@ namespace BayesNet {
                 return opts;
             }
 
-            default: throw InferencePropertyNotImplementedException();
+            default:
+                throw InferencePropertyNotImplementedException();
 
         }
     }

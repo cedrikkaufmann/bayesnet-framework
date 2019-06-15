@@ -25,19 +25,22 @@ namespace BayesNet {
     class BayesBelief {
     public:
         BayesBelief() {};
+
         virtual ~BayesBelief() = default;
 
-        double &operator[] (size_t index);
+        double &operator[](size_t index);
 
         void set(BeliefState state, double belief);
+
         double get(BeliefState state) const;
 
         std::string toString() const;
+
     private:
         double _beliefs[BAYESNET_STATES];
     };
 
-    std::ostream &operator << (std::ostream &os, const BayesBelief &bayesBelief);
+    std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief);
 }
 
 #endif //BAYESNET_FRAMEWORK_STATE_H
