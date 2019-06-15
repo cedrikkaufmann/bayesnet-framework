@@ -5,15 +5,39 @@
 #ifndef BAYESNET_FRAMEWORK_STATE_H
 #define BAYESNET_FRAMEWORK_STATE_H
 
-#define BAYESNET_STATES 4
+#define BAYESNET_STATES 2
+
+#include <string>
+#include <vector>
+#include <iostream>
 
 namespace BayesNet {
     /**
      * Enumeration for better readability of bayes node prediction states
      */
     enum BeliefState {
-        BeliefGood = 0, BeliefProbablyGood = 1, BeliefProbablyBad = 2, BeliefBad = 3
+        BELIEF_STATE_GOOD = 0,
+        BELIEF_STATE_PROBABLY_GOOD = 1,
+        BELIEF_STATE_PROBABLY_BAD = 2,
+        BELIEF_STATE_BAD = 3
     };
+
+    class BayesBelief {
+    public:
+        BayesBelief() {};
+        virtual ~BayesBelief() = default;
+
+        double &operator[] (size_t index);
+
+        void set(BeliefState state, double belief);
+        double get(BeliefState state) const;
+
+        std::string toString() const;
+    private:
+        double _beliefs[BAYESNET_STATES];
+    };
+
+    std::ostream &operator << (std::ostream &os, const BayesBelief &bayesBelief);
 }
 
 #endif //BAYESNET_FRAMEWORK_STATE_H
