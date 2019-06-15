@@ -20,6 +20,10 @@ namespace BayesNet {
     class BayesNodeNotFoundException : public std::exception {
         const char *what() const noexcept override;
     };
+
+    class InferencePropertyNotImplementedException : public std::exception {
+        const char *what() const noexcept override;
+    };
 }
 
 #endif //BAYESNET_FRAMEWORK_EXCEPTION_H

@@ -6,15 +6,19 @@
 
 namespace BayesNet {
 
-    const char* NotInitializedException::what() const noexcept {
+    const char *NotInitializedException::what() const noexcept {
         return "Bayesian network not initialized";
     }
 
-    const char* BayesNodeAlreadyDefinedException::what() const noexcept {
+    const char *BayesNodeAlreadyDefinedException::what() const noexcept {
         return "Bayes node with the same identifier already registered";
     }
 
-    const char* BayesNodeNotFoundException::what() const noexcept {
+    const char *BayesNodeNotFoundException::what() const noexcept {
         return "Bayes node with given identifier does not exist";
+    }
+
+    const char *InferencePropertyNotImplementedException::what() const noexcept {
+        return "Inference property set not implemented";
     }
 }
