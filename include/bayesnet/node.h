@@ -17,9 +17,11 @@ namespace BayesNet {
         virtual ~Node() = default;
 
         dai::Var &getDiscrete() { return this->_discrete; };
+
         dai::Var getDiscrete() const { return this->_discrete; }
 
         dai::VarSet &getConditionalDiscrete() { return this->_conditionalDiscrete; };
+
         dai::VarSet getConditionalDiscrete() const { return this->_conditionalDiscrete; };
 
         Factor &getFactor();
