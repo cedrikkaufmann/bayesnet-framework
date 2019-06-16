@@ -17,14 +17,6 @@
 
 namespace BayesNet {
 
-    Network::Network() : _nodeCounter(0), _init(false), _properties(), _inferenceInstance(nullptr) {
-        // TODO: properties not working for every algo
-        this->_properties.set("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS));  // Maximum number of iterations
-        this->_properties.set("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE));          // Tolerance for convergence
-        this->_properties.set("verbose",
-                              size_t(CONFIG_INFERENCE_VERBOSE));     // Verbosity (amount of output generated)
-    }
-
     void Network::newNode(const std::string &name) {
         auto search = this->_registry.find(name);
 

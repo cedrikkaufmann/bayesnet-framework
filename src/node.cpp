@@ -32,4 +32,10 @@ namespace BayesNet {
     void Node::clearEvidence() {
         this->getFactor().clearEvidence();
     }
+
+    std::ostream &operator<<(std::ostream &os, Node &node) {
+        os << node.getDiscrete() << " - " << node.getConditionalDiscrete() << " " << node.getFactor();
+
+        return os;
+    }
 }

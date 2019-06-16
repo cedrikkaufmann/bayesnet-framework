@@ -21,7 +21,7 @@ namespace BayesNet {
 
     class Network {
     public:
-        Network();
+        Network() : _nodeCounter(0), _init(false), _properties(), _inferenceInstance(nullptr) {};
 
         virtual ~Network() = default;
 

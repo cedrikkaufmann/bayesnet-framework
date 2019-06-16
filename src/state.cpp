@@ -59,7 +59,10 @@ namespace BayesNet {
                     os << "UNKNOWN STATE: "; // should never happen
             }
 
-            os << bayesBelief.get(static_cast<BeliefState>(i)) << "; ";
+            os << bayesBelief.get(static_cast<BeliefState>(i));
+
+            if (i < BAYESNET_STATES - 1)
+                os << "; ";
         }
 
         os << "}";

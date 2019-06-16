@@ -16,9 +16,11 @@ namespace BayesNet {
 
         virtual ~Node() = default;
 
-        dai::Var &getDiscrete() { return _discrete; };
+        dai::Var &getDiscrete() { return this->_discrete; };
+        dai::Var getDiscrete() const { return this->_discrete; }
 
-        dai::VarSet &getConditionalDiscrete() { return _conditionalDiscrete; };
+        dai::VarSet &getConditionalDiscrete() { return this->_conditionalDiscrete; };
+        dai::VarSet getConditionalDiscrete() const { return this->_conditionalDiscrete; };
 
         Factor &getFactor();
 
@@ -39,6 +41,8 @@ namespace BayesNet {
         size_t _factorGraphIndex;
         std::vector<Node *> _children;
     };
+
+    std::ostream &operator<<(std::ostream &os, Node &node);
 }
 
 #endif //BAYESNET_FRAMEWORK_NODE_H
