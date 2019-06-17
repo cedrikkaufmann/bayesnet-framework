@@ -11,7 +11,7 @@ namespace BayesNet {
         switch (inf) {
 
             case LOOPY_BELIEF_PROPAGATION_SUMPROD: {
-                auto opts = dai::PropertySet()
+                dai::PropertySet opts = dai::PropertySet()
                         ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
                         ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
                         ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
@@ -23,7 +23,7 @@ namespace BayesNet {
             }
 
             case LOOPY_BELIEF_PROPAGATION_MAXPROD: {
-                auto opts = dai::PropertySet()
+                dai::PropertySet opts = dai::PropertySet()
                         ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
                         ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
                         ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
@@ -35,11 +35,11 @@ namespace BayesNet {
             }
 
             case CONDITIONED_BELIEF_PROPAGATION: {
-                auto bbpOpts = dai::PropertySet()
+                dai::PropertySet bbpOpts = dai::PropertySet()
                         ("updates", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_UPDATES))
                         ("damping", dai::Real(CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_DAMPING));
 
-                auto opts = dai::PropertySet()
+                dai::PropertySet opts = dai::PropertySet()
                         ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
                         ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
                         ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
@@ -58,7 +58,7 @@ namespace BayesNet {
             }
 
             case FRACTIONAL_BELIEF_PROPAGATION: {
-                auto opts = dai::PropertySet()
+                dai::PropertySet opts = dai::PropertySet()
                         ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
                         ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
                         ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))

@@ -10,19 +10,19 @@
 namespace BayesNet {
 
     class NotInitializedException : public std::exception {
-        const char *what() const noexcept override;
+        const char *what() const throw();
     };
 
     class BayesNodeAlreadyDefinedException : public std::exception {
-        const char *what() const noexcept override;
+        const char *what() const throw();
     };
 
     class BayesNodeNotFoundException : public std::exception {
-        const char *what() const noexcept override;
+        const char *what() const throw();
     };
 
     class InferencePropertyNotImplementedException : public std::exception {
-        const char *what() const noexcept override;
+        const char *what() const throw();
     };
 }
 

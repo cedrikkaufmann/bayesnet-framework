@@ -14,7 +14,7 @@ namespace BayesNet {
     public:
         explicit Node(size_t label, size_t states);
 
-        virtual ~Node() = default;
+        virtual ~Node() {};
 
         dai::Var &getDiscrete() { return this->_discrete; };
 

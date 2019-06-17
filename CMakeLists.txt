@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 project(BayesNet_Framework)
 
 # Compiler settings and flags
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 03)
 set(CMAKE_CXX_FLAGS "-march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
