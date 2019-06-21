@@ -18,80 +18,80 @@
 namespace BayesNet {
 
     void Network::newNode(const std::string &name) {
-        auto search = this->_registry.find(name);
+        std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
-        if (search != this->_registry.end()) {
+        if (search != _registry.end()) {
             throw BayesNodeAlreadyDefinedException();
         }
 
-        size_t nodeValue = this->_nodeCounter++;
-        this->_registry[name] = nodeValue;
+        size_t nodeValue = _nodeCounter++;
+        _registry[name] = nodeValue;
 
         Node node(nodeValue, BAYESNET_STATES);
-        this->_nodes.push_back(node);
+        _nodes.push_back(node);
     }
 
     void Network::newConnection(const std::string &parentName, const std::string &childName) {
-        size_t nodeChildValue = this->_registry.at(childName);
-        size_t nodeParentValue = this->_registry.at(parentName);
+        size_t nodeChildValue = _registry.at(childName);
+        size_t nodeParentValue = _registry.at(parentName);
 
-        Node &node = this->_nodes.at(nodeChildValue);
+        Node &node = _nodes.at(nodeChildValue);
 
-        this->_nodes.at(nodeParentValue).addChild(&node);
+        _nodes.at(nodeParentValue).addChild(&node);
     }
 
     Node &Network::getNode(const std::string &name) {
-        size_t nodeValue = this->_registry.at(name);
-        return this->_nodes.at(nodeValue);
+        size_t nodeValue = _registry.at(name);
+        return _nodes.at(nodeValue);
     }
 
     void Network::init(InferenceProperties algorithm) {
         std::vector<dai::Factor> factors;
 
-        for (auto &node : this->_nodes) {
-            factors.push_back(node.getFactor());
+        for (size_t i = 0; i < _nodes.size(); ++i) {
+            factors.push_back(_nodes[i].getFactor());
         }
 
-        this->_factorGraph = dai::FactorGraph(factors);
+        _factorGraph = dai::FactorGraph(factors);
 
-        for (auto &node : this->_nodes) {
-            size_t factorIndex = this->_factorGraph.findFactor(node.getConditionalDiscrete());
-            node.setFactorGraphIndex(factorIndex);
+        for (size_t i = 0; i < _nodes.size(); ++i) {
+            size_t factorIndex = _factorGraph.findFactor(_nodes[i].getConditionalDiscrete());
+            _nodes[i].setFactorGraphIndex(factorIndex);
         }
 
         createInferenceInstance(algorithm);
-        this->_inferenceInstance->init();
+        _inferenceInstance->init();
 
-        this->_init = true;
+        _init = true;
     }
 
     void Network::setEvidence(const std::string &name, size_t state) {
-        if (!this->_init) {
+        if (!_init) {
             throw NotInitializedException();
         }
 
         try {
-            size_t nodeValue = this->_registry.at(name);
-            Node &node = this->_nodes.at(nodeValue);
+            size_t nodeValue = _registry.at(name);
+            Node &node = _nodes.at(nodeValue);
             node.setEvidence(state);
-            this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
-            this->_inferenceInstance->init(node.getConditionalDiscrete());
+            _inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
+            _inferenceInstance->init(node.getConditionalDiscrete());
         } catch (const std::exception &) {
             throw BayesNodeNotFoundException();
         }
     }
 
     void Network::clearEvidence(const std::string &name) {
-        if (!this->_init) {
+        if (!_init) {
             throw NotInitializedException();
         }
 
         try {
-            size_t nodeValue = this->_registry.at(name);
-            Node &node = this->_nodes.at(nodeValue);
+            size_t nodeValue = _registry.at(name);
+            Node &node = _nodes.at(nodeValue);
             node.clearEvidence();
-            this->_inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
-            this->_inferenceInstance->init(node.getConditionalDiscrete());
+            _inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
+            _inferenceInstance->init(node.getConditionalDiscrete());
         } catch (const std::exception &) {
             throw BayesNodeNotFoundException();
         }
@@ -102,32 +102,29 @@ namespace BayesNet {
         switch (inf) {
 
             case LOOPY_BELIEF_PROPAGATION_MAXPROD: {
-                auto opts = getInferenceProperties(inf);
-                this->_inferenceInstance = new dai::BP(this->_factorGraph, opts);
+                dai::PropertySet opts = getInferenceProperties(inf);
+                _inferenceInstance = new dai::BP(_factorGraph, opts);
                 break;
             }
 
             case LOOPY_BELIEF_PROPAGATION_SUMPROD: {
-                auto opts = getInferenceProperties(inf);
-                this->_inferenceInstance = new dai::BP(this->_factorGraph, opts);
+                dai::PropertySet opts = getInferenceProperties(inf);
+                _inferenceInstance = new dai::BP(_factorGraph, opts);
                 break;
             }
 
 
             case CONDITIONED_BELIEF_PROPAGATION: {
-                auto opts = getInferenceProperties(inf);
-                this->_inferenceInstance = new dai::CBP(this->_factorGraph, opts);
+                dai::PropertySet opts = getInferenceProperties(inf);
+                _inferenceInstance = new dai::CBP(_factorGraph, opts);
                 break;
             }
 
             case FRACTIONAL_BELIEF_PROPAGATION: {
-                auto opts = getInferenceProperties(inf);
-                this->_inferenceInstance = new dai::FBP(this->_factorGraph, opts);
+                dai::PropertySet opts = getInferenceProperties(inf);
+                _inferenceInstance = new dai::FBP(_factorGraph, opts);
                 break;
             }
-
-            default:
-                throw InferencePropertyNotImplementedException();
         }
     }
 
@@ -140,18 +137,18 @@ namespace BayesNet {
     }
 
     BayesBelief Network::getBelief(const std::string &name) {
-        if (!this->_init) {
+        if (!_init) {
             throw NotInitializedException();
         }
 
-        size_t nodeValue = this->_registry.at(name);
-        Node &node = this->_nodes.at(nodeValue);
+        size_t nodeValue = _registry[name];
+        Node &node = _nodes[nodeValue];
 
-        auto belief = this->_inferenceInstance->belief(node.getDiscrete());
+        dai::Factor belief = _inferenceInstance->belief(node.getDiscrete());
         BayesBelief bayesBelief;
 
-        for (int j = 0; j < belief.nrStates(); ++j) {
-            bayesBelief[j] = belief[j];
+        for (size_t i = 0; i < belief.nrStates(); ++i) {
+            bayesBelief[i] = belief[i];
         }
 
         return bayesBelief;

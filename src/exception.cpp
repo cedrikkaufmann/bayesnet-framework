@@ -17,8 +17,4 @@ namespace BayesNet {
     const char *BayesNodeNotFoundException::what() const throw() {
         return "Bayes node with given identifier does not exist";
     }
-
-    const char *InferencePropertyNotImplementedException::what() const throw() {
-        return "Inference property set not implemented";
-    }
 }

@@ -8,11 +8,11 @@
 namespace BayesNet {
 
     void Factor::setEvidence(size_t state) {
-        if (this->_isEvidence) {
-            this->restore();
+        if (_isEvidence) {
+            restore();
         }
 
-        this->backup();
+        backup();
 
         size_t jointStates = this->nrStates();
         size_t evidenceEntries = jointStates / BAYESNET_STATES;
@@ -26,23 +26,23 @@ namespace BayesNet {
             }
         }
 
-        this->_isEvidence = true;
+        _isEvidence = true;
     }
 
     void Factor::clearEvidence() {
-        this->restore();
-        this->_isEvidence = false;
+        restore();
+        _isEvidence = false;
     }
 
     void Factor::backup() {
-        for (int j = 0; j < this->nrStates(); ++j) {
-            this->_backupFactor.at(j) = this->get(j);
+        for (size_t i = 0; i < this->nrStates(); ++i) {
+            _backupFactor[i] = get(i);
         }
     }
 
     void Factor::restore() {
-        for (int j = 0; j < this->nrStates(); ++j) {
-            this->set(j, this->_backupFactor.at(j));
+        for (size_t i = 0; i < this->nrStates(); ++i) {
+            set(i, _backupFactor[i]);
         }
     }
 

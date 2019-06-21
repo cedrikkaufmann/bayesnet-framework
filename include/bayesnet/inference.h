@@ -13,7 +13,7 @@ namespace BayesNet {
         LOOPY_BELIEF_PROPAGATION_SUMPROD,
         LOOPY_BELIEF_PROPAGATION_MAXPROD,
         CONDITIONED_BELIEF_PROPAGATION,
-        FRACTIONAL_BELIEF_PROPAGATION,
+        FRACTIONAL_BELIEF_PROPAGATION
     };
 }
 
@@ -52,6 +52,5 @@ namespace BayesNet {
 namespace BayesNet {
     dai::PropertySet getInferenceProperties(InferenceProperties inf);
 }
-
 
 #endif //BAYESNET_FRAMEWORK_INFERENCE_H

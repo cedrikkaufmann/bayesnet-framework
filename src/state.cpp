@@ -8,12 +8,12 @@
 namespace BayesNet {
 
     void BayesBelief::set(BeliefState state, double belief) {
-        this->_beliefs[state] = belief;
+        _beliefs[state] = belief;
     }
 
 
     double BayesBelief::get(BeliefState state) const {
-        return this->_beliefs[state];
+        return _beliefs[state];
     }
 
     std::string BayesBelief::toString() const {
@@ -27,7 +27,7 @@ namespace BayesNet {
             throw 0;
         }
 
-        return this->_beliefs[index];
+        return _beliefs[index];
     }
 
     std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief) {

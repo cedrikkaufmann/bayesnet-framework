@@ -69,9 +69,6 @@ namespace BayesNet {
                 return opts;
             }
 
-            default:
-                throw InferencePropertyNotImplementedException();
-
         }
     }
 }

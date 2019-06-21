@@ -8,29 +8,29 @@
 namespace BayesNet {
 
     Node::Node(size_t label, size_t states) : _factorGraphIndex(0) {
-        this->_discrete = dai::Var(label, states);
-        this->_conditionalDiscrete = dai::VarSet(this->_discrete);
+        _discrete = dai::Var(label, states);
+        _conditionalDiscrete = dai::VarSet(_discrete);
     }
 
     void Node::addChild(Node *node) {
-        this->_children.push_back(node);
-        node->_conditionalDiscrete |= this->_discrete;
+        _children.push_back(node);
+        node->_conditionalDiscrete |= _discrete;
     }
 
     Factor &Node::getFactor() {
-        if (this->_factor.vars() != this->_conditionalDiscrete) {
-            this->_factor = Factor(this->_conditionalDiscrete);
+        if (_factor.vars() != _conditionalDiscrete) {
+            _factor = Factor(_conditionalDiscrete);
         }
 
-        return this->_factor;
+        return _factor;
     }
 
     void Node::setEvidence(size_t state) {
-        this->getFactor().setEvidence(state);
+        getFactor().setEvidence(state);
     }
 
     void Node::clearEvidence() {
-        this->getFactor().clearEvidence();
+        getFactor().clearEvidence();
     }
 
     std::ostream &operator<<(std::ostream &os, Node &node) {

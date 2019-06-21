@@ -21,13 +21,13 @@ namespace BayesNet {
 
     class Network {
     public:
-        Network() : _nodeCounter(0), _init(false), _properties(), _inferenceInstance(nullptr) {};
+        Network() : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {}
 
-        virtual ~Network() = default;
+        ~Network() { delete this->_inferenceInstance; }
 
         void newNode(const std::string &name);
 
-        void newSensor(const std::string &name, size_t type);
+        //void newSensor(const std::string &name, size_t type);
 
         void newConnection(const std::string &parentName, const std::string &childName);
 
@@ -44,12 +44,12 @@ namespace BayesNet {
         Node &getNode(const std::string &name);
 
     private:
-        size_t _nodeCounter;
         std::unordered_map<std::string, size_t> _registry;
         std::vector<Node> _nodes;
         dai::FactorGraph _factorGraph;
         dai::PropertySet _properties;
         dai::DAIAlgFG *_inferenceInstance;
+        size_t _nodeCounter;
         bool _init;
 
         void createInferenceInstance(InferenceProperties inf);

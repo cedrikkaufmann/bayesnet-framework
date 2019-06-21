@@ -14,18 +14,17 @@ namespace BayesNet {
     public:
         Factor() : dai::Factor(), _isEvidence(false) {}
 
-        explicit Factor(dai::VarSet &vars) : dai::Factor(vars), _isEvidence(false),
-                                             _backupFactor(vars.nrStates().get_ui()) {}
+        explicit Factor(dai::VarSet &vars) : dai::Factor(vars), _backupFactor(vars.nrStates().get_ui()), _isEvidence(false) {}
 
-        virtual ~Factor() {};
+        ~Factor() {}
 
         void setEvidence(size_t state);
 
         void clearEvidence();
 
     private:
-        bool _isEvidence;
         std::vector<double> _backupFactor;
+        bool _isEvidence;
 
         void backup();
 
@@ -34,7 +33,7 @@ namespace BayesNet {
 
     class GaussianFactor : public dai::Factor {
     public:
-        explicit GaussianFactor(dai::VarSet &vars) : dai::Factor(vars) {};
+        explicit GaussianFactor(dai::VarSet &vars) : dai::Factor(vars) {}
     };
 }
 

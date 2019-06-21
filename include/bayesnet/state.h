@@ -24,9 +24,9 @@ namespace BayesNet {
 
     class BayesBelief {
     public:
-        BayesBelief() {};
+        BayesBelief() {}
 
-        virtual ~BayesBelief() {};
+        ~BayesBelief() {}
 
         double &operator[](size_t index);
 

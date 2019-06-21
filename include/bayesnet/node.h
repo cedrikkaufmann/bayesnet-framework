@@ -14,15 +14,15 @@ namespace BayesNet {
     public:
         explicit Node(size_t label, size_t states);
 
-        virtual ~Node() {};
+        ~Node() {}
 
-        dai::Var &getDiscrete() { return this->_discrete; };
+        dai::Var &getDiscrete() { return _discrete; }
 
-        dai::Var getDiscrete() const { return this->_discrete; }
+        dai::Var getDiscrete() const { return _discrete; }
 
-        dai::VarSet &getConditionalDiscrete() { return this->_conditionalDiscrete; };
+        dai::VarSet &getConditionalDiscrete() { return _conditionalDiscrete; }
 
-        dai::VarSet getConditionalDiscrete() const { return this->_conditionalDiscrete; };
+        dai::VarSet getConditionalDiscrete() const { return _conditionalDiscrete; }
 
         Factor &getFactor();
 
@@ -32,9 +32,9 @@ namespace BayesNet {
 
         void clearEvidence();
 
-        void setFactorGraphIndex(size_t index) { this->_factorGraphIndex = index; };
+        void setFactorGraphIndex(size_t index) { _factorGraphIndex = index; }
 
-        size_t getFactorGraphIndex() { return this->_factorGraphIndex; };
+        size_t getFactorGraphIndex() { return _factorGraphIndex; }
 
     private:
         dai::Var _discrete;
