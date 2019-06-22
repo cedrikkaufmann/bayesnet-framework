@@ -34,7 +34,7 @@ namespace BayesNet {
 
         void setFactorGraphIndex(size_t index) { _factorGraphIndex = index; }
 
-        size_t getFactorGraphIndex() { return _factorGraphIndex; }
+        size_t getFactorGraphIndex() const { return _factorGraphIndex; }
 
     private:
         dai::Var _discrete;

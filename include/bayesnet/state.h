@@ -5,11 +5,11 @@
 #ifndef BAYESNET_FRAMEWORK_STATE_H
 #define BAYESNET_FRAMEWORK_STATE_H
 
-#define BAYESNET_STATES 2
-
 #include <string>
 #include <vector>
 #include <iostream>
+
+#define BAYESNET_STATES 2
 
 namespace BayesNet {
     /**
@@ -19,16 +19,20 @@ namespace BayesNet {
         BELIEF_STATE_GOOD = 0,
         BELIEF_STATE_PROBABLY_GOOD = 1,
         BELIEF_STATE_PROBABLY_BAD = 2,
-        BELIEF_STATE_BAD = 3
+        BELIEF_STATE_BAD = 3,
+        BELIEF_STATE_TRUE = 4,
+        BELIEF_STATE_FALSE = 5
     };
 
     class BayesBelief {
     public:
-        BayesBelief() {}
+        BayesBelief() : _beliefs(4, 2), _binary(false) {}
 
-        ~BayesBelief() {}
+        explicit BayesBelief(bool binary);
 
         double &operator[](size_t index);
+
+        bool isBinary() const { return _binary; }
 
         void set(BeliefState state, double belief);
 
@@ -37,7 +41,8 @@ namespace BayesNet {
         std::string toString() const;
 
     private:
-        double _beliefs[BAYESNET_STATES];
+        std::vector<double> _beliefs;
+        bool _binary;
     };
 
     std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief);

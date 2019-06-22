@@ -17,7 +17,7 @@
 
 namespace BayesNet {
 
-    void Network::newNode(const std::string &name) {
+    void Network::newNode(const std::string &name, size_t states) {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
@@ -27,8 +27,16 @@ namespace BayesNet {
         size_t nodeValue = _nodeCounter++;
         _registry[name] = nodeValue;
 
-        Node node(nodeValue, BAYESNET_STATES);
+        Node node(nodeValue, states);
         _nodes.push_back(node);
+    }
+
+    void Network::newNode(const std::string &name) {
+        newNode(name, 4); // create node with 4 states as default
+    }
+
+    void Network::newBinaryNode(const std::string &name) {
+        newNode(name, 2); // create node with 2 states
     }
 
     void Network::newConnection(const std::string &parentName, const std::string &childName) {

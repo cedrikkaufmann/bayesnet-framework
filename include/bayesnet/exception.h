@@ -20,6 +20,10 @@ namespace BayesNet {
     class BayesNodeNotFoundException : public std::exception {
         const char *what() const throw();
     };
+
+    class IndexOutOfBoundException : public std::exception {
+        const char *what() const throw();
+    };
 }
 
 #endif //BAYESNET_FRAMEWORK_EXCEPTION_H

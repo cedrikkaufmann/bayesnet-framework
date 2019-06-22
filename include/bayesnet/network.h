@@ -23,9 +23,11 @@ namespace BayesNet {
     public:
         Network() : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {}
 
-        ~Network() { delete this->_inferenceInstance; }
+        //~Network() { if (_inferenceInstance != nullptr) delete this->_inferenceInstance; }
 
         void newNode(const std::string &name);
+
+        void newBinaryNode(const std::string &name);
 
         //void newSensor(const std::string &name, size_t type);
 
@@ -51,6 +53,8 @@ namespace BayesNet {
         dai::DAIAlgFG *_inferenceInstance;
         size_t _nodeCounter;
         bool _init;
+
+        void newNode(const std::string &name, size_t states);
 
         void createInferenceInstance(InferenceProperties inf);
     };

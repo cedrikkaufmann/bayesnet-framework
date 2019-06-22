@@ -7,7 +7,7 @@
 
 namespace BayesNet {
 
-    Node::Node(size_t label, size_t states) : _factorGraphIndex(0) {
+    Node::Node(size_t label, size_t states) : _factor(Factor(states)), _factorGraphIndex(0) {
         _discrete = dai::Var(label, states);
         _conditionalDiscrete = dai::VarSet(_discrete);
     }
@@ -19,7 +19,7 @@ namespace BayesNet {
 
     Factor &Node::getFactor() {
         if (_factor.vars() != _conditionalDiscrete) {
-            _factor = Factor(_conditionalDiscrete);
+            _factor = Factor(_conditionalDiscrete, _discrete.states());
         }
 
         return _factor;

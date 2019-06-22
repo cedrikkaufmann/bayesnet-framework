@@ -2,10 +2,19 @@
 // Created by Cedrik Kaufmann on 2019-06-13.
 //
 
-#include <bayesnet/state.h>
 #include <sstream>
 
+#include <bayesnet/state.h>
+#include <bayesnet/exception.h>
+
 namespace BayesNet {
+
+    BayesBelief::BayesBelief(bool binary) : _binary(binary) {
+        if (binary)
+            _beliefs = std::vector<double>(2, 0);
+        else
+            _beliefs = std::vector<double>(4, 0);
+    }
 
     void BayesBelief::set(BeliefState state, double belief) {
         _beliefs[state] = belief;
@@ -23,17 +32,35 @@ namespace BayesNet {
     }
 
     double &BayesBelief::operator[](size_t index) {
-        if (index > BAYESNET_STATES - 1) {
-            throw 0;
+        size_t upperBoundary;
+
+        if (_binary)
+            upperBoundary = 1;
+        else
+            upperBoundary = 3;
+
+        if (index > upperBoundary) {
+            throw IndexOutOfBoundException();
         }
 
         return _beliefs[index];
     }
 
     std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief) {
+        size_t upperBoundary;
+        size_t offset;
+
+        if (bayesBelief.isBinary()) {
+            offset = 4;
+            upperBoundary = offset + 2; // 2 entries if binary
+        } else {
+            offset = 0;
+            upperBoundary = offset + 4; // 4 entries if not binary
+        }
+
         os << "{";
 
-        for (int i = 0; i < BAYESNET_STATES; ++i) {
+        for (size_t i = offset; i < upperBoundary; ++i) {
             switch (i) {
                 case BELIEF_STATE_GOOD: {
                     os << "GOOD: ";
@@ -55,13 +82,22 @@ namespace BayesNet {
                     break;
                 }
 
+                case BELIEF_STATE_TRUE: {
+                    os << "TRUE: ";
+                    break;
+                }
+
+                case BELIEF_STATE_FALSE:
+                    os << "FALSE: ";
+                    break;
+
                 default:
                     os << "UNKNOWN STATE: "; // should never happen
             }
 
-            os << bayesBelief.get(static_cast<BeliefState>(i));
+            os << bayesBelief.get(static_cast<BeliefState>(i - offset));
 
-            if (i < BAYESNET_STATES - 1)
+            if (i < upperBoundary - 1)
                 os << "; ";
         }
 

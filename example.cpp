@@ -22,6 +22,27 @@ using namespace dai;
 int main() {
     BayesNet::Network net;
 
+    net.newNode("speed_control");
+    net.newNode("speed_messurement");
+    net.newNode("acceleration");
+    net.newBinaryNode("setpoint_generation");
+
+    net.newConnection("speed_messurement", "speed_control");
+    net.newConnection("acceleration", "speed_control");
+    net.newConnection("setpoint_generation", "speed_control");
+
+    net.init(BayesNet::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+    net.doInference();
+
+    cout << "Approximate (loopy belief propagation) variable marginals:" << endl;
+    cout << "Speed control: " << net.getBelief("speed_control") << endl; // display the belief of bp for that variable
+    cout << "Speed messurement: " << net.getBelief("speed_messurement") << endl;
+    cout << "Acceleration: " << net.getBelief("acceleration") << endl;
+    cout << "Setpoint generation: " << net.getBelief("setpoint_generation") << endl;
+
+    /*
+    BayesNet::Network net;
+
     net.newNode("cloudy");
     net.newNode("sprinkler");
     net.newNode("rainy");
@@ -81,7 +102,7 @@ int main() {
     cout << "Cloudy: " << net.getBelief("cloudy") << endl; // display the belief of bp for that variable
     cout << "Sprinkler: " << net.getBelief("sprinkler") << endl;
     cout << "Rainy: " << net.getBelief("rainy") << endl;
-    cout << "Wet grass: " << net.getBelief("wetGrass") << endl;
+    cout << "Wet grass: " << net.getBelief("wetGrass") << endl;*/
 
     return 0;
 }

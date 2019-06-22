@@ -17,4 +17,8 @@ namespace BayesNet {
     const char *BayesNodeNotFoundException::what() const throw() {
         return "Bayes node with given identifier does not exist";
     }
+
+    const char *IndexOutOfBoundException::what() const throw() {
+        return "Index out of bounds for bayes belief";
+    }
 }
