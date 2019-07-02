@@ -11,6 +11,7 @@
 
 #include <bayesnet/node.h>
 #include <bayesnet/state.h>
+#include <bayesnet/cpt.h>
 #include <bayesnet/inference.h>
 
 #include <dai/factor.h>
@@ -38,6 +39,8 @@ namespace BayesNet {
         void setEvidence(const std::string &name, size_t state);
 
         void clearEvidence(const std::string &name);
+
+        void setCPT(const std::string &name, const CPT &cpt);
 
         void doInference();
 

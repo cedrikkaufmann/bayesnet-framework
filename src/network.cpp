@@ -161,4 +161,12 @@ namespace BayesNet {
 
         return bayesBelief;
     }
+
+    void Network::setCPT(const std::string &name, const CPT &cpt) {
+        Factor& factor = getNode(name).getFactor();
+
+        for (size_t i = 0; i < cpt.size(); ++i) {
+            factor.set(i, dai::Real(cpt.get(i)));
+        }
+    }
 }

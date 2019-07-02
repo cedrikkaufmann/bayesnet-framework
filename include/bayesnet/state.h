@@ -12,6 +12,7 @@
 #define BAYESNET_STATES 2
 
 namespace BayesNet {
+
     /**
      * Enumeration for better readability of bayes node prediction states
      */
@@ -26,7 +27,7 @@ namespace BayesNet {
 
     class BayesBelief {
     public:
-        BayesBelief() : _beliefs(4, 2), _binary(false) {}
+        BayesBelief() : _beliefs(4, 0), _binary(false) {}
 
         explicit BayesBelief(bool binary);
 
