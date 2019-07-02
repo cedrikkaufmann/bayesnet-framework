@@ -17,6 +17,8 @@
 
 namespace BayesNet {
 
+    using namespace Inference;
+
     void Network::newNode(const std::string &name, size_t states) {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
@@ -149,11 +151,10 @@ namespace BayesNet {
             throw NotInitializedException();
         }
 
-        size_t nodeValue = _registry[name];
-        Node &node = _nodes[nodeValue];
+        Node &node = getNode(name);
 
         dai::Factor belief = _inferenceInstance->belief(node.getDiscrete());
-        BayesBelief bayesBelief;
+        BayesBelief bayesBelief(node.getDiscrete().states() == 2);
 
         for (size_t i = 0; i < belief.nrStates(); ++i) {
             bayesBelief[i] = belief[i];

@@ -20,6 +20,8 @@
 
 namespace BayesNet {
 
+    using namespace Inference;
+
     class Network {
     public:
         Network() : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {}

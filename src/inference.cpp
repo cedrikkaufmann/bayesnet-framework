@@ -7,6 +7,8 @@
 
 namespace BayesNet {
 
+    using namespace Inference;
+
     dai::PropertySet getInferenceProperties(InferenceProperties inf) {
         switch (inf) {
 

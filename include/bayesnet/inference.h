@@ -9,12 +9,14 @@
 
 namespace BayesNet {
 
-    enum InferenceProperties {
-        LOOPY_BELIEF_PROPAGATION_SUMPROD,
-        LOOPY_BELIEF_PROPAGATION_MAXPROD,
-        CONDITIONED_BELIEF_PROPAGATION,
-        FRACTIONAL_BELIEF_PROPAGATION
-    };
+    namespace Inference {
+        enum InferenceProperties {
+            LOOPY_BELIEF_PROPAGATION_SUMPROD,
+            LOOPY_BELIEF_PROPAGATION_MAXPROD,
+            CONDITIONED_BELIEF_PROPAGATION,
+            FRACTIONAL_BELIEF_PROPAGATION
+        };
+    }
 }
 
 // DEFAULT
@@ -50,7 +52,7 @@ namespace BayesNet {
 #define CONFIG_FRACTIONAL_BELIEF_PROPAGATION_LOGDOMAIN false
 
 namespace BayesNet {
-    dai::PropertySet getInferenceProperties(InferenceProperties inf);
+    dai::PropertySet getInferenceProperties(Inference::InferenceProperties inf);
 }
 
 #endif //BAYESNET_FRAMEWORK_INFERENCE_H
