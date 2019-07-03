@@ -139,7 +139,7 @@ namespace BayesNet {
     }
 
     void Network::doInference() {
-        if (!this->_init) {
+        if (!_init) {
             throw NotInitializedException();
         }
 
