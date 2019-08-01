@@ -1,0 +1,21 @@
+{
+  "nodes": {
+    "pregnant": 2,
+    "progesteroneLevel": 2,
+    "scanningTest": 2,
+    "urineTest": 2,
+    "bloodTest": 2
+  },
+  "connections": {
+    "pregnant": ["progesteroneLevel", "scanningTest"],
+    "progesteroneLevel": ["urineTest", "bloodTest"]
+  },
+  "cpt": {
+    "pregnant": {},
+    "progesteroneLevel": {},
+    "scanningTest": {},
+    "urineTest": {},
+    "bloodTest": {}
+  },
+  "inference": "LOOPY_BELIEF_PROPAGATION_SUMPROD"
+}
