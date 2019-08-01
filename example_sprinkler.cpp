@@ -3,10 +3,6 @@
 //
 
 #include <iostream>
-#include <fstream>
-#include <map>
-#include <bayesnet/node.h>
-#include <bayesnet/factor.h>
 #include <bayesnet/state.h>
 #include <bayesnet/cpt.h>
 #include <bayesnet/network.h>
@@ -52,7 +48,7 @@ int main() {
     pWetGrass.push_back(0.0);  // S = 0, R = 0, W = 1
     pWetGrass.push_back(0.9);  // S = 1, R = 0, W = 1
     pWetGrass.push_back(0.9);  // S = 0, R = 1, W = 1
-    pWetGrass.push_back(0.899); // S = 1, R = 1, W = 1
+    pWetGrass.push_back(0.99); // S = 1, R = 1, W = 1
 
     BayesNet::CPT cloudy(pCloudy);
     BayesNet::CPT sprinkler(pSprinkler);
@@ -73,7 +69,9 @@ int main() {
     cout << "Rainy: " << net.getBelief("rainy") << endl;
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl;
 
-    net.setEvidence("sprinkler", 1);
+
+    net.setEvidence("sprinkler", BayesNet::BELIEF_STATE_TRUE);
+    net.setEvidence("rainy", BayesNet::BELIEF_STATE_TRUE);
     net.doInference();
 
     cout << "Approximate (loopy belief propagation) variable marginals:" << endl;

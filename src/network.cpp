@@ -11,9 +11,6 @@
 #include <dai/bp.h>
 #include <dai/cbp.h>
 #include <dai/fbp.h>
-#include <dai/trwbp.h>
-#include <dai/decmap.h>
-#include <dai/bbp.h>
 
 namespace BayesNet {
 
@@ -81,9 +78,16 @@ namespace BayesNet {
         }
 
         try {
-            size_t nodeValue = _registry.at(name);
-            Node &node = _nodes.at(nodeValue);
-            node.setEvidence(state);
+            Node &node = getNode(name);
+
+            if (node.getDiscrete().states() == 2 && state > 3 && state < 6) {
+                node.setEvidence(state - 4);
+            } else if (state > 3) {
+                throw IndexOutOfBoundException();
+            } else {
+                node.setEvidence(state);
+            }
+
             _inferenceInstance->setFactor(node.getFactorGraphIndex(), node.getFactor(), false);
             _inferenceInstance->init(node.getConditionalDiscrete());
         } catch (const std::exception &) {

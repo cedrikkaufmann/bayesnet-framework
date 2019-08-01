@@ -21,8 +21,8 @@ namespace BayesNet {
         BELIEF_STATE_PROBABLY_GOOD = 1,
         BELIEF_STATE_PROBABLY_BAD = 2,
         BELIEF_STATE_BAD = 3,
-        BELIEF_STATE_TRUE = 4,
-        BELIEF_STATE_FALSE = 5
+        BELIEF_STATE_FALSE = 4,
+        BELIEF_STATE_TRUE = 5
     };
 
     class BayesBelief {
