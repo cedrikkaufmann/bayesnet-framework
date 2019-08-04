@@ -2,8 +2,12 @@
 // Created by Cedrik Kaufmann on 2019-06-15.
 //
 
+#include <string>
+
 #include <bayesnet/inference.h>
 #include <bayesnet/exception.h>
+
+#include <dai/util.h>
 
 namespace BayesNet {
 

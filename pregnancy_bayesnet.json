@@ -11,11 +11,11 @@
     "progesteroneLevel": ["urineTest", "bloodTest"]
   },
   "cpt": {
-    "pregnant": {},
-    "progesteroneLevel": {},
-    "scanningTest": {},
-    "urineTest": {},
-    "bloodTest": {}
+    "pregnant": [0, 0.87],
+    "progesteroneLevel": [0, 0.10, 0.01, 0],
+    "scanningTest": [0, 0.10, 0.01, 0],
+    "urineTest": [0, 0.20, 0.10, 0],
+    "bloodTest": [0, 0.30, 0.10, 0]
   },
   "inference": "LOOPY_BELIEF_PROPAGATION_SUMPROD"
 }

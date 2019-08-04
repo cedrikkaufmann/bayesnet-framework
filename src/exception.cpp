@@ -3,6 +3,7 @@
 //
 
 #include <bayesnet/exception.h>
+#include <sstream>
 
 namespace BayesNet {
 
@@ -20,5 +21,9 @@ namespace BayesNet {
 
     const char *IndexOutOfBoundException::what() const throw() {
         return "Index out of bounds for bayes belief";
+    }
+
+    const char *InvalidCPTException::what() const throw() {
+        return "CPT not valid for given probabilities";
     }
 }

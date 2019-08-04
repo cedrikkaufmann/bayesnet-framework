@@ -26,6 +26,8 @@ namespace BayesNet {
     public:
         Network() : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {}
 
+        explicit Network(const std::string &file);
+
         //~Network() { if (_inferenceInstance != nullptr) delete this->_inferenceInstance; }
 
         void newNode(const std::string &name);
@@ -38,7 +40,7 @@ namespace BayesNet {
 
         void init(InferenceProperties inf);
 
-        void setEvidence(const std::string &name, size_t state);
+        void setEvidence(const std::string &name, BeliefState state);
 
         void clearEvidence(const std::string &name);
 
@@ -49,6 +51,10 @@ namespace BayesNet {
         BayesBelief getBelief(const std::string &name);
 
         Node &getNode(const std::string &name);
+
+        void save(const std::string &file);
+
+        void load(const std::string &file);
 
     private:
         std::unordered_map<std::string, size_t> _registry;

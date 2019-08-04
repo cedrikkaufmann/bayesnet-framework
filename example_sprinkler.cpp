@@ -9,7 +9,6 @@
 #include <bayesnet/inference.h>
 
 using namespace std;
-using namespace dai;
 
 int main() {
     BayesNet::Network net;

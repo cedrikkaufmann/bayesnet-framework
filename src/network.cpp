@@ -7,6 +7,7 @@
 #include <bayesnet/network.h>
 #include <bayesnet/exception.h>
 #include <bayesnet/inference.h>
+#include <bayesnet/json.h>
 
 #include <dai/bp.h>
 #include <dai/cbp.h>
@@ -15,6 +16,10 @@
 namespace BayesNet {
 
     using namespace Inference;
+
+    Network::Network(const std::string &file) : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {
+        parseJson(file, *this);
+    }
 
     void Network::newNode(const std::string &name, size_t states) {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
@@ -72,7 +77,7 @@ namespace BayesNet {
         _init = true;
     }
 
-    void Network::setEvidence(const std::string &name, size_t state) {
+    void Network::setEvidence(const std::string &name, BeliefState state) {
         if (!_init) {
             throw NotInitializedException();
         }
