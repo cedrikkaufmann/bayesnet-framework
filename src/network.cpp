@@ -206,8 +206,7 @@ namespace BayesNet {
         // add cpt for nodes to network
         for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin(); it != iv->cpt.end(); it++) {
 
-            std::vector<double> cpt = (*it).second;
-            setCPT((*it).first, CPT(cpt));
+            setCPT((*it).first, CPT((*it).second));
         }
     }
 
