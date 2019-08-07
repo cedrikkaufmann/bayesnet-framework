@@ -182,40 +182,32 @@ namespace BayesNet {
     }
 
     void Network::load(InitializationVector *iv) {
-        std::vector<std::string> nodes;
-
         // add nodes with 4 states to network
         for (size_t i = 0; i < iv->nodes.size(); ++i) {
 
-            std::cout << "adding node " << iv->nodes[i] << std::endl;
             newNode(iv->nodes[i]);
-            nodes.push_back(iv->nodes[i]);
         }
 
         // add binary nodes to network
         for (size_t i = 0; i < iv->binaryNodes.size(); ++i) {
 
-            std::cout << "adding node " << iv->binaryNodes[i] << std::endl;
             newBinaryNode(iv->binaryNodes[i]);
-            nodes.push_back(iv->binaryNodes[i]);
         }
 
         // add connections for nodes to network
-        for (size_t i = 0; i < nodes.size(); ++i) {
+        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv->connections.begin(); it != iv->connections.end(); it++) {
 
-            for (size_t j = 0; j < iv->connections[nodes[i]].size(); ++j) {
+            for (size_t i = 0; i < (*it).second.size(); ++i) {
 
-                std::cout << "adding connection from " << nodes[i] << " to " << iv->connections[nodes[i]][j]
-                          << std::endl;
-                newConnection(nodes[i], iv->connections[nodes[i]][j]);
+                newConnection((*it).first, (*it).second[i]);
             }
         }
 
         // add cpt for nodes to network
-        for (size_t i = 0; i < nodes.size(); ++i) {
+        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin(); it != iv->cpt.end(); it++) {
 
-            std::cout << "set cpt for " << nodes[i] << std::endl;
-            setCPT(nodes[i], CPT(iv->cpt[nodes[i]]));
+            std::vector<double> cpt = (*it).second;
+            setCPT((*it).first, CPT(cpt));
         }
     }
 
