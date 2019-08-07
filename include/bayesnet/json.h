@@ -7,15 +7,27 @@
 
 #include <string>
 #include <vector>
-
-#include <bayesnet/network.h>
+#include <unordered_map>
+#include <iostream>
 
 namespace BayesNet {
 
-    void parseJson(const std::string &filename, Network &network);
-    void saveJson(const std::string &filename, const Network &network);
+    struct InitializationVector {
+        std::vector<std::string> binaryNodes;
+        std::vector<std::string> nodes;
+        std::unordered_map<std::string, std::vector<std::string> > connections;
+        std::unordered_map<std::string, std::vector<double> > cpt;
+    };
+
+    InitializationVector *parseJson(const std::string &filename);
+
+    void saveJson(const std::string &filename, InitializationVector *iv);
+
     bool isWhitespaceOrQuotationMark(char c);
-    std::vector<std::string> split(const std::string& s, char delimiter);
+
+    std::vector<std::string> split(const std::string &s, char delimiter);
+
+    std::ostream &operator<<(std::ostream &os, const InitializationVector &iv);
 }
 
 #endif //BAYESNET_FRAMEWORK_JSON_H

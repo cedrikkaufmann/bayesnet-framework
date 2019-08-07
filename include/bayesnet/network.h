@@ -13,6 +13,7 @@
 #include <bayesnet/state.h>
 #include <bayesnet/cpt.h>
 #include <bayesnet/inference.h>
+#include <bayesnet/json.h>
 
 #include <dai/factor.h>
 #include <dai/factorgraph.h>
@@ -27,8 +28,6 @@ namespace BayesNet {
         Network() : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {}
 
         explicit Network(const std::string &file);
-
-        //~Network() { if (_inferenceInstance != nullptr) delete this->_inferenceInstance; }
 
         void newNode(const std::string &name);
 
@@ -50,15 +49,18 @@ namespace BayesNet {
 
         BayesBelief getBelief(const std::string &name);
 
-        Node &getNode(const std::string &name);
-
-        void save(const std::string &file);
+        Node *getNode(const std::string &name);
 
         void load(const std::string &file);
 
+        void load(InitializationVector *iv);
+
+        void save(const std::string &file);
+
     private:
         std::unordered_map<std::string, size_t> _registry;
-        std::vector<Node> _nodes;
+        std::vector<std::string> _nodeNames;
+        std::vector<Node *> _nodes;
         dai::FactorGraph _factorGraph;
         dai::PropertySet _properties;
         dai::DAIAlgFG *_inferenceInstance;

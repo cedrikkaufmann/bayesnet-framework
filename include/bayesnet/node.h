@@ -7,14 +7,15 @@
 
 #include <dai/factorgraph.h>
 #include <bayesnet/factor.h>
+#include <bayesnet/cpt.h>
 
 namespace BayesNet {
 
     class Node {
     public:
-        explicit Node(size_t label, size_t states);
+        explicit Node(std::string name, size_t label, size_t states);
 
-        ~Node() {}
+        std::string getName() const { return _name; }
 
         dai::Var &getDiscrete() { return _discrete; }
 
@@ -26,21 +27,31 @@ namespace BayesNet {
 
         Factor &getFactor();
 
+        std::vector<Node *> &getChildren() { return _children; }
+
         void addChild(Node *node);
 
         void setEvidence(size_t state);
 
         void clearEvidence();
 
+        CPT &getCPT() { return _cpt; }
+
+        void setCPT(const CPT &cpt);
+
         void setFactorGraphIndex(size_t index) { _factorGraphIndex = index; }
 
         size_t getFactorGraphIndex() const { return _factorGraphIndex; }
 
+        bool isBinary() { return _discrete.states() == 2; }
+
     private:
+        std::string _name;
         dai::Var _discrete;
         dai::VarSet _conditionalDiscrete;
         Factor _factor;
         size_t _factorGraphIndex;
+        CPT _cpt;
         std::vector<Node *> _children;
     };
 

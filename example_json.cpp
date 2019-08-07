@@ -12,8 +12,8 @@
 using namespace std;
 
 int main() {
-    BayesNet::Network net;
-    BayesNet::parseJson("../pregnancy_bayesnet.json", net);
+    BayesNet::Network net("../pregnancy_bayesnet.json");
+    net.save("../testsave.json");
 
     net.init(BayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
 
