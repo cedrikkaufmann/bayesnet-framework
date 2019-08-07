@@ -59,6 +59,8 @@ int main() {
     net.setCPT("rainy", rainy);
     net.setCPT("wetGrass", wetGrass);
 
+    net.save("../sprinkler.bayesnet");
+
     net.init(BayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
     net.doInference();
 

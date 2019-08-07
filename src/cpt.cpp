@@ -8,7 +8,7 @@
 using namespace std;
 namespace BayesNet {
 
-    CPT::CPT(std::vector<double> &probabilities) {
+    CPT::CPT(std::vector<double> probabilities) {
         // try to calculate complementary probability if missing
         size_t states = probabilities.size() / 2;
 

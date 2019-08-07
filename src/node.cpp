@@ -7,7 +7,7 @@
 
 namespace BayesNet {
 
-    Node::Node(std::string name, size_t label, size_t states) : _name(name), _factor(Factor(states)),
+    Node::Node(const std::string& name, size_t label, size_t states) : _name(name), _factor(Factor(states)),
                                                                 _factorGraphIndex(0) {
         _discrete = dai::Var(label, states);
         _conditionalDiscrete = dai::VarSet(_discrete);
@@ -34,7 +34,7 @@ namespace BayesNet {
         getFactor().clearEvidence();
     }
 
-    void Node::setCPT(const CPT &cpt) {
+    void Node::setCPT(const CPT& cpt) {
         _cpt = cpt;
         Factor &factor = getFactor();
 

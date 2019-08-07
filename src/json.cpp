@@ -307,5 +307,7 @@ namespace BayesNet {
 
         // write end json file
         os << "}" << std::endl;
+
+        return os;
     }
 }

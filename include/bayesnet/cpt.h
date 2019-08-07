@@ -17,7 +17,7 @@ namespace BayesNet {
 
         explicit CPT(size_t jointSize) : _probabilities(jointSize, 0) {}
 
-        explicit CPT(std::vector<double> &probabilities);
+        explicit CPT(std::vector<double> probabilities);
 
         explicit CPT(const Factor &factor) : _probabilities(factor.nrStates()) {}
 
