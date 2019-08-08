@@ -3,7 +3,6 @@
 //
 
 #include <fstream>
-#include <sstream>
 #include <regex>
 
 #include <bayesnet/json.h>
