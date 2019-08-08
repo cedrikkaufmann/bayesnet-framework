@@ -1,0 +1,20 @@
+{
+  "nodes": {
+    "pregnant": 2,
+    "progesteroneLevel": 2,
+    "scanningTest": 2,
+    "urineTest": 2,
+    "bloodTest": 2
+  },
+  "connections": {
+    "progesteroneLevel": ["urineTest", "bloodTest"],
+    "pregnant": ["progesteroneLevel", "scanningTest"]
+  },
+  "cpt": {
+    "urineTest": [0.9, 0.2, 0.1, 0.8],
+    "progesteroneLevel": [0.99, 0.1, 0.01, 0.9],
+    "bloodTest": [0.9, 0.3, 0.1, 0.7],
+    "scanningTest": [0.99, 0.1, 0.01, 0.9],
+    "pregnant": [0.13, 0.87]
+  }
+}

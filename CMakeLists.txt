@@ -22,9 +22,9 @@ link_directories(/usr/local/lib)
 link_libraries(gmp gmpxx dai)
 
 # Add compilable executables
-add_executable(sprinkler_example example_sprinkler.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
-add_executable(pregnancy_example example_pregnancy.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
-add_executable(json_example example_json.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
+add_executable(sprinkler_example examples/example_sprinkler.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
+add_executable(pregnancy_example examples/example_pregnancy.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
+add_executable(json_example examples/example_json.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
 
 # Link QT5
 # target_link_libraries(bayesnet_builder Qt5::Core Qt5::Widgets)

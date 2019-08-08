@@ -3,7 +3,6 @@
 //
 
 #include <bayesnet/network.h>
-#include <bayesnet/json.h>
 #include <bayesnet/inference.h>
 #include <bayesnet/state.h>
 
@@ -12,8 +11,7 @@
 using namespace std;
 
 int main() {
-    BayesNet::Network net("../pregnancy_bayesnet.json");
-    net.save("../pregnancy.bayesnet");
+    BayesNet::Network net("../examples/pregnancy.bayesnet");
 
     net.init(BayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
 
