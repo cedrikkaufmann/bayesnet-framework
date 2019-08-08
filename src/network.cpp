@@ -15,8 +15,7 @@ namespace bayesNet {
 
     Network::Network(const std::string &file)
             : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {
-        json::InitializationVector *iv = json::parse(file);
-        load(iv);
+        load(file);
     }
 
     void Network::newNode(const std::string &name, size_t states) {
