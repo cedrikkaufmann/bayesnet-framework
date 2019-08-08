@@ -5,7 +5,7 @@
 #include <bayesnet/exception.h>
 #include <sstream>
 
-namespace BayesNet {
+namespace bayesNet {
 
     const char *NotInitializedException::what() const throw() {
         return "Bayesian network not initialized";

@@ -9,7 +9,7 @@
 
 #include <bayesnet/factor.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     class CPT {
     public:

@@ -11,11 +11,11 @@
 #include <dai/cbp.h>
 #include <dai/fbp.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     Network::Network(const std::string &file)
             : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {
-        Json::InitializationVector *iv = Json::parse(file);
+        json::InitializationVector *iv = json::parse(file);
         load(iv);
     }
 
@@ -176,10 +176,10 @@ namespace BayesNet {
     }
 
     void Network::load(const std::string &file) {
-        load(Json::parse(file));
+        load(json::parse(file));
     }
 
-    void Network::load(Json::InitializationVector *iv) {
+    void Network::load(json::InitializationVector *iv) {
         // add nodes with 4 states to network
         for (size_t i = 0; i < iv->nodes.size(); ++i) {
 
@@ -209,7 +209,7 @@ namespace BayesNet {
     }
 
     void Network::save(const std::string &file) {
-        Json::InitializationVector *iv = new Json::InitializationVector();
+        json::InitializationVector *iv = new json::InitializationVector();
 
         for (size_t i = 0; i < _nodeNames.size(); ++i) {
             Node *node = getNode(_nodeNames[i]);
@@ -232,6 +232,6 @@ namespace BayesNet {
             iv->cpt[node->getName()] = node->getCPT().getProbabilities();
         }
 
-        Json::save(file, iv);
+        json::save(file, iv);
     }
 }

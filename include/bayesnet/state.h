@@ -11,7 +11,7 @@
 
 #define BAYESNET_STATES 2
 
-namespace BayesNet {
+namespace bayesNet {
 
     /**
      * Enumeration for better readability of bayes node prediction states

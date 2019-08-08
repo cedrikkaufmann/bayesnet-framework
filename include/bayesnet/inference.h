@@ -7,7 +7,7 @@
 
 #include <dai/properties.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     namespace Inference {
         enum InferenceProperties {
@@ -51,7 +51,7 @@ namespace BayesNet {
 #define CONFIG_FRACTIONAL_BELIEF_PROPAGATION_INFERENCE "SUMPROD"
 #define CONFIG_FRACTIONAL_BELIEF_PROPAGATION_LOGDOMAIN false
 
-namespace BayesNet {
+namespace bayesNet {
     dai::PropertySet getInferenceProperties(Inference::InferenceProperties inf);
 }
 

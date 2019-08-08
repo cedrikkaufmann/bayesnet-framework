@@ -11,13 +11,13 @@
 using namespace std;
 
 int main() {
-    BayesNet::Network net("../examples/pregnancy.bayesnet");
+    bayesNet::Network net("../examples/pregnancy.bayesnet");
 
-    net.init(BayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+    net.init(bayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
 
-    net.setEvidence("scanningTest", BayesNet::BELIEF_STATE_FALSE);
-    net.setEvidence("bloodTest", BayesNet::BELIEF_STATE_FALSE);
-    net.setEvidence("urineTest", BayesNet::BELIEF_STATE_FALSE);
+    net.setEvidence("scanningTest", bayesNet::BELIEF_STATE_FALSE);
+    net.setEvidence("bloodTest", bayesNet::BELIEF_STATE_FALSE);
+    net.setEvidence("urineTest", bayesNet::BELIEF_STATE_FALSE);
 
     net.doInference();
 

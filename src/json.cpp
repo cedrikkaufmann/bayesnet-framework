@@ -9,9 +9,9 @@
 #include <bayesnet/json.h>
 #include <bayesnet/util.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
-    namespace Json {
+    namespace json {
 
         InitializationVector *parse(const std::string &filename) {
             // regular expressions to parse json file
@@ -75,7 +75,7 @@ namespace BayesNet {
                                 connections.end());
 
                         // split connection list and at to iv
-                        iv->connections[match.str(1)] = Utils::split(connections, ',');
+                        iv->connections[match.str(1)] = utils::split(connections, ',');
 
                         continue;
                     }
@@ -88,7 +88,7 @@ namespace BayesNet {
                         // remove whitespaces
                         cpt.erase(std::remove(cpt.begin(), cpt.end(), ' '), cpt.end());
                         // split connection list
-                        std::vector<std::string> splitCPT = Utils::split(cpt, ',');
+                        std::vector<std::string> splitCPT = utils::split(cpt, ',');
 
                         // convert string to double and add to iv
                         iv->cpt[match.str(1)] = std::vector<double>(splitCPT.size());

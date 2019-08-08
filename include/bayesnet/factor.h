@@ -8,7 +8,7 @@
 #include <dai/factor.h>
 #include <dai/factorgraph.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     class Factor : public dai::Factor {
     public:

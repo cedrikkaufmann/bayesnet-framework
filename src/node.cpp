@@ -5,7 +5,7 @@
 #include <bayesnet/node.h>
 #include <bayesnet/state.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     Node::Node(const std::string& name, size_t label, size_t states) : _name(name), _factor(Factor(states)),
                                                                 _factorGraphIndex(0) {

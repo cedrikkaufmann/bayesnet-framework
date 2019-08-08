@@ -6,7 +6,7 @@
 #include <bayesnet/state.h>
 #include <bayesnet/exception.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     void Factor::setEvidence(size_t state) {
         if (state > _states - 1)

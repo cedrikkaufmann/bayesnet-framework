@@ -9,7 +9,7 @@
 
 #include <dai/util.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     using namespace Inference;
 

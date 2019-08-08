@@ -10,9 +10,9 @@
 #include <unordered_map>
 #include <iostream>
 
-namespace BayesNet {
+namespace bayesNet {
 
-    namespace Json {
+    namespace json {
 
         struct InitializationVector {
             std::vector<std::string> binaryNodes;

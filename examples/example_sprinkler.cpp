@@ -11,7 +11,7 @@
 using namespace std;
 
 int main() {
-    BayesNet::Network net;
+    bayesNet::Network net;
 
     net.newBinaryNode("cloudy");
     net.newBinaryNode("sprinkler");
@@ -49,17 +49,17 @@ int main() {
     pWetGrass.push_back(0.9);  // S = 0, R = 1, W = 1
     pWetGrass.push_back(0.99); // S = 1, R = 1, W = 1
 
-    BayesNet::CPT cloudy(pCloudy);
-    BayesNet::CPT sprinkler(pSprinkler);
-    BayesNet::CPT rainy(pRainy);
-    BayesNet::CPT wetGrass(pWetGrass);
+    bayesNet::CPT cloudy(pCloudy);
+    bayesNet::CPT sprinkler(pSprinkler);
+    bayesNet::CPT rainy(pRainy);
+    bayesNet::CPT wetGrass(pWetGrass);
 
     net.setCPT("cloudy", cloudy);
     net.setCPT("sprinkler", sprinkler);
     net.setCPT("rainy", rainy);
     net.setCPT("wetGrass", wetGrass);
 
-    net.init(BayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+    net.init(bayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
     net.doInference();
 
     cout << "Approximate (loopy belief propagation) variable marginals:" << endl;
@@ -69,8 +69,8 @@ int main() {
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl;
 
 
-    net.setEvidence("sprinkler", BayesNet::BELIEF_STATE_TRUE);
-    net.setEvidence("rainy", BayesNet::BELIEF_STATE_TRUE);
+    net.setEvidence("sprinkler", bayesNet::BELIEF_STATE_TRUE);
+    net.setEvidence("rainy", bayesNet::BELIEF_STATE_TRUE);
     net.doInference();
 
     cout << "Approximate (loopy belief propagation) variable marginals:" << endl;

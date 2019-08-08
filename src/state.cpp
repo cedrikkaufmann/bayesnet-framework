@@ -7,7 +7,7 @@
 #include <bayesnet/state.h>
 #include <bayesnet/exception.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     BayesBelief::BayesBelief(bool binary) : _binary(binary) {
         if (binary)

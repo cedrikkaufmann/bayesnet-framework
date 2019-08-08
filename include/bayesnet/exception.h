@@ -7,7 +7,7 @@
 
 #include <exception>
 
-namespace BayesNet {
+namespace bayesNet {
 
     class NotInitializedException : public std::exception {
         const char *what() const throw();

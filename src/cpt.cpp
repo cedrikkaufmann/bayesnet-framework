@@ -6,7 +6,7 @@
 #include <bayesnet/exception.h>
 
 using namespace std;
-namespace BayesNet {
+namespace bayesNet {
 
     CPT::CPT(std::vector<double> probabilities) {
         // try to calculate complementary probability if missing

@@ -19,7 +19,7 @@
 #include <dai/factorgraph.h>
 #include <dai/daialg.h>
 
-namespace BayesNet {
+namespace bayesNet {
 
     class Network {
     public:
@@ -51,7 +51,7 @@ namespace BayesNet {
 
         void load(const std::string &file);
 
-        void load(Json::InitializationVector *iv);
+        void load(json::InitializationVector *iv);
 
         void save(const std::string &file);
 
