@@ -76,7 +76,7 @@ namespace bayesNet {
         _init = true;
     }
 
-    void Network::setEvidence(const std::string &name, BeliefState state) {
+    void Network::setEvidence(const std::string &name, belief::BeliefState state) {
         if (!_init) {
             throw NotInitializedException();
         }
@@ -154,7 +154,7 @@ namespace bayesNet {
         this->_inferenceInstance->run();
     }
 
-    BayesBelief Network::getBelief(const std::string &name) {
+    belief::BayesBelief Network::getBelief(const std::string &name) {
         if (!_init) {
             throw NotInitializedException();
         }
@@ -162,7 +162,7 @@ namespace bayesNet {
         Node *node = getNode(name);
 
         dai::Factor belief = _inferenceInstance->belief(node->getDiscrete());
-        BayesBelief bayesBelief(node->getDiscrete().states() == 2);
+        belief::BayesBelief bayesBelief(node->isBinary());
 
         for (size_t i = 0; i < belief.nrStates(); ++i) {
             bayesBelief[i] = belief[i];

@@ -15,9 +15,9 @@ int main() {
 
     net.init(bayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
 
-    net.setEvidence("scanningTest", bayesNet::BELIEF_STATE_FALSE);
-    net.setEvidence("bloodTest", bayesNet::BELIEF_STATE_FALSE);
-    net.setEvidence("urineTest", bayesNet::BELIEF_STATE_FALSE);
+    net.setEvidence("scanningTest", bayesNet::belief::FALSE);
+    net.setEvidence("bloodTest", bayesNet::belief::FALSE);
+    net.setEvidence("urineTest", bayesNet::belief::FALSE);
 
     net.doInference();
 

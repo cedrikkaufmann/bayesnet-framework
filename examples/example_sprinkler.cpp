@@ -69,8 +69,8 @@ int main() {
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl;
 
 
-    net.setEvidence("sprinkler", bayesNet::BELIEF_STATE_TRUE);
-    net.setEvidence("rainy", bayesNet::BELIEF_STATE_TRUE);
+    net.setEvidence("sprinkler", bayesNet::belief::TRUE);
+    net.setEvidence("rainy", bayesNet::belief::TRUE);
     net.doInference();
 
     cout << "Approximate (loopy belief propagation) variable marginals:" << endl;

@@ -37,7 +37,7 @@ namespace bayesNet {
 
         void init(Inference::InferenceProperties inf);
 
-        void setEvidence(const std::string &name, BeliefState state);
+        void setEvidence(const std::string &name, belief::BeliefState state);
 
         void clearEvidence(const std::string &name);
 
@@ -45,7 +45,7 @@ namespace bayesNet {
 
         void doInference();
 
-        BayesBelief getBelief(const std::string &name);
+        belief::BayesBelief getBelief(const std::string &name);
 
         Node *getNode(const std::string &name);
 

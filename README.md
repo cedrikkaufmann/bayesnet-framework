@@ -23,7 +23,7 @@ Build successful on the following systems:
 ### Create new network
 
 ```
-BayesNet::Network net;
+bayesNet::Network net;
 ```
 
 ### Add new nodes to network
@@ -54,7 +54,7 @@ net.newConnection("node1", "node3");
 std::vector<double> probTable;
 probTable.pushBack(0.7);
 
-net.CPT("node1", BayesNet::CPT(probTable));
+net.setCPT("node1", bayesNet::CPT(probTable));
 ```
 
 ### Set and clear evidence on nodes
@@ -62,10 +62,10 @@ net.CPT("node1", BayesNet::CPT(probTable));
 Set evidence:
 ```
 // node with 2 states
-net.setEvidence("node1", BayesNet::BELIEF_STATE_FALSE);
+net.setEvidence("node1", bayesNet::FALSE);
 
 // node with 4 states
-net.setEvidecne("node3", BayesNet::BELIEF_STATE_GOOD);
+net.setEvidecne("node3", bayesNet::GOOD);
 ```
 
 Clear evidence:
@@ -75,14 +75,14 @@ net.clearEvidence("node3");
 ```
 
 Allowed values for binary nodes are 
-- ```BayesNet::BELIEF_STATE_FALSE```
-- ```BayesNet::BELIEF_STATE_TRUE```
+- ```bayesNet::belief::FALSE```
+- ```bayesNet::belief::TRUE```
 
 Allowed values for nodes with 4 states
-- ```BayesNet::BELIEF_STATE_GOOD```
-- ```BayesNet::BELIEF_STATE_PROBABLY_GOOD```
-- ```BayesNet::BELIEF_STATE_PROBABLY_BAD```
-- ```BayesNet::BELIEF_STATE_BAD```
+- ```bayesNet::belief::GOOD```
+- ```bayesNet::belief::PROBABLY_GOOD```
+- ```bayesNet::belief::PROBABLY_BAD```
+- ```bayesNet::belief::BAD```
 
 ### Inference on network
 
