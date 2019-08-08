@@ -26,4 +26,12 @@ namespace bayesNet {
     const char *InvalidCPTException::what() const throw() {
         return "CPT not valid for given probabilities";
     }
+
+    const char *FileNotFoundException::what() const throw() {
+        return "Unable to load file";
+    }
+
+    const char *UnableWriteFileException::what() const throw() {
+        return "Unable to write file";
+    }
 }

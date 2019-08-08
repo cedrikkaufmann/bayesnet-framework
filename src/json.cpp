@@ -7,6 +7,7 @@
 
 #include <bayesnet/json.h>
 #include <bayesnet/util.h>
+#include <bayesnet/exception.h>
 
 namespace bayesNet {
 
@@ -149,9 +150,7 @@ namespace bayesNet {
                 return iv;
             } else {
 
-                // failed to open file
-                std::cout << "Unable to open file: \"" << filename << "\"" << std::endl;
-                return nullptr;
+                throw FileNotFoundException();
             }
         }
 
@@ -170,7 +169,7 @@ namespace bayesNet {
             } else {
 
                 // error while opening file
-                std::cout << "Failed to write file: \"" << filename << "\"" << std::endl;
+                throw UnableWriteFileException();
             }
         }
 

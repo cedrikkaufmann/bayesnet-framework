@@ -28,6 +28,14 @@ namespace bayesNet {
     class InvalidCPTException : public std::exception {
         const char *what() const throw();
     };
+
+    class FileNotFoundException : public std::exception {
+        const char *what() const throw();
+    };
+
+    class UnableWriteFileException : public std::exception {
+        const char *what() const throw();
+    };
 }
 
 #endif //BAYESNET_FRAMEWORK_EXCEPTION_H
