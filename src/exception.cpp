@@ -3,7 +3,6 @@
 //
 
 #include <bayesnet/exception.h>
-#include <sstream>
 
 namespace bayesNet {
 

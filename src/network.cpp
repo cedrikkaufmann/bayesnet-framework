@@ -192,7 +192,8 @@ namespace bayesNet {
         }
 
         // add connections for nodes to network
-        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv->connections.begin(); it != iv->connections.end(); it++) {
+        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv->connections.begin();
+             it != iv->connections.end(); it++) {
 
             for (size_t i = 0; i < (*it).second.size(); ++i) {
 
@@ -201,7 +202,8 @@ namespace bayesNet {
         }
 
         // add cpt for nodes to network
-        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin(); it != iv->cpt.end(); it++) {
+        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin();
+             it != iv->cpt.end(); it++) {
 
             setCPT((*it).first, CPT((*it).second));
         }

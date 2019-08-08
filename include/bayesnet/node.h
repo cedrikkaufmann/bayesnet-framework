@@ -13,7 +13,7 @@ namespace bayesNet {
 
     class Node {
     public:
-        explicit Node(const std::string& name, size_t label, size_t states);
+        explicit Node(const std::string &name, size_t label, size_t states);
 
         std::string getName() const { return _name; }
 
@@ -37,7 +37,7 @@ namespace bayesNet {
 
         CPT &getCPT() { return _cpt; }
 
-        void setCPT(const CPT& cpt);
+        void setCPT(const CPT &cpt);
 
         void setFactorGraphIndex(size_t index) { _factorGraphIndex = index; }
 

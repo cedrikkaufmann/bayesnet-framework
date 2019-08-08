@@ -193,7 +193,7 @@ namespace bayesNet {
             // binary nodes
             for (size_t i = 0; i < iv.binaryNodes.size(); ++i) {
 
-                os << indentSectionEntries << "\"" <<iv.binaryNodes[i] << "\": 2";
+                os << indentSectionEntries << "\"" << iv.binaryNodes[i] << "\": 2";
 
                 if (i == iv.binaryNodes.size() - 1) {
 
@@ -207,7 +207,7 @@ namespace bayesNet {
             // nodes with 4 states
             for (size_t i = 0; i < iv.nodes.size(); ++i) {
 
-                os << indentSectionEntries << "\"" <<iv.nodes[i] << "\": 4";
+                os << indentSectionEntries << "\"" << iv.nodes[i] << "\": 4";
 
                 if (i == iv.nodes.size() - 1) {
 
@@ -228,7 +228,8 @@ namespace bayesNet {
             // write each connection
             size_t itCounter = 0;
 
-            for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv.connections.begin(); it != iv.connections.end(); it++) {
+            for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv.connections.begin();
+                 it != iv.connections.end(); it++) {
 
                 os << indentSectionEntries << "\"" << (*it).first << "\": [";
 
@@ -264,7 +265,8 @@ namespace bayesNet {
             // write each connection
             itCounter = 0;
 
-            for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv.cpt.begin(); it != iv.cpt.end(); it++) {
+            for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv.cpt.begin();
+                 it != iv.cpt.end(); it++) {
 
                 os << indentSectionEntries << "\"" << (*it).first << "\": [";
 
