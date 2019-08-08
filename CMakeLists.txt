@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 3.13)
 project(BayesNet_Framework)
 
 # Compiler settings and flags
-set(CMAKE_CXX_COMPILER /usr/local/opt/llvm/bin/clang++)
+set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-march=native -Weverything")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Search paths for includes and libraries
-include_directories(/usr/local/opt/llvm/lib /usr/local/include include)
-link_directories(/usr/local/opt/llvm/include /usr/local/lib)
+include_directories(/usr/local/include include)
+link_directories(/usr/local/lib)
 
 # Qt5 configuration
 #set(CMAKE_PREFIX_PATH /usr/local/opt/qt)

@@ -15,14 +15,8 @@ All dependencies are assumed to be available as system libraries for static link
 The project uses CMake as build system. Make sure to set the correct search paths for includes and libraries in the CMakeLists.txt.
 
 Build successful on the following systems:
-- MacOS 10.14 (64-Bit), Apple LLVM 10.0.1, libGMP 6.1.2, libDAI 0.3.2
-- MacOS 10.14 (64-Bit), LLVM 8.0.0, libGMP 6.1.2, libDAI 0.3.2
-
-**Compilation notes**
-
-Since gcc doesn't have moved the ``std::tr1`` features into the STL, the source code may have to get changed from using ``std::unordered_map`` to ``std::tr1::unordered_map``, to successfully compile it.
-
-To build the latest version of libDAI the file ``include/dai/util.h`` needs to be updated to use unordered_map from namespace ``std`` instead of ``std::tr1`` version, if using llvm to compile. However gcc seems no to have moved the ``tr1` features into the STL.
+- MacOS 10.14 (64-Bit), Clang++ Apple LLVM 10.0.1, libGMP 6.1.2, libDAI 0.3.2
+- MacOS 10.14 (64-Bit), Clang++ LLVM 8.0.0, libGMP 6.1.2, libDAI 0.3.2
 
 ## Usage
 
