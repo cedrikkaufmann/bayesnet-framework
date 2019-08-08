@@ -13,11 +13,9 @@
 
 namespace BayesNet {
 
-    using namespace Inference;
-
     Network::Network(const std::string &file)
             : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {
-        InitializationVector *iv = parseJson(file);
+        Json::InitializationVector *iv = Json::parse(file);
         load(iv);
     }
 
@@ -58,7 +56,7 @@ namespace BayesNet {
         return _nodes[nodeValue];
     }
 
-    void Network::init(InferenceProperties algorithm) {
+    void Network::init(Inference::InferenceProperties algorithm) {
         std::vector<dai::Factor> factors;
 
         for (size_t i = 0; i < _nodes.size(); ++i) {
@@ -117,30 +115,30 @@ namespace BayesNet {
         }
     }
 
-    void Network::createInferenceInstance(InferenceProperties inf) {
+    void Network::createInferenceInstance(Inference::InferenceProperties inf) {
 
         switch (inf) {
 
-            case LOOPY_BELIEF_PROPAGATION_MAXPROD: {
+            case Inference::LOOPY_BELIEF_PROPAGATION_MAXPROD: {
                 dai::PropertySet opts = getInferenceProperties(inf);
                 _inferenceInstance = new dai::BP(_factorGraph, opts);
                 break;
             }
 
-            case LOOPY_BELIEF_PROPAGATION_SUMPROD: {
+            case Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD: {
                 dai::PropertySet opts = getInferenceProperties(inf);
                 _inferenceInstance = new dai::BP(_factorGraph, opts);
                 break;
             }
 
 
-            case CONDITIONED_BELIEF_PROPAGATION: {
+            case Inference::CONDITIONED_BELIEF_PROPAGATION: {
                 dai::PropertySet opts = getInferenceProperties(inf);
                 _inferenceInstance = new dai::CBP(_factorGraph, opts);
                 break;
             }
 
-            case FRACTIONAL_BELIEF_PROPAGATION: {
+            case Inference::FRACTIONAL_BELIEF_PROPAGATION: {
                 dai::PropertySet opts = getInferenceProperties(inf);
                 _inferenceInstance = new dai::FBP(_factorGraph, opts);
                 break;
@@ -178,10 +176,10 @@ namespace BayesNet {
     }
 
     void Network::load(const std::string &file) {
-        load(parseJson(file));
+        load(Json::parse(file));
     }
 
-    void Network::load(InitializationVector *iv) {
+    void Network::load(Json::InitializationVector *iv) {
         // add nodes with 4 states to network
         for (size_t i = 0; i < iv->nodes.size(); ++i) {
 
@@ -211,7 +209,7 @@ namespace BayesNet {
     }
 
     void Network::save(const std::string &file) {
-        InitializationVector *iv = new InitializationVector();
+        Json::InitializationVector *iv = new Json::InitializationVector();
 
         for (size_t i = 0; i < _nodeNames.size(); ++i) {
             Node *node = getNode(_nodeNames[i]);
@@ -234,6 +232,6 @@ namespace BayesNet {
             iv->cpt[node->getName()] = node->getCPT().getProbabilities();
         }
 
-        saveJson(file, iv);
+        Json::save(file, iv);
     }
 }

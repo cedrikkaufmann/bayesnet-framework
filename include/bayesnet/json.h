@@ -12,22 +12,23 @@
 
 namespace BayesNet {
 
-    struct InitializationVector {
-        std::vector<std::string> binaryNodes;
-        std::vector<std::string> nodes;
-        std::unordered_map<std::string, std::vector<std::string> > connections;
-        std::unordered_map<std::string, std::vector<double> > cpt;
-    };
+    namespace Json {
 
-    InitializationVector *parseJson(const std::string &filename);
+        struct InitializationVector {
+            std::vector<std::string> binaryNodes;
+            std::vector<std::string> nodes;
+            std::unordered_map<std::string, std::vector<std::string> > connections;
+            std::unordered_map<std::string, std::vector<double> > cpt;
+        };
 
-    void saveJson(const std::string &filename, InitializationVector *iv);
+        InitializationVector *parse(const std::string &filename);
 
-    bool isWhitespaceOrQuotationMark(char c);
+        void save(const std::string &filename, InitializationVector *iv);
 
-    std::vector<std::string> split(const std::string &s, char delimiter);
+        bool isWhitespaceOrQuotationMark(char c);
 
-    std::ostream &operator<<(std::ostream &os, const InitializationVector &iv);
+        std::ostream &operator<<(std::ostream &os, const InitializationVector &iv);
+    }
 }
 
 #endif //BAYESNET_FRAMEWORK_JSON_H

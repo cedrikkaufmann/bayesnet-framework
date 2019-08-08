@@ -7,307 +7,298 @@
 #include <regex>
 
 #include <bayesnet/json.h>
+#include <bayesnet/util.h>
 
 namespace BayesNet {
 
-    InitializationVector *parseJson(const std::string &filename) {
-        // regular expressions to parse json file
-        std::regex beginRegEx("^\\s*\\{\\s*$");
-        std::regex endRegEx("^\\s*}\\s*,?\\s*$");
-        std::regex sectionRegEx("^\\s*\"(nodes|connections|cpt)\"\\s*:\\s*\\{\\s*$");
-        std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
-        std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9]+)\"\\s*,?)*)\\],?$");
-        std::regex cptRegEx("^\\s*\"([a-zA-Z0-9]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
-        std::regex inferenceRegEx("^\\s*\"inference\"\\s*:\\s*\"([A-Z_]+)\"\\s*$");
+    namespace Json {
 
-        // open file
-        std::ifstream file(filename);
-        std::string line;
+        InitializationVector *parse(const std::string &filename) {
+            // regular expressions to parse json file
+            std::regex beginRegEx("^\\s*\\{\\s*$");
+            std::regex endRegEx("^\\s*}\\s*,?\\s*$");
+            std::regex sectionRegEx("^\\s*\"(nodes|connections|cpt)\"\\s*:\\s*\\{\\s*$");
+            std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
+            std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9]+)\"\\s*,?)*)\\],?$");
+            std::regex cptRegEx("^\\s*\"([a-zA-Z0-9]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
+            std::regex inferenceRegEx("^\\s*\"inference\"\\s*:\\s*\"([A-Z_]+)\"\\s*$");
 
-        // parsing file
-        if (file.is_open()) {
-            InitializationVector *iv = new InitializationVector();
+            // open file
+            std::ifstream file(filename);
+            std::string line;
 
-            bool beginFile = false;
-            bool sectionNodes = false;
-            bool sectionConnections = false;
-            bool sectionCPT = false;
+            // parsing file
+            if (file.is_open()) {
+                InitializationVector *iv = new InitializationVector();
 
-            std::smatch match;
+                bool beginFile = false;
+                bool sectionNodes = false;
+                bool sectionConnections = false;
+                bool sectionCPT = false;
 
-            while (getline(file, line)) {
+                std::smatch match;
 
-                // check for begin of file
-                if (!beginFile && std::regex_match(line, beginRegEx)) {
+                while (getline(file, line)) {
 
-                    beginFile = true;
+                    // check for begin of file
+                    if (!beginFile && std::regex_match(line, beginRegEx)) {
 
-                    continue;
-                }
-
-                // check for node name and count of states
-                if (sectionNodes && std::regex_match(line, match, nodesRegEx)) {
-
-                    // add node to iv
-                    if (match.str(2) == "2") {
-
-                        iv->binaryNodes.push_back(match.str(1));
-                    } else {
-
-                        iv->nodes.push_back(match.str(1));
-                    }
-
-                    continue;
-                }
-
-                if (sectionConnections && std::regex_match(line, match, connectionsRegEx)) {
-
-                    // get connection list
-                    std::string connections = match.str(2);
-
-                    // further string processing
-                    // remove whitespaces and quotation marks
-                    connections.erase(
-                            std::remove_if(connections.begin(), connections.end(), isWhitespaceOrQuotationMark),
-                            connections.end());
-
-                    // split connection list and at to iv
-                    iv->connections[match.str(1)] = split(connections, ',');
-
-                    continue;
-                }
-
-                if (sectionCPT && std::regex_match(line, match, cptRegEx)) {
-
-                    // get cpt list
-                    std::string cpt = match.str(2);
-
-                    // remove whitespaces
-                    cpt.erase(std::remove(cpt.begin(), cpt.end(), ' '), cpt.end());
-                    // split connection list
-                    std::vector<std::string> splitCPT = split(cpt, ',');
-
-                    // convert string to double and add to iv
-                    iv->cpt[match.str(1)] = std::vector<double>(splitCPT.size());
-
-                    for (size_t i = 0; i < splitCPT.size(); ++i) {
-
-                        iv->cpt[match.str(1)][i] = std::stod(splitCPT[i]);
-                    }
-
-                    continue;
-                }
-
-                // check for end of section/file
-                if (std::regex_match(line, match, endRegEx)) {
-
-                    // end of section nodes/connections/cpt
-                    if (sectionNodes || sectionConnections || sectionCPT) {
-
-                        sectionConnections = false;
-                        sectionNodes = false;
-                        sectionCPT = false;
+                        beginFile = true;
 
                         continue;
                     }
 
-                    // end of json file, stop parsing
-                    break;
-                }
+                    // check for node name and count of states
+                    if (sectionNodes && std::regex_match(line, match, nodesRegEx)) {
 
-                // check for section
-                if (std::regex_match(line, match, sectionRegEx)) {
+                        // add node to iv
+                        if (match.str(2) == "2") {
 
-                    if (match.str(1) == "nodes") {
+                            iv->binaryNodes.push_back(match.str(1));
+                        } else {
 
-                        sectionNodes = true;
-                    } else if (match.str(1) == "connections") {
+                            iv->nodes.push_back(match.str(1));
+                        }
 
-                        sectionConnections = true;
-                    } else if (match.str(1) == "cpt") {
-
-                        sectionCPT = true;
+                        continue;
                     }
 
-                    continue;
+                    if (sectionConnections && std::regex_match(line, match, connectionsRegEx)) {
+
+                        // get connection list
+                        std::string connections = match.str(2);
+
+                        // further string processing
+                        // remove whitespaces and quotation marks
+                        connections.erase(
+                                std::remove_if(connections.begin(), connections.end(), isWhitespaceOrQuotationMark),
+                                connections.end());
+
+                        // split connection list and at to iv
+                        iv->connections[match.str(1)] = Utils::split(connections, ',');
+
+                        continue;
+                    }
+
+                    if (sectionCPT && std::regex_match(line, match, cptRegEx)) {
+
+                        // get cpt list
+                        std::string cpt = match.str(2);
+
+                        // remove whitespaces
+                        cpt.erase(std::remove(cpt.begin(), cpt.end(), ' '), cpt.end());
+                        // split connection list
+                        std::vector<std::string> splitCPT = Utils::split(cpt, ',');
+
+                        // convert string to double and add to iv
+                        iv->cpt[match.str(1)] = std::vector<double>(splitCPT.size());
+
+                        for (size_t i = 0; i < splitCPT.size(); ++i) {
+
+                            iv->cpt[match.str(1)][i] = std::stod(splitCPT[i]);
+                        }
+
+                        continue;
+                    }
+
+                    // check for end of section/file
+                    if (std::regex_match(line, match, endRegEx)) {
+
+                        // end of section nodes/connections/cpt
+                        if (sectionNodes || sectionConnections || sectionCPT) {
+
+                            sectionConnections = false;
+                            sectionNodes = false;
+                            sectionCPT = false;
+
+                            continue;
+                        }
+
+                        // end of json file, stop parsing
+                        break;
+                    }
+
+                    // check for section
+                    if (std::regex_match(line, match, sectionRegEx)) {
+
+                        if (match.str(1) == "nodes") {
+
+                            sectionNodes = true;
+                        } else if (match.str(1) == "connections") {
+
+                            sectionConnections = true;
+                        } else if (match.str(1) == "cpt") {
+
+                            sectionCPT = true;
+                        }
+
+                        continue;
+                    }
+
+                    // check for inference option
+                    if (std::regex_match(line, match, inferenceRegEx)) {
+                        // TODO: inference option
+
+                        continue;
+                    }
                 }
 
-                // check for inference option
-                if (std::regex_match(line, match, inferenceRegEx)) {
-                    // TODO: inference option
+                // close file descriptor
+                file.close();
 
-                    continue;
-                }
-            }
-
-            // close file descriptor
-            file.close();
-
-            // return initialization vector
-            return iv;
-        } else {
-
-            // failed to open file
-            std::cout << "Unable to open file: \"" << filename << "\"" << std::endl;
-            return nullptr;
-        }
-    }
-
-    void saveJson(const std::string &filename, InitializationVector *iv) {
-        // open file
-        std::ofstream file(filename);
-
-        // check if file is open
-        if (file.is_open()) {
-
-            // write data
-            file << *iv;
-
-            // close file
-            file.close();
-        } else {
-
-            // error while opening file
-            std::cout << "Failed to write file: \"" << filename << "\"" << std::endl;
-        }
-    }
-
-    bool isWhitespaceOrQuotationMark(char c) {
-        return c == ' ' || c == '"';
-    }
-
-    std::vector<std::string> split(const std::string &s, char delimiter) {
-        std::vector<std::string> tokens;
-        std::string token;
-        std::istringstream tokenStream(s);
-
-        while (std::getline(tokenStream, token, delimiter)) {
-
-            tokens.push_back(token);
-        }
-
-        return tokens;
-    }
-
-    std::ostream &operator<<(std::ostream &os, const InitializationVector &iv) {
-        // set indentations
-        std::string indentSection(2, ' ');
-        std::string indentSectionEntries(4, ' ');
-
-        // write json begin
-        os << "{" << std::endl;
-
-        // write nodes section
-        // begin nodes section
-        os << indentSection << "\"nodes\": {" << std::endl;
-
-        // write each node
-        // binary nodes
-        for (size_t i = 0; i < iv.binaryNodes.size(); ++i) {
-
-            os << indentSectionEntries << "\"" <<iv.binaryNodes[i] << "\": 2";
-
-            if (i == iv.binaryNodes.size() - 1) {
-
-                os << std::endl;
+                // return initialization vector
+                return iv;
             } else {
 
-                os << "," << std::endl;
+                // failed to open file
+                std::cout << "Unable to open file: \"" << filename << "\"" << std::endl;
+                return nullptr;
             }
         }
 
-        // nodes with 4 states
-        for (size_t i = 0; i < iv.nodes.size(); ++i) {
+        void save(const std::string &filename, InitializationVector *iv) {
+            // open file
+            std::ofstream file(filename);
 
-            os << indentSectionEntries << "\"" <<iv.nodes[i] << "\": 4";
+            // check if file is open
+            if (file.is_open()) {
 
-            if (i == iv.nodes.size() - 1) {
+                // write data
+                file << *iv;
 
-                os << std::endl;
+                // close file
+                file.close();
             } else {
 
-                os << "," << std::endl;
+                // error while opening file
+                std::cout << "Failed to write file: \"" << filename << "\"" << std::endl;
             }
         }
 
-        // end nodes section
-        os << indentSection << "}," << std::endl;
+        bool isWhitespaceOrQuotationMark(char c) {
+            return c == ' ' || c == '"';
+        }
 
-        // write connections section
-        // begin connections section
-        os << indentSection << "\"connections\": {" << std::endl;
+        std::ostream &operator<<(std::ostream &os, const InitializationVector &iv) {
+            // set indentations
+            std::string indentSection(2, ' ');
+            std::string indentSectionEntries(4, ' ');
 
-        // write each connection
-        size_t itCounter = 0;
+            // write json begin
+            os << "{" << std::endl;
 
-        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv.connections.begin(); it != iv.connections.end(); it++) {
+            // write nodes section
+            // begin nodes section
+            os << indentSection << "\"nodes\": {" << std::endl;
 
-            os << indentSectionEntries << "\"" << (*it).first << "\": [";
+            // write each node
+            // binary nodes
+            for (size_t i = 0; i < iv.binaryNodes.size(); ++i) {
 
-            for (size_t i = 0; i < (*it).second.size(); ++i) {
+                os << indentSectionEntries << "\"" <<iv.binaryNodes[i] << "\": 2";
 
-                os << "\"" << (*it).second[i] << "\"";
+                if (i == iv.binaryNodes.size() - 1) {
 
-                if (i == (*it).second.size() - 1) {
-
-                    os << "]";
+                    os << std::endl;
                 } else {
 
-                    os << ", ";
+                    os << "," << std::endl;
                 }
             }
 
-            if (++itCounter < iv.connections.size()) {
+            // nodes with 4 states
+            for (size_t i = 0; i < iv.nodes.size(); ++i) {
 
-                os << "," << std::endl;
-            } else {
+                os << indentSectionEntries << "\"" <<iv.nodes[i] << "\": 4";
 
-                os << std::endl;
-            }
-        }
+                if (i == iv.nodes.size() - 1) {
 
-        // end connections section
-        os << indentSection << "}," << std::endl;
-
-        // write cpt section
-        // begin cpt section
-        os << indentSection << "\"cpt\": {" << std::endl;
-
-        // write each connection
-        itCounter = 0;
-
-        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv.cpt.begin(); it != iv.cpt.end(); it++) {
-
-            os << indentSectionEntries << "\"" << (*it).first << "\": [";
-
-            for (size_t i = 0; i < (*it).second.size(); ++i) {
-
-                os << (*it).second[i];
-
-                if (i == (*it).second.size() - 1) {
-
-                    os << "]";
+                    os << std::endl;
                 } else {
 
-                    os << ", ";
+                    os << "," << std::endl;
                 }
             }
 
-            if (++itCounter < iv.cpt.size()) {
+            // end nodes section
+            os << indentSection << "}," << std::endl;
 
-                os << "," << std::endl;
-            } else {
+            // write connections section
+            // begin connections section
+            os << indentSection << "\"connections\": {" << std::endl;
 
-                os << std::endl;
+            // write each connection
+            size_t itCounter = 0;
+
+            for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv.connections.begin(); it != iv.connections.end(); it++) {
+
+                os << indentSectionEntries << "\"" << (*it).first << "\": [";
+
+                for (size_t i = 0; i < (*it).second.size(); ++i) {
+
+                    os << "\"" << (*it).second[i] << "\"";
+
+                    if (i == (*it).second.size() - 1) {
+
+                        os << "]";
+                    } else {
+
+                        os << ", ";
+                    }
+                }
+
+                if (++itCounter < iv.connections.size()) {
+
+                    os << "," << std::endl;
+                } else {
+
+                    os << std::endl;
+                }
             }
+
+            // end connections section
+            os << indentSection << "}," << std::endl;
+
+            // write cpt section
+            // begin cpt section
+            os << indentSection << "\"cpt\": {" << std::endl;
+
+            // write each connection
+            itCounter = 0;
+
+            for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv.cpt.begin(); it != iv.cpt.end(); it++) {
+
+                os << indentSectionEntries << "\"" << (*it).first << "\": [";
+
+                for (size_t i = 0; i < (*it).second.size(); ++i) {
+
+                    os << (*it).second[i];
+
+                    if (i == (*it).second.size() - 1) {
+
+                        os << "]";
+                    } else {
+
+                        os << ", ";
+                    }
+                }
+
+                if (++itCounter < iv.cpt.size()) {
+
+                    os << "," << std::endl;
+                } else {
+
+                    os << std::endl;
+                }
+            }
+
+            // end cpt section
+            os << indentSection << "}" << std::endl;
+
+            // write end json file
+            os << "}" << std::endl;
+
+            return os;
         }
-
-        // end cpt section
-        os << indentSection << "}" << std::endl;
-
-        // write end json file
-        os << "}" << std::endl;
-
-        return os;
     }
 }

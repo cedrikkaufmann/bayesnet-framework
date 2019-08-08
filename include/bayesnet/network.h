@@ -21,8 +21,6 @@
 
 namespace BayesNet {
 
-    using namespace Inference;
-
     class Network {
     public:
         Network() : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {}
@@ -37,7 +35,7 @@ namespace BayesNet {
 
         void newConnection(const std::string &parentName, const std::string &childName);
 
-        void init(InferenceProperties inf);
+        void init(Inference::InferenceProperties inf);
 
         void setEvidence(const std::string &name, BeliefState state);
 
@@ -53,7 +51,7 @@ namespace BayesNet {
 
         void load(const std::string &file);
 
-        void load(InitializationVector *iv);
+        void load(Json::InitializationVector *iv);
 
         void save(const std::string &file);
 
@@ -69,7 +67,7 @@ namespace BayesNet {
 
         void newNode(const std::string &name, size_t states);
 
-        void createInferenceInstance(InferenceProperties inf);
+        void createInferenceInstance(Inference::InferenceProperties inf);
     };
 }
 
