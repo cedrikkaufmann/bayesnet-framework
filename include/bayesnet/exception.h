@@ -36,6 +36,10 @@ namespace bayesNet {
     class UnableWriteFileException : public std::exception {
         const char *what() const throw();
     };
+
+    class InvalidAlgorithmFile : public std::exception {
+        const char *what() const throw();
+    };
 }
 
 #endif //BAYESNET_FRAMEWORK_EXCEPTION_H

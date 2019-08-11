@@ -18,10 +18,10 @@ namespace bayesNet {
             std::regex beginRegEx("^\\s*\\{\\s*$");
             std::regex endRegEx("^\\s*}\\s*,?\\s*$");
             std::regex sectionRegEx("^\\s*\"(nodes|connections|cpt)\"\\s*:\\s*\\{\\s*$");
-            std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
-            std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9]+)\"\\s*,?)*)\\],?$");
-            std::regex cptRegEx("^\\s*\"([a-zA-Z0-9]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
-            std::regex inferenceRegEx("^\\s*\"inference\"\\s*:\\s*\"([A-Z_]+)\"\\s*$");
+            std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
+            std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9_]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9_]+)\"\\s*,?)*)\\],?$");
+            std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
+            std::regex inferenceRegEx("^\\s*\"inference\"\\s*:\\s*\"([a-zA-Z0-9_.\\/]*)\"\\s*$");
 
             // open file
             std::ifstream file(filename);
@@ -137,8 +137,8 @@ namespace bayesNet {
 
                     // check for inference option
                     if (std::regex_match(line, match, inferenceRegEx)) {
-                        // TODO: inference option
 
+                        iv->inferenceAlgorithm = match.str(1);
                         continue;
                     }
                 }

@@ -19,6 +19,7 @@ namespace bayesNet {
             std::vector<std::string> nodes;
             std::unordered_map<std::string, std::vector<std::string> > connections;
             std::unordered_map<std::string, std::vector<double> > cpt;
+            std::string inferenceAlgorithm;
         };
 
         InitializationVector *parse(const std::string &filename);

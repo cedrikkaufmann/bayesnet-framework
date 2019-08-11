@@ -5,54 +5,58 @@
 #ifndef BAYESNET_FRAMEWORK_INFERENCE_H
 #define BAYESNET_FRAMEWORK_INFERENCE_H
 
+#include <string>
+
 #include <dai/properties.h>
+#include <dai/factorgraph.h>
+#include <dai/daialg.h>
+
+#define DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
+#define DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,rec_tol=1e-9,min_max_adj=10,choose=CHOOSE_BBP,recursion=REC_LOGZ,clamp=CLAMP_VAR,bbp_cfn=CFN_GIBBS_B,bbp_props=[maxiter=1000,tol=1e-9,updates=SEQ_BP_REV,damping=0.1]]"
+#define DEFAULT_FRACTIONAL_BELIEF_PROPAGTION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
 
 namespace bayesNet {
 
-    namespace Inference {
-        enum InferenceProperties {
-            LOOPY_BELIEF_PROPAGATION_SUMPROD,
-            LOOPY_BELIEF_PROPAGATION_MAXPROD,
+    namespace inference {
+
+        enum AlgorithmType {
+            LOOPY_BELIEF_PROPAGATION,
             CONDITIONED_BELIEF_PROPAGATION,
             FRACTIONAL_BELIEF_PROPAGATION
         };
+
+        class Algorithm {
+        public:
+            Algorithm() : _algorithm(LOOPY_BELIEF_PROPAGATION),
+                          _inferenceProperties(DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES),
+                          _inferenceInstance(nullptr) {}
+
+            explicit Algorithm(const std::string &filename);
+
+            explicit Algorithm(const AlgorithmType &alg, const std::string &properties) : _algorithm(alg),
+                                                                                          _inferenceProperties(
+                                                                                                  properties),
+                                                                                          _inferenceInstance(
+                                                                                                  nullptr) {};
+
+            void generateInferenceInstance(dai::FactorGraph &fg);
+
+            void save(const std::string &filename);
+
+            dai::InfAlg *getInstance() { return _inferenceInstance; }
+
+            AlgorithmType getType() const { return _algorithm; }
+
+            dai::PropertySet getProperties() const { return _inferenceProperties; }
+
+        private:
+            AlgorithmType _algorithm;
+            dai::PropertySet _inferenceProperties;
+            dai::InfAlg *_inferenceInstance;
+        };
+
+        std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm);
     }
-}
-
-// DEFAULT
-#define CONFIG_INFERENCE_MAXIMUM_ITERATIONS 10000
-#define CONFIG_INFERENCE_TOLERANCE 1e-9
-#define CONFIG_INFERENCE_VERBOSE 1
-
-// LOOPY BELIEF PROPAGATION SUMPROD
-#define CONFIG_LOOPY_BELIEF_PROPAGATION_SUMPROD_UPDATES "SEQRND"
-#define CONFIG_LOOPY_BELIEF_PROPAGATION_SUMPROD_INFERENCE "SUMPROD"
-#define CONFIG_LOOPY_BELIEF_PROPAGATION_SUMPROD_LOGDOMAIN false
-
-// LOOPY BELIEF PROPAGATION MAXPROD
-#define CONFIG_LOOPY_BELIEF_PROPAGATION_MAXPROD_UPDATES "SEQRND"
-#define CONFIG_LOOPY_BELIEF_PROPAGATION_MAXPROD_INFERENCE "MAXPROD"
-#define CONFIG_LOOPY_BELIEF_PROPAGATION_MAXPROD_LOGDOMAIN false
-
-// CONDITIONED BELIEF PROPAGATION
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_UPDATES "SEQRND"
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_REC_TOL 1e-9
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_MIN_MAX_ADJ 10
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_CHOOSE "CHOOSE_BBP"
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_RECURSION "REC_LOGZ"
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_CLAMP "CLAMP_VAR"
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_CHOOSE "CHOOSE_BBP"
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_CFN "CFN_GIBBS_B"
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_UPDATES "SEQ_BP_REV"
-#define CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_DAMPING 0.1
-
-// FRACTIONAL BELIEF PROPAGATION
-#define CONFIG_FRACTIONAL_BELIEF_PROPAGATION_UPDATES "SEQRND"
-#define CONFIG_FRACTIONAL_BELIEF_PROPAGATION_INFERENCE "SUMPROD"
-#define CONFIG_FRACTIONAL_BELIEF_PROPAGATION_LOGDOMAIN false
-
-namespace bayesNet {
-    dai::PropertySet getInferenceProperties(Inference::InferenceProperties inf);
 }
 
 #endif //BAYESNET_FRAMEWORK_INFERENCE_H

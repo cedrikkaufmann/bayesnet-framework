@@ -23,7 +23,7 @@ namespace bayesNet {
 
     class Network {
     public:
-        Network() : _properties(), _inferenceInstance(nullptr), _nodeCounter(0), _init(false) {}
+        Network() : _inferenceAlgorithm(nullptr), _nodeCounter(0), _init(false) {}
 
         explicit Network(const std::string &file);
 
@@ -35,7 +35,7 @@ namespace bayesNet {
 
         void newConnection(const std::string &parentName, const std::string &childName);
 
-        void init(Inference::InferenceProperties inf);
+        void init(inference::Algorithm *alg);
 
         void setEvidence(const std::string &name, belief::BeliefState state);
 
@@ -60,14 +60,11 @@ namespace bayesNet {
         std::vector<std::string> _nodeNames;
         std::vector<Node *> _nodes;
         dai::FactorGraph _factorGraph;
-        dai::PropertySet _properties;
-        dai::DAIAlgFG *_inferenceInstance;
+        inference::Algorithm *_inferenceAlgorithm;
         size_t _nodeCounter;
         bool _init;
 
         void newNode(const std::string &name, size_t states);
-
-        void createInferenceInstance(Inference::InferenceProperties inf);
     };
 }
 

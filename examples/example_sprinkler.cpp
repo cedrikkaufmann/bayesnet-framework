@@ -59,7 +59,7 @@ int main() {
     net.setCPT("rainy", rainy);
     net.setCPT("wetGrass", wetGrass);
 
-    net.init(bayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+    net.init(bayesNet::inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
     net.doInference();
 
     cout << "Approximate (loopy belief propagation) variable marginals:" << endl;

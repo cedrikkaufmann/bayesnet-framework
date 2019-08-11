@@ -2,79 +2,113 @@
 // Created by Cedrik Kaufmann on 2019-06-15.
 //
 
-#include <string>
+#include <fstream>
 
 #include <bayesnet/inference.h>
 #include <bayesnet/exception.h>
 
-#include <dai/util.h>
+#include <dai/bp.h>
+#include <dai/cbp.h>
+#include <dai/fbp.h>
 
 namespace bayesNet {
 
-    using namespace Inference;
+    namespace inference {
 
-    dai::PropertySet getInferenceProperties(InferenceProperties inf) {
-        switch (inf) {
+        void Algorithm::generateInferenceInstance(dai::FactorGraph &fg) {
+            switch (_algorithm) {
 
-            case LOOPY_BELIEF_PROPAGATION_SUMPROD: {
-                dai::PropertySet opts = dai::PropertySet()
-                        ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
-                        ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
-                        ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
-                        ("updates", std::string(CONFIG_LOOPY_BELIEF_PROPAGATION_SUMPROD_UPDATES))
-                        ("inference", std::string(CONFIG_LOOPY_BELIEF_PROPAGATION_SUMPROD_INFERENCE))
-                        ("logdomain", CONFIG_LOOPY_BELIEF_PROPAGATION_SUMPROD_LOGDOMAIN);
+                case inference::LOOPY_BELIEF_PROPAGATION: {
+                    _inferenceInstance = new dai::BP(fg, _inferenceProperties);
+                    break;
+                }
 
-                return opts;
+                case inference::CONDITIONED_BELIEF_PROPAGATION: {
+                    _inferenceInstance = new dai::CBP(fg, _inferenceProperties);
+                    break;
+                }
+
+                case inference::FRACTIONAL_BELIEF_PROPAGATION: {
+                    _inferenceInstance = new dai::FBP(fg, _inferenceProperties);
+                    break;
+                }
+            }
+        }
+
+        void Algorithm::save(const std::string &filename) {
+            std::ofstream file(filename);
+
+            if (file.is_open()) {
+
+                file << *this;
+                file.close();
+            } else {
+
+                throw UnableWriteFileException();
+            }
+        }
+
+        Algorithm::Algorithm(const std::string &filename) : _inferenceInstance(nullptr) {
+            // load inference algorithm string from file
+            std::ifstream inferenceAlgorithmFile(filename);
+            std::string inferenceAlgorithm;
+            std::string inferenceAlgorithmType;
+
+            if (inferenceAlgorithmFile.is_open()) {
+
+                // read algorithm type
+                getline(inferenceAlgorithmFile, inferenceAlgorithmType);
+                // read algorithm string
+                getline(inferenceAlgorithmFile, inferenceAlgorithm);
+
+                // close file descriptor
+                inferenceAlgorithmFile.close();
+
+                // generate inference algorithm from string
+                if (inferenceAlgorithmType == "BP") {
+
+                    _algorithm = LOOPY_BELIEF_PROPAGATION;
+                } else if (inferenceAlgorithmType == "CBP") {
+
+                    _algorithm = LOOPY_BELIEF_PROPAGATION;
+                } else if (inferenceAlgorithmType == "FBP") {
+
+                    _algorithm = LOOPY_BELIEF_PROPAGATION;
+                } else {
+
+                    throw InvalidAlgorithmFile();
+                }
+
+                _inferenceProperties = dai::PropertySet(inferenceAlgorithm);
+            } else {
+
+                throw FileNotFoundException();
+            }
+        }
+
+        std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm) {
+
+            switch (algorithm.getType()) {
+
+                case inference::LOOPY_BELIEF_PROPAGATION: {
+                    os << "BP" << std::endl;
+                    break;
+                }
+
+                case inference::CONDITIONED_BELIEF_PROPAGATION: {
+                    os << "CBP" << std::endl;
+                    break;
+                }
+
+                case inference::FRACTIONAL_BELIEF_PROPAGATION: {
+                    os << "FBP" << std::endl;
+                    break;
+                }
             }
 
-            case LOOPY_BELIEF_PROPAGATION_MAXPROD: {
-                dai::PropertySet opts = dai::PropertySet()
-                        ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
-                        ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
-                        ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
-                        ("updates", std::string(CONFIG_LOOPY_BELIEF_PROPAGATION_MAXPROD_UPDATES))
-                        ("inference", std::string(CONFIG_LOOPY_BELIEF_PROPAGATION_MAXPROD_INFERENCE))
-                        ("logdomain", CONFIG_LOOPY_BELIEF_PROPAGATION_MAXPROD_LOGDOMAIN);
+            os << algorithm.getProperties() << std::endl;
 
-                return opts;
-            }
-
-            case CONDITIONED_BELIEF_PROPAGATION: {
-                dai::PropertySet bbpOpts = dai::PropertySet()
-                        ("updates", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_UPDATES))
-                        ("damping", dai::Real(CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_DAMPING));
-
-                dai::PropertySet opts = dai::PropertySet()
-                        ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
-                        ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
-                        ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
-                        ("updates", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_UPDATES))
-                        ("rec_tol", dai::Real(
-                                CONFIG_CONDITIONED_BELIEF_PROPAGATION_REC_TOL)) // Tolerance used for controlling recursion depth
-                        ("min_max_adj", dai::Real(
-                                CONFIG_CONDITIONED_BELIEF_PROPAGATION_MIN_MAX_ADJ)) // Maximum number of levels of recursion
-                        ("choose", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_CHOOSE))
-                        ("recursion", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_RECURSION))
-                        ("clamp", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_CLAMP))
-                        ("bbp_props", bbpOpts)
-                        ("bbp_cfn", std::string(CONFIG_CONDITIONED_BELIEF_PROPAGATION_BBP_CFN));
-
-                return opts;
-            }
-
-            case FRACTIONAL_BELIEF_PROPAGATION: {
-                dai::PropertySet opts = dai::PropertySet()
-                        ("maxiter", size_t(CONFIG_INFERENCE_MAXIMUM_ITERATIONS))
-                        ("tol", dai::Real(CONFIG_INFERENCE_TOLERANCE))
-                        ("verbose", size_t(CONFIG_INFERENCE_VERBOSE))
-                        ("updates", std::string(CONFIG_FRACTIONAL_BELIEF_PROPAGATION_UPDATES))
-                        ("inference", std::string(CONFIG_FRACTIONAL_BELIEF_PROPAGATION_INFERENCE))
-                        ("logdomain", CONFIG_FRACTIONAL_BELIEF_PROPAGATION_LOGDOMAIN);
-
-                return opts;
-            }
-
+            return os;
         }
     }
 }

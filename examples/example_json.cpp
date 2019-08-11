@@ -11,9 +11,7 @@
 using namespace std;
 
 int main() {
-    bayesNet::Network net("../examples/pregnancy.bayesnet");
-
-    net.init(bayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+    bayesNet::Network net("../networks/pregnancy.bayesnet");
 
     net.setEvidence("scanningTest", bayesNet::belief::FALSE);
     net.setEvidence("bloodTest", bayesNet::belief::FALSE);

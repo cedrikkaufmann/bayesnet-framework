@@ -33,4 +33,8 @@ namespace bayesNet {
     const char *UnableWriteFileException::what() const throw() {
         return "Unable to write file";
     }
+
+    const char *InvalidAlgorithmFile::what() const throw() {
+        return "Invalid algorithm file";
+    }
 }

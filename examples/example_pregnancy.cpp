@@ -49,7 +49,7 @@ int main() {
     pB[2] = 0.10;
     net.setCPT("bloodTest", bayesNet::CPT(pB));
 
-    net.init(bayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+    net.init(bayesNet::inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
 
     net.setEvidence("scanningTest", bayesNet::belief::FALSE);
     net.setEvidence("bloodTest", bayesNet::belief::FALSE);
