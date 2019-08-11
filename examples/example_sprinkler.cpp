@@ -59,7 +59,9 @@ int main() {
     net.setCPT("rainy", rainy);
     net.setCPT("wetGrass", wetGrass);
 
-    net.init(bayesNet::inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+    bayesNet::inference::Algorithm *algo = new bayesNet::inference::Algorithm("../algorithms/junction_tree.algorithm");
+
+    net.init(algo);
     net.doInference();
 
     cout << "Approximate (loopy belief propagation) variable marginals:" << endl;
@@ -70,7 +72,6 @@ int main() {
 
 
     net.setEvidence("sprinkler", bayesNet::belief::TRUE);
-    net.setEvidence("rainy", bayesNet::belief::TRUE);
     net.doInference();
 
     cout << "Approximate (loopy belief propagation) variable marginals:" << endl;
