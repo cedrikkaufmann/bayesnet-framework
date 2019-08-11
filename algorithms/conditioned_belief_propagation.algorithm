@@ -1,0 +1,2 @@
+CBP
+[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,rec_tol=1e-9,min_max_adj=10,choose=CHOOSE_BBP,recursion=REC_LOGZ,clamp=CLAMP_VAR,bbp_cfn=CFN_GIBBS_B,bbp_props=[maxiter=1000,tol=1e-9,updates=SEQ_BP_REV,damping=0.1]]
