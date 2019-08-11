@@ -22,7 +22,8 @@ namespace bayesNet {
         enum AlgorithmType {
             LOOPY_BELIEF_PROPAGATION,
             CONDITIONED_BELIEF_PROPAGATION,
-            FRACTIONAL_BELIEF_PROPAGATION
+            FRACTIONAL_BELIEF_PROPAGATION,
+            JUNCTION_TREE
         };
 
         class Algorithm {

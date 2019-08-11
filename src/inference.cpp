@@ -10,6 +10,7 @@
 #include <dai/bp.h>
 #include <dai/cbp.h>
 #include <dai/fbp.h>
+#include <dai/jtree.h>
 
 namespace bayesNet {
 
@@ -32,6 +33,9 @@ namespace bayesNet {
                     _inferenceInstance = new dai::FBP(fg, _inferenceProperties);
                     break;
                 }
+                case JUNCTION_TREE:
+                    _inferenceInstance = new dai::JTree(fg, _inferenceProperties);
+                    break;
             }
         }
 
@@ -74,6 +78,9 @@ namespace bayesNet {
                 } else if (inferenceAlgorithmType == "FBP") {
 
                     _algorithm = LOOPY_BELIEF_PROPAGATION;
+                } else if (inferenceAlgorithmType == "JT") {
+
+                    _algorithm = JUNCTION_TREE;
                 } else {
 
                     throw InvalidAlgorithmFile();
