@@ -15,5 +15,6 @@
     "rainy": [0.8, 0.2, 0.2, 0.8],
     "sprinkler": [0.5, 0.9, 0.5, 0.1],
     "cloudy": [0.5, 0.5]
-  }
+  },
+  "inference": "../algorithms/conditioned_belief_propagation.algorithm"
 }

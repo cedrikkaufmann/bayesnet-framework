@@ -84,12 +84,12 @@ Allowed values for nodes with 4 states
 - ```bayesNet::belief::PROBABLY_BAD```
 - ```bayesNet::belief::BAD```
 
-### Inference on network
+### inference on network
 
 First the network needs to be initialized, this will build a factor graph on base of your build bayesian network and pass this to the inference engine. The following shows the initialization using the ```Loopy Belief Propagation``` algorithm. The initialization only needs to be done once after building the network, or if new nodes are added or old ones are deleted.
 
 ```
-net.init(BayesNet::Inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
+net.init(BayesNet::inference::LOOPY_BELIEF_PROPAGATION_SUMPROD);
 ```
 
 After the initialization the network is ready to get inferred.
