@@ -12,8 +12,6 @@
 #include <dai/daialg.h>
 
 #define DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
-#define DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,rec_tol=1e-9,min_max_adj=10,choose=CHOOSE_BBP,recursion=REC_LOGZ,clamp=CLAMP_VAR,bbp_cfn=CFN_GIBBS_B,bbp_props=[maxiter=1000,tol=1e-9,updates=SEQ_BP_REV,damping=0.1]]"
-#define DEFAULT_FRACTIONAL_BELIEF_PROPAGTION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
 
 namespace bayesNet {
 
@@ -38,7 +36,7 @@ namespace bayesNet {
                                                                                           _inferenceProperties(
                                                                                                   properties),
                                                                                           _inferenceInstance(
-                                                                                                  nullptr) {};
+                                                                                                  nullptr) {}
 
             void generateInferenceInstance(dai::FactorGraph &fg);
 
@@ -50,10 +48,13 @@ namespace bayesNet {
 
             dai::PropertySet getProperties() const { return _inferenceProperties; }
 
+            std::string getFilename() const { return _filename; }
+
         private:
             AlgorithmType _algorithm;
             dai::PropertySet _inferenceProperties;
             dai::InfAlg *_inferenceInstance;
+            std::string _filename;
         };
 
         std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm);

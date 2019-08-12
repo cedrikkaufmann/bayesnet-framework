@@ -53,7 +53,9 @@ namespace bayesNet {
 
         void load(json::InitializationVector *iv);
 
-        void save(const std::string &file);
+        void save(const std::string &filename);
+
+        void save(const std::string &networkFilename, const std::string &algorithmFilename);
 
     private:
         std::unordered_map<std::string, size_t> _registry;

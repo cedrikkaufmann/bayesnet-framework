@@ -3,7 +3,6 @@
 //
 
 #include <bayesnet/network.h>
-#include <bayesnet/inference.h>
 #include <bayesnet/state.h>
 
 #include <iostream>
@@ -19,7 +18,7 @@ int main() {
 
     net.doInference();
 
-    cout << "Approximate (loopy belief propagation) variable marginals:" << endl;
+    cout << "Variable marginals:" << endl;
     cout << "P: " << net.getBelief("pregnant") << endl;
     cout << "L: " << net.getBelief("progesteroneLevel") << endl;
     cout << "S: " << net.getBelief("scanningTest") << endl;

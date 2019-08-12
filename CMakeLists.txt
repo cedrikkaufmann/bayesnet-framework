@@ -23,7 +23,6 @@ link_libraries(gmp gmpxx dai)
 
 # Add compilable executables
 add_executable(sprinkler_example examples/example_sprinkler.cpp src/util.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
-add_executable(pregnancy_example examples/example_pregnancy.cpp src/util.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
 add_executable(json_example examples/example_json.cpp src/util.cpp src/json.cpp src/factor.cpp src/network.cpp src/node.cpp src/exception.cpp src/state.cpp src/inference.cpp src/cpt.cpp)
 
 # Link QT5

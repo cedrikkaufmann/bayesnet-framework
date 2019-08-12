@@ -46,6 +46,8 @@ namespace bayesNet {
 
                 file << *this;
                 file.close();
+
+                _filename = filename;
             } else {
 
                 throw UnableWriteFileException();
@@ -74,10 +76,10 @@ namespace bayesNet {
                     _algorithm = LOOPY_BELIEF_PROPAGATION;
                 } else if (inferenceAlgorithmType == "CBP") {
 
-                    _algorithm = LOOPY_BELIEF_PROPAGATION;
+                    _algorithm = CONDITIONED_BELIEF_PROPAGATION;
                 } else if (inferenceAlgorithmType == "FBP") {
 
-                    _algorithm = LOOPY_BELIEF_PROPAGATION;
+                    _algorithm = FRACTIONAL_BELIEF_PROPAGATION;
                 } else if (inferenceAlgorithmType == "JT") {
 
                     _algorithm = JUNCTION_TREE;
@@ -87,6 +89,7 @@ namespace bayesNet {
                 }
 
                 _inferenceProperties = dai::PropertySet(inferenceAlgorithm);
+                _filename = filename;
             } else {
 
                 throw FileNotFoundException();
@@ -111,9 +114,13 @@ namespace bayesNet {
                     os << "FBP" << std::endl;
                     break;
                 }
+
+                case JUNCTION_TREE:
+                    os << "JT" << std::endl;
+                    break;
             }
 
-            os << algorithm.getProperties() << std::endl;
+            os << algorithm.getProperties();
 
             return os;
         }

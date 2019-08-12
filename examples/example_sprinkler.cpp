@@ -62,19 +62,22 @@ int main() {
     bayesNet::inference::Algorithm *algo = new bayesNet::inference::Algorithm("../algorithms/junction_tree.algorithm");
 
     net.init(algo);
+
+    net.save("a.net", "a.algorithm");
+
     net.doInference();
 
-    cout << "Approximate (loopy belief propagation) variable marginals:" << endl;
+    cout << "Variable marginals:" << endl;
     cout << "Cloudy: " << net.getBelief("cloudy") << endl; // display the belief of bp for that variable
     cout << "Sprinkler: " << net.getBelief("sprinkler") << endl;
     cout << "Rainy: " << net.getBelief("rainy") << endl;
-    cout << "Wet grass: " << net.getBelief("wetGrass") << endl;
+    cout << "Wet grass: " << net.getBelief("wetGrass") << endl << endl;
 
 
     net.setEvidence("sprinkler", bayesNet::belief::TRUE);
     net.doInference();
 
-    cout << "Approximate (loopy belief propagation) variable marginals:" << endl;
+    cout << "Variable marginals:" << endl;
     cout << "Cloudy: " << net.getBelief("cloudy") << endl; // display the belief of bp for that variable
     cout << "Sprinkler: " << net.getBelief("sprinkler") << endl;
     cout << "Rainy: " << net.getBelief("rainy") << endl;

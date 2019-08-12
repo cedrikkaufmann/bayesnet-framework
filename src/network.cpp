@@ -180,7 +180,7 @@ namespace bayesNet {
         init(algorithm);
     }
 
-    void Network::save(const std::string &file) {
+    void Network::save(const std::string &filename) {
         json::InitializationVector *iv = new json::InitializationVector();
 
         for (size_t i = 0; i < _nodeNames.size(); ++i) {
@@ -206,8 +206,22 @@ namespace bayesNet {
 
             // add cpt to iv
             iv->cpt[node->getName()] = node->getCPT().getProbabilities();
+
+            // add inference algorithm
+            if (_init && !_inferenceAlgorithm->getFilename().empty()) {
+                iv->inferenceAlgorithm = _inferenceAlgorithm->getFilename();
+            }
         }
 
-        json::save(file, iv);
+        json::save(filename, iv);
+    }
+
+    void Network::save(const std::string &networkFilename, const std::string &algorithmFilename) {
+        if (_inferenceAlgorithm != nullptr) {
+
+            _inferenceAlgorithm->save(algorithmFilename);
+        }
+
+        save(networkFilename);
     }
 }
