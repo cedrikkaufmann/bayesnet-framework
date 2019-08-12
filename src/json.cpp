@@ -293,7 +293,16 @@ namespace bayesNet {
             }
 
             // end cpt section
-            os << indentSection << "}" << std::endl;
+            os << indentSection << "}";
+
+            // inference section
+            if (!iv.inferenceAlgorithm.empty()) {
+
+                os << "," << std::endl << indentSection << "\"inference\": \"" << iv.inferenceAlgorithm << "\"" << std::endl;
+            } else {
+
+                os << std::endl;
+            }
 
             // write end json file
             os << "}" << std::endl;

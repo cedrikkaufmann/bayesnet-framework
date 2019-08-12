@@ -63,8 +63,6 @@ int main() {
 
     net.init(algo);
 
-    net.save("a.net", "a.algorithm");
-
     net.doInference();
 
     cout << "Variable marginals:" << endl;
