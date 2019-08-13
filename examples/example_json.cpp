@@ -9,8 +9,8 @@
 
 using namespace std;
 
-int main() {
-    bayesNet::Network net("../networks/pregnancy.bayesnet");
+int main( int argc, char **argv ) {
+    bayesNet::Network net("../../networks/pregnancy.bayesnet");
 
     net.setEvidence("scanningTest", bayesNet::belief::FALSE);
     net.setEvidence("bloodTest", bayesNet::belief::FALSE);
@@ -24,4 +24,6 @@ int main() {
     cout << "S: " << net.getBelief("scanningTest") << endl;
     cout << "U: " << net.getBelief("urineTest") << endl;
     cout << "B: " << net.getBelief("bloodTest") << endl;
+
+    return 0;
 }

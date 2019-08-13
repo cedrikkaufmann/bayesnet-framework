@@ -3,7 +3,6 @@
 //
 
 #include <bayesnet/factor.h>
-#include <bayesnet/state.h>
 #include <bayesnet/exception.h>
 
 namespace bayesNet {
