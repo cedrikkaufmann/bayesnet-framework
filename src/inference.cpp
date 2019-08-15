@@ -12,6 +12,7 @@
 #include <dai/fbp.h>
 #include <dai/jtree.h>
 
+
 namespace bayesNet {
 
     namespace inference {

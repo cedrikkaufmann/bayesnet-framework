@@ -61,4 +61,4 @@ namespace bayesNet {
     }
 }
 
-#endif //BAYESNET_FRAMEWORK_INFERENCE_H
+#endif //BAYESNET_FRAMEWORK_INFERENCE_GUI_H
