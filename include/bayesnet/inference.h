@@ -11,7 +11,10 @@
 #include <dai/factorgraph.h>
 #include <dai/daialg.h>
 
+#define DEFAULT_JUNCTION_TREE_PROPERTIES "[verbose=1,updates=HUGIN]"
 #define DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
+#define DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
+#define DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,logdomain=0,rec_tol=1e-9,min_max_adj=10,choose=CHOOSE_BBP,recursion=REC_LOGZ,clamp=CLAMP_VAR,bbp_cfn=CFN_GIBBS_B,bbp_props=[maxiter=1000,tol=1e-9,updates=SEQ_BP_REV,damping=0.1]]"
 
 namespace bayesNet {
 
@@ -40,6 +43,8 @@ namespace bayesNet {
 
             void generateInferenceInstance(dai::FactorGraph &fg);
 
+            void save() { save(_filename); }
+
             void save(const std::string &filename);
 
             dai::InfAlg *getInstance() { return _inferenceInstance; }
@@ -47,6 +52,8 @@ namespace bayesNet {
             AlgorithmType getType() const { return _algorithm; }
 
             dai::PropertySet getProperties() const { return _inferenceProperties; }
+
+            dai::PropertySet &getProperties() { return _inferenceProperties; }
 
             std::string getFilename() const { return _filename; }
 

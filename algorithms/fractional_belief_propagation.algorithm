@@ -1,2 +1,0 @@
-FBP
-[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]
