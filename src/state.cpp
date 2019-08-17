@@ -53,9 +53,11 @@ namespace bayesNet {
             size_t offset;
 
             if (bayesBelief.isBinary()) {
+
                 offset = 4;
                 upperBoundary = offset + 2; // 2 entries if binary
             } else {
+
                 offset = 0;
                 upperBoundary = offset + 4; // 4 entries if not binary
             }
@@ -63,7 +65,9 @@ namespace bayesNet {
             os << "{";
 
             for (size_t i = offset; i < upperBoundary; ++i) {
+
                 switch (i) {
+
                     case GOOD: {
                         os << "GOOD: ";
                         break;

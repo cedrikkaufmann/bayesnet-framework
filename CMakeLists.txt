@@ -29,6 +29,7 @@ add_library(
         ${PROJECT_SOURCE_DIR}/src/node.cpp
         ${PROJECT_SOURCE_DIR}/src/state.cpp
         ${PROJECT_SOURCE_DIR}/src/util.cpp
+        ${PROJECT_SOURCE_DIR}/src/fuzzy.cpp
 )
 
 target_include_directories(
@@ -150,3 +151,20 @@ if (Qt5_FOUND)
     add_dependencies(inference_algorithm_tool bayesnet_gui_lib)
 
 endif ()
+
+
+# Json example
+add_executable(
+        test
+        test.cpp
+)
+
+target_link_libraries(
+        test
+        bayesnet_lib
+)
+
+add_dependencies(
+        test
+        bayesnet_lib
+)

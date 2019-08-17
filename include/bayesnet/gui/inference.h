@@ -29,7 +29,9 @@ namespace bayesNet {
 
         class AlgorithmForm : public QFormLayout {
         public:
-            explicit AlgorithmForm(inference::Algorithm *algorithm, QWidget *parent = nullptr) : QFormLayout(parent), _algorithm(algorithm) { }
+            explicit AlgorithmForm(inference::Algorithm *algorithm, QWidget *parent = nullptr) : QFormLayout(parent),
+                                                                                                 _algorithm(
+                                                                                                         algorithm) {}
 
             virtual void saveAlgorithm() = 0;
 
@@ -105,6 +107,7 @@ namespace bayesNet {
             explicit AlgorithmList(const std::string &path, QWidget *parent = nullptr);
 
             std::string getFullFilepath(const std::string &file);
+
             std::string getPath() const { return _path; }
 
             void populateData();
@@ -123,6 +126,7 @@ namespace bayesNet {
             explicit AlgorithmView(const std::string &file, QWidget *parent = nullptr);
 
         public slots:
+
             void saveAlgorithm();
 
         private:
@@ -137,6 +141,7 @@ namespace bayesNet {
         public slots:
 
             void algorithmSelectionChanged(QListWidgetItem *item);
+
             void showNewAlgorithmDialog();
 
         private:
@@ -153,6 +158,7 @@ namespace bayesNet {
             QPushButton *_actionButtonDelete;
 
             void connectElements();
+
             void createElements();
         };
     }

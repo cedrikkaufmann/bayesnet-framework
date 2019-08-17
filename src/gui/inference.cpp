@@ -74,15 +74,18 @@ namespace bayesNet {
 
             inference::Algorithm *algorithm;
 
-            if(type == "LOOPY BELIEF PROPAGATION") {
+            if (type == "LOOPY BELIEF PROPAGATION") {
 
-                algorithm = new inference::Algorithm(inference::LOOPY_BELIEF_PROPAGATION, DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES);
+                algorithm = new inference::Algorithm(inference::LOOPY_BELIEF_PROPAGATION,
+                                                     DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES);
             } else if (type == "FRACTIONAL BELIEF PROPAGATION") {
 
-                algorithm = new inference::Algorithm(inference::FRACTIONAL_BELIEF_PROPAGATION, DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES);
+                algorithm = new inference::Algorithm(inference::FRACTIONAL_BELIEF_PROPAGATION,
+                                                     DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES);
             } else if (type == "CONDITIONED BELIEF PROPAGATION") {
 
-                algorithm = new inference::Algorithm(inference::CONDITIONED_BELIEF_PROPAGATION, DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES);
+                algorithm = new inference::Algorithm(inference::CONDITIONED_BELIEF_PROPAGATION,
+                                                     DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES);
             } else {
 
                 algorithm = new inference::Algorithm(inference::JUNCTION_TREE, DEFAULT_JUNCTION_TREE_PROPERTIES);
@@ -104,7 +107,7 @@ namespace bayesNet {
         }
 
         void InferenceWindow::connectElements() {
-            QWidget::connect(_algorithmList, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this,
+            QWidget::connect(_algorithmList, SIGNAL(currentItemChanged(QListWidgetItem * , QListWidgetItem * )), this,
                              SLOT(algorithmSelectionChanged(QListWidgetItem * )));
 
             QWidget::connect(_actionButtonDelete, SIGNAL(clicked()), _algorithmList, SLOT(deleteAlgorithmFile()));
@@ -120,7 +123,8 @@ namespace bayesNet {
 
             if (_dirPrompt->exec()) {
 
-                _algorithmList = new AlgorithmList(_dirPrompt->directory().absolutePath().toStdString().append("/"), this);
+                _algorithmList = new AlgorithmList(_dirPrompt->directory().absolutePath().toStdString().append("/"),
+                                                   this);
                 delete _dirPrompt;
             } else {
 
@@ -221,7 +225,8 @@ namespace bayesNet {
         }
 
 
-        BeliefPropagationView::BeliefPropagationView(inference::Algorithm *algorithm, QWidget *parent) : AlgorithmForm(algorithm, parent) {
+        BeliefPropagationView::BeliefPropagationView(inference::Algorithm *algorithm, QWidget *parent) : AlgorithmForm(
+                algorithm, parent) {
             createLabels();
             createInputs();
             initFormLayout();
@@ -302,13 +307,15 @@ namespace bayesNet {
 
             if (properties.hasKey("updates")) {
 
-                int i = _valueUpdates->findData(QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
+                int i = _valueUpdates->findData(
+                        QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
                 _valueUpdates->setCurrentIndex(i);
             }
 
             if (properties.hasKey("inference")) {
 
-                int i = _valueInference->findData(QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
+                int i = _valueInference->findData(
+                        QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
                 _valueInference->setCurrentIndex(i);
             }
 
@@ -356,7 +363,8 @@ namespace bayesNet {
             _algorithm->save();
         }
 
-        JunctionTreeView::JunctionTreeView(inference::Algorithm *algorithm, QWidget *parent) : AlgorithmForm(algorithm, parent) {
+        JunctionTreeView::JunctionTreeView(inference::Algorithm *algorithm, QWidget *parent) : AlgorithmForm(algorithm,
+                                                                                                             parent) {
             createLabels();
             createInputs();
             initFormLayout();
@@ -412,19 +420,22 @@ namespace bayesNet {
 
             if (properties.hasKey("updates")) {
 
-                int i = _valueUpdates->findData(QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
+                int i = _valueUpdates->findData(
+                        QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
                 _valueUpdates->setCurrentIndex(i);
             }
 
             if (properties.hasKey("inference")) {
 
-                int i = _valueInference->findData(QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
+                int i = _valueInference->findData(
+                        QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
                 _valueInference->setCurrentIndex(i);
             }
 
             if (properties.hasKey("heuristic")) {
 
-                int i = _valueHeuristic->findData(QVariant(boost::any_cast<std::string>(properties.get("heuristic")).c_str()));
+                int i = _valueHeuristic->findData(
+                        QVariant(boost::any_cast<std::string>(properties.get("heuristic")).c_str()));
                 _valueHeuristic->setCurrentIndex(i);
             }
 

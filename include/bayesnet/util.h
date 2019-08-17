@@ -13,7 +13,8 @@ namespace bayesNet {
     namespace utils {
 
         std::vector<std::string> split(const std::string &s, char delimiter);
-        void readDirectory(const std::string& name, std::vector<std::string>& v);
+
+        void readDirectory(const std::string &name, std::vector<std::string> &v);
     }
 }
 

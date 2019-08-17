@@ -298,7 +298,8 @@ namespace bayesNet {
             // inference section
             if (!iv.inferenceAlgorithm.empty()) {
 
-                os << "," << std::endl << indentSection << "\"inference\": \"" << iv.inferenceAlgorithm << "\"" << std::endl;
+                os << "," << std::endl << indentSection << "\"inference\": \"" << iv.inferenceAlgorithm << "\""
+                   << std::endl;
             } else {
 
                 os << std::endl;
