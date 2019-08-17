@@ -22,7 +22,7 @@ namespace bayesNet {
 
     class FuzzyController : ContinuousVariable {
     public:
-        FuzzyController() : _binary(false), _functions(4) {}
+        FuzzyController() : _binary(false), _cpt(4), _functions(4) {}
 
         explicit FuzzyController(bool binary);
 

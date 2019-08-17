@@ -11,9 +11,11 @@ namespace bayesNet {
         if (binary) {
 
             _functions = std::vector<FuzzyFunction *>(2);
+            _cpt = CPT(2);
         } else {
 
             _functions = std::vector<FuzzyFunction *>(4);
+            _cpt = CPT(4);
         }
     }
 
@@ -27,7 +29,7 @@ namespace bayesNet {
                 _cpt.set(1, 1 - val);
             } else {
 
-                double val = _functions[1]->fx(y));
+                double val = _functions[1]->fx(y);
                 _cpt.set(1, val);
                 _cpt.set(0, 1 - val);
             }
