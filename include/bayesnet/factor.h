@@ -30,11 +30,6 @@ namespace bayesNet {
 
         void restore();
     };
-
-    class GaussianFactor : public dai::Factor {
-    public:
-        explicit GaussianFactor(dai::VarSet &vars) : dai::Factor(vars) {}
-    };
 }
 
 #endif //BAYESNET_FRAMEWORK_FACTOR_H

@@ -3,18 +3,18 @@
 //
 
 #include <bayesnet/fuzzy.h>
-#include <cmath>
+#include <math.h>
 
 namespace bayesNet {
 
     FuzzyController::FuzzyController(bool binary) : _binary(binary) {
         if (binary) {
 
-            _functions = std::vector<FuzzyFunction *>(2);
+            _functions = std::vector<MembershipFunction *>(2);
             _cpt = CPT(2);
         } else {
 
-            _functions = std::vector<FuzzyFunction *>(4);
+            _functions = std::vector<MembershipFunction *>(4);
             _cpt = CPT(4);
         }
     }
@@ -45,7 +45,7 @@ namespace bayesNet {
         return _cpt;
     }
 
-    void FuzzyController::setFunction(belief::BeliefState state, FuzzyFunction *fun) {
+    void FuzzyController::setMF(belief::BeliefState state, MembershipFunction *func) {
         size_t offset = 0;
 
         if (_binary) {
@@ -53,10 +53,10 @@ namespace bayesNet {
             offset = 4;
         }
 
-        _functions[state - offset] = fun;
+        _functions[state - offset] = func;
     }
 
-    double fuzzyFunctions::Linear::fx(double x) {
+    double membershipFunctions::Linear::fx(double x) {
         if (_m > 0) {
 
             if (x < _fxMin) {
@@ -85,7 +85,7 @@ namespace bayesNet {
         return (_m * (x - _b));
     }
 
-    fuzzyFunctions::Linear::Linear(double fxMin, double fxMax) : _fxMin(fxMin), _fxMax(fxMax) {
+    membershipFunctions::Linear::Linear(double fxMin, double fxMax) : _fxMin(fxMin), _fxMax(fxMax) {
         if (_fxMax > fxMin) {
 
             _m = 1 / (fxMax - fxMin);
@@ -97,7 +97,57 @@ namespace bayesNet {
         }
     }
 
-    double fuzzyFunctions::Gaussian::fx(double x) {
-        return 0.5 * (1 + std::erf((x - _mean) / (std::sqrt(2 * std::pow(_deviation, 2)))));
+    double membershipFunctions::Triangle::fx(double x) {
+        if (x <= _begin || x >= _end) {
+
+            return 0;
+        }
+
+        if (x > _begin && x < _max) {
+
+            return _increasing.fx(x);
+        }
+
+        if (x > _max && x < _end) {
+
+            return _decreasing.fx(x);
+        }
+
+        return 1;
+    }
+
+    double membershipFunctions::Trapezoid::fx(double x) {
+        if (x <= _increasingBegin || x >= _decreasingEnd) {
+
+            return 0;
+        }
+
+        if (x >= _increasingEnd && x <= _decreasingBegin) {
+
+            return 1;
+        }
+
+        if (x > _increasingBegin && x < _increasingEnd) {
+
+            return _increasingLinear.fx(x);
+        }
+
+        return _decreasingLinear.fx(x);
+    }
+
+    double membershipFunctions::Sigmoidal::fx(double x) {
+        return 1 / (1 + std::exp(-1 * _a * (x - _c)));
+    }
+
+    double membershipFunctions::Bell::fx(double x) {
+        return 1 / (1 + std::pow(std::abs((x - _c) / _a), 2 * _b));
+    }
+
+    double membershipFunctions::Gaussian::fx(double x) {
+        return std::exp(-std::pow(x - _mean, 2) / (2 * std::pow(_deviation, 2)));
+    }
+
+    double membershipFunctions::Gaussian2::fx(double x) {
+        return 0;
     }
 }
