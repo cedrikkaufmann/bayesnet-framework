@@ -48,4 +48,26 @@ namespace bayesNet {
 
         return os;
     }
+
+    void SensorNode::observe(double x) {
+        std::vector<double> beliefs = _fuzzySet->getBeliefs(x);
+        size_t states = beliefs.size();
+
+        CPT cpt(states);
+
+        // normalize
+        double sum = 0;
+
+        for (size_t i = 0; i < states; ++i) {
+
+            sum += beliefs[i];
+        }
+
+        for (size_t i = 0; i < states; ++i) {
+
+            cpt.set(i, beliefs[i] / sum);
+        }
+
+        setCPT(cpt);
+    }
 }

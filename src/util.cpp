@@ -3,9 +3,9 @@
 //
 
 #include <sstream>
+#include <dirent.h>
 
 #include <bayesnet/util.h>
-#include <dirent.h>
 
 namespace bayesNet {
 
@@ -37,6 +37,12 @@ namespace bayesNet {
 
             // drop items "." and ".." from list
             v.erase(v.begin(), v.begin() + 2);
+        }
+
+        double uniformRandom(double min, double max) {
+            std::uniform_real_distribution<double> unif(min, max);
+            std::default_random_engine re;
+            return unif(re);
         }
     }
 }

@@ -18,6 +18,31 @@ namespace bayesNet {
         virtual ~MembershipFunction() {}
 
         virtual double fx(double x) = 0;
+
+        virtual double findMaximum();
+    };
+
+    class FuzzyRule {
+
+    };
+
+    class FuzzySet {
+    public:
+        explicit FuzzySet(size_t states) : _nullBeliefTolerance(0), _mf(states) {}
+
+        explicit FuzzySet(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {}
+
+        void setMf(size_t state, MembershipFunction *mf) { _mf[state] = mf; }
+
+        MembershipFunction *getMf(size_t state) { return _mf[state]; }
+
+        double findMaximum(size_t state);
+
+        std::vector<double> getBeliefs(double x);
+
+    private:
+        double _nullBeliefTolerance;
+        std::vector<MembershipFunction *> _mf;
     };
 
     class FuzzyController : ContinuousVariable {
@@ -46,6 +71,8 @@ namespace bayesNet {
 
             virtual double fx(double x);
 
+            virtual double findMaximum() { return _fxMax; }
+
         private:
             double _m;
             double _b;
@@ -55,11 +82,15 @@ namespace bayesNet {
 
         class Triangle : public MembershipFunction {
         public:
-            explicit Triangle(double begin, double max, double end) : _begin(begin), _max(max), _end(end), _increasing(_begin, _max), _decreasing(_max, _end) {}
+            explicit Triangle(double begin, double max, double end) : _begin(begin), _max(max), _end(end),
+                                                                      _increasing(_begin, _max),
+                                                                      _decreasing(_end, _max) {}
 
             virtual ~Triangle() {}
 
             virtual double fx(double x);
+
+            virtual double findMaximum() { return _max; }
 
         private:
             double _begin;
@@ -81,6 +112,8 @@ namespace bayesNet {
 
             virtual double fx(double x);
 
+            virtual double findMaximum();
+
         private:
             double _increasingBegin;
             double _increasingEnd;
@@ -88,6 +121,52 @@ namespace bayesNet {
             double _decreasingEnd;
             Linear _increasingLinear;
             Linear _decreasingLinear;
+        };
+
+        class SShape : public MembershipFunction {
+        public:
+            explicit SShape(double a, double b) : _a(a), _b(b) {}
+
+            virtual ~SShape() {}
+
+            virtual double fx(double x);
+
+            double getA() { return _a; }
+
+            double getB() { return _b; }
+
+        private:
+            double _a;
+            double _b;
+        };
+
+        class ZShape : public MembershipFunction {
+        public:
+            explicit ZShape(double a, double b) : _sShape(a, b) {}
+
+            virtual ~ZShape() {}
+
+            virtual double fx(double x);
+
+            double getA() { return _sShape.getA(); }
+
+            double getB() { return _sShape.getB(); }
+
+        private:
+            SShape _sShape;
+        };
+
+        class PiShape : public MembershipFunction {
+        public:
+            explicit PiShape(double a, double b, double c, double d) : _sShape(a, b), _zShape(c, d) {}
+
+            virtual ~PiShape() {}
+
+            virtual double fx(double x);
+
+        private:
+            SShape _sShape;
+            ZShape _zShape;
         };
 
         class Sigmoidal : public MembershipFunction {
@@ -125,6 +204,10 @@ namespace bayesNet {
 
             virtual double fx(double x);
 
+            double getMean() { return _mean; }
+
+            virtual double findMaximum() { return _mean; }
+
         private:
             double _mean;
             double _deviation;
@@ -132,17 +215,18 @@ namespace bayesNet {
 
         class Gaussian2 : public MembershipFunction {
         public:
-            explicit Gaussian2(double mean1, double deviation1, double mean2, double deviation2) : _mean1(mean1), _mean2(mean2), _deviation1(deviation1), _deviation2(deviation2) {}
+            explicit Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight) : _left(
+                    meanLeft, deviationLeft), _right(meanRight, deviationRight) {}
 
             virtual ~Gaussian2() {}
 
             virtual double fx(double x);
 
+            virtual double findMaximum();
+
         private:
-            double _mean1;
-            double _mean2;
-            double _deviation1;
-            double _deviation2;
+            Gaussian _left;
+            Gaussian _right;
         };
     }
 }

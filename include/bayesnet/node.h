@@ -8,12 +8,15 @@
 #include <dai/factorgraph.h>
 #include <bayesnet/factor.h>
 #include <bayesnet/cpt.h>
+#include <bayesnet/fuzzy.h>
 
 namespace bayesNet {
 
     class Node {
     public:
         explicit Node(const std::string &name, size_t label, size_t states);
+
+        virtual ~Node() {}
 
         std::string getName() const { return _name; }
 
@@ -53,6 +56,18 @@ namespace bayesNet {
         size_t _factorGraphIndex;
         CPT _cpt;
         std::vector<Node *> _children;
+    };
+
+    class SensorNode : public Node {
+    public:
+        explicit SensorNode(const std::string &name, size_t label, size_t states, FuzzySet *set) : Node(name, label, states), _fuzzySet(set) {}
+
+        virtual ~SensorNode() {}
+
+        void observe(double x);
+
+    private:
+        FuzzySet *_fuzzySet;
     };
 
     std::ostream &operator<<(std::ostream &os, Node &node);

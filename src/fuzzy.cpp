@@ -2,8 +2,10 @@
 // Created by Cedrik Kaufmann on 2019-08-16.
 //
 
-#include <bayesnet/fuzzy.h>
 #include <math.h>
+
+#include <bayesnet/fuzzy.h>
+#include <bayesnet/util.h>
 
 namespace bayesNet {
 
@@ -20,27 +22,6 @@ namespace bayesNet {
     }
 
     CPT &FuzzyController::getCPT(double y) {
-        if (_binary) {
-
-            if (_functions[0] != nullptr) {
-
-                double val = _functions[0]->fx(y);
-                _cpt.set(0, val);
-                _cpt.set(1, 1 - val);
-            } else {
-
-                double val = _functions[1]->fx(y);
-                _cpt.set(1, val);
-                _cpt.set(0, 1 - val);
-            }
-
-            return _cpt;
-        }
-
-        for (size_t i = 0; i < 4; ++i) {
-
-            _cpt.set(i, _functions[i]->fx(y));
-        }
 
         return _cpt;
     }
@@ -57,26 +38,26 @@ namespace bayesNet {
     }
 
     double membershipFunctions::Linear::fx(double x) {
-        if (_m > 0) {
+        if (_fxMin < _fxMax) {
 
-            if (x < _fxMin) {
+            if (x <= _fxMin) {
 
                 return 0;
             }
 
-            if (x > _fxMax) {
+            if (x >= _fxMax) {
 
                 return 1;
             }
 
         } else {
 
-            if (x < _fxMin) {
+            if (x <= _fxMax) {
 
                 return 1;
             }
 
-            if (x > _fxMax) {
+            if (x >= _fxMin) {
 
                 return 0;
             }
@@ -86,15 +67,8 @@ namespace bayesNet {
     }
 
     membershipFunctions::Linear::Linear(double fxMin, double fxMax) : _fxMin(fxMin), _fxMax(fxMax) {
-        if (_fxMax > fxMin) {
-
-            _m = 1 / (fxMax - fxMin);
-            _b = fxMin;
-        } else {
-
-            _m = -1 / (fxMin - fxMax);
-            _b = fxMin;
-        }
+        _m = 1 / (fxMax - fxMin);
+        _b = fxMin;
     }
 
     double membershipFunctions::Triangle::fx(double x) {
@@ -135,6 +109,42 @@ namespace bayesNet {
         return _decreasingLinear.fx(x);
     }
 
+    double membershipFunctions::Trapezoid::findMaximum() {
+        return utils::uniformRandom(_increasingEnd, _decreasingBegin);
+    }
+
+    double membershipFunctions::SShape::fx(double x) {
+        if (x <= _a) {
+
+            return 0;
+        }
+
+        if (x >= _b) {
+
+            return 1;
+        }
+
+        if (x > _a && x <= (_a + _b) / 2) {
+
+            return 2 * std::pow((x - _a) / (_b - _a), 2);
+        }
+
+        return 1 - 2 * std::pow((x - _b) / (_b - _a), 2);
+    }
+
+    double membershipFunctions::ZShape::fx(double x) {
+        return 1 - _sShape.fx(x);
+    }
+
+    double membershipFunctions::PiShape::fx(double x) {
+        if (x <= _zShape.getA()) {
+
+            return _sShape.fx(x);
+        }
+
+        return _zShape.fx(x);
+    }
+
     double membershipFunctions::Sigmoidal::fx(double x) {
         return 1 / (1 + std::exp(-1 * _a * (x - _c)));
     }
@@ -148,6 +158,54 @@ namespace bayesNet {
     }
 
     double membershipFunctions::Gaussian2::fx(double x) {
-        return 0;
+        double gaussianLeft;
+        double gaussianRight;
+
+        if (x >= _left.getMean()) {
+
+            gaussianLeft = 1;
+        } else {
+
+            gaussianLeft = _left.fx(x);
+        }
+
+        if (x <= _right.getMean()) {
+
+            gaussianRight = 1;
+        } else {
+
+            gaussianRight = _right.fx(x);
+        }
+
+        return gaussianLeft * gaussianRight;
+    }
+
+    double membershipFunctions::Gaussian2::findMaximum() {
+        return utils::uniformRandom(_left.getMean(), _right.getMean());
+    }
+
+    std::vector<double> FuzzySet::getBeliefs(double x) {
+        size_t states = _mf.size();
+        std::vector<double> beliefs(states);
+
+        for (size_t i = 0; i < states; ++i) {
+
+            beliefs[i] = _mf[i]->fx(x);
+
+            if (beliefs[i] < _nullBeliefTolerance) {
+
+                beliefs[i] = _nullBeliefTolerance;
+            }
+        }
+
+        return beliefs;
+    }
+
+    double FuzzySet::findMaximum(size_t state) {
+        return _mf[state]->findMaximum();
+    }
+
+    double MembershipFunction::findMaximum() {
+        // TODO general maximum algorithm
     }
 }
