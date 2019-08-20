@@ -9,34 +9,6 @@
 
 namespace bayesNet {
 
-    FuzzyController::FuzzyController(bool binary) : _binary(binary) {
-        if (binary) {
-
-            _functions = std::vector<MembershipFunction *>(2);
-            _cpt = CPT(2);
-        } else {
-
-            _functions = std::vector<MembershipFunction *>(4);
-            _cpt = CPT(4);
-        }
-    }
-
-    CPT &FuzzyController::getCPT(double y) {
-
-        return _cpt;
-    }
-
-    void FuzzyController::setMF(belief::BeliefState state, MembershipFunction *func) {
-        size_t offset = 0;
-
-        if (_binary) {
-
-            offset = 4;
-        }
-
-        _functions[state - offset] = func;
-    }
-
     double membershipFunctions::Linear::fx(double x) {
         if (_fxMin < _fxMax) {
 
@@ -207,5 +179,29 @@ namespace bayesNet {
 
     double MembershipFunction::findMaximum() {
         // TODO general maximum algorithm
+        return 0;
+    }
+
+
+    void FuzzyRule::addParentState(size_t state) {
+        _parentStates.push_back(state);
+    }
+
+    size_t FuzzyRule::nrJointStates() {
+        return 0;
+    }
+
+    void FuzzyRuleSet::addRule(FuzzyRule *rule) {
+        _rules.push_back(rule);
+    }
+
+    void FuzzyController::addFuzzySet(FuzzySet *set) {
+        _fuzzySet.push_back(set);
+    }
+
+    CPT &FuzzyController::generateCPT(double x) {
+        CPT cpt;
+
+        return cpt;
     }
 }

@@ -7,7 +7,6 @@
 
 #include <vector>
 
-#include <bayesnet/continuous.h>
 #include <bayesnet/cpt.h>
 #include <bayesnet/state.h>
 
@@ -20,10 +19,6 @@ namespace bayesNet {
         virtual double fx(double x) = 0;
 
         virtual double findMaximum();
-    };
-
-    class FuzzyRule {
-
     };
 
     class FuzzySet {
@@ -45,20 +40,59 @@ namespace bayesNet {
         std::vector<MembershipFunction *> _mf;
     };
 
-    class FuzzyController : ContinuousVariable {
+    class FuzzyRule {
     public:
-        FuzzyController() : _binary(false), _cpt(4), _functions(4) {}
+        FuzzyRule() {}
 
-        explicit FuzzyController(bool binary);
+        explicit FuzzyRule(const std::vector<size_t> &parentStates, size_t state) : _state(
+                state) { _parentStates = parentStates; }
 
-        CPT &getCPT(double x);
+        void addParentState(size_t state);
 
-        void setMF(belief::BeliefState state, MembershipFunction *func);
+        void setParentStates(const std::vector<size_t> &parentStates) { _parentStates = parentStates; }
+
+        void setState(size_t state) { _state = state; }
+
+        std::vector<size_t> &getParentStates() { return _parentStates; }
+
+        size_t getState() { return _state; }
+
+        size_t nrJointStates();
 
     private:
-        bool _binary;
-        CPT _cpt;
-        std::vector<MembershipFunction *> _functions;
+        std::vector<size_t> _parentStates;
+        size_t _state;
+    };
+
+    class FuzzyRuleSet {
+    public:
+        FuzzyRuleSet() {}
+
+        explicit FuzzyRuleSet(const std::vector<FuzzyRule *> &rules) { _rules = rules; }
+
+        void addRule(FuzzyRule *rule);
+
+        void setRules(const std::vector<FuzzyRule *> &rules) { _rules = rules; }
+
+        std::vector<FuzzyRule *> &getRules() { return _rules; }
+
+    private:
+        std::vector<FuzzyRule *> _rules;
+    };
+
+    class FuzzyController {
+    public:
+        FuzzyController() {}
+
+        CPT &generateCPT(double x);
+
+        void addFuzzySet(FuzzySet *set);
+
+        void setFuzzyRuleSet(FuzzyRuleSet *rules) { _rules = rules; }
+
+    private:
+        FuzzyRuleSet *_rules;
+        std::vector<FuzzySet *> _fuzzySet;
     };
 
     namespace membershipFunctions {
@@ -106,7 +140,7 @@ namespace bayesNet {
                                                                              _increasingEnd(x2), _decreasingBegin(x3),
                                                                              _decreasingEnd(x4),
                                                                              _increasingLinear(x1, x2),
-                                                                             _decreasingLinear(x3, x4) {}
+                                                                             _decreasingLinear(x4, x3) {}
 
             virtual ~Trapezoid() {}
 

@@ -155,16 +155,16 @@ endif ()
 
 # Json example
 add_executable(
-        test
-        test.cpp
+        membershipFunctions
+        membershipFunctionsTest.cpp
 )
 
 target_link_libraries(
-        test
+        membershipFunctions
         bayesnet_lib
 )
 
 add_dependencies(
-        test
+        membershipFunctions
         bayesnet_lib
 )
