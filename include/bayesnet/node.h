@@ -16,21 +16,21 @@ namespace bayesNet {
     public:
         explicit Node(const std::string &name, size_t label, size_t states);
 
-        virtual ~Node() {}
+        virtual ~Node();
 
-        std::string getName() const { return _name; }
+        std::string getName() const;
 
-        dai::Var &getDiscrete() { return _discrete; }
+        dai::Var &getDiscrete();
 
-        dai::Var getDiscrete() const { return _discrete; }
+        dai::Var getDiscrete() const;
 
-        dai::VarSet &getConditionalDiscrete() { return _conditionalDiscrete; }
+        dai::VarSet &getConditionalDiscrete();
 
-        dai::VarSet getConditionalDiscrete() const { return _conditionalDiscrete; }
+        dai::VarSet getConditionalDiscrete() const;
 
         Factor &getFactor();
 
-        std::vector<Node *> &getChildren() { return _children; }
+        std::vector<Node *> &getChildren();
 
         void addChild(Node *node);
 
@@ -38,15 +38,15 @@ namespace bayesNet {
 
         void clearEvidence();
 
-        CPT &getCPT() { return _cpt; }
+        CPT &getCPT();
 
         void setCPT(const CPT &cpt);
 
-        void setFactorGraphIndex(size_t index) { _factorGraphIndex = index; }
+        void setFactorGraphIndex(size_t index);
 
-        size_t getFactorGraphIndex() const { return _factorGraphIndex; }
+        size_t getFactorGraphIndex() const;
 
-        bool isBinary() { return _discrete.states() == 2; }
+        bool isBinary();
 
     private:
         std::string _name;
@@ -60,9 +60,9 @@ namespace bayesNet {
 
     class SensorNode : public Node {
     public:
-        explicit SensorNode(const std::string &name, size_t label, size_t states, FuzzySet *set) : Node(name, label, states), _fuzzySet(set) {}
+        explicit SensorNode(const std::string &name, size_t label, size_t states, FuzzySet *set);
 
-        virtual ~SensorNode() {}
+        virtual ~SensorNode();
 
         void observe(double x);
 

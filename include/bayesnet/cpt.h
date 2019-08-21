@@ -13,23 +13,25 @@ namespace bayesNet {
 
     class CPT {
     public:
-        CPT() {}
+        CPT();
 
-        explicit CPT(size_t jointSize) : _probabilities(jointSize, 0) {}
+        virtual ~CPT();
+
+        explicit CPT(size_t jointSize);
 
         explicit CPT(std::vector<double> probabilities);
 
-        explicit CPT(const Factor &factor) : _probabilities(factor.nrStates()) {}
+        explicit CPT(const Factor &factor);
 
-        size_t size() const { return _probabilities.size(); }
+        size_t size() const;
 
-        void set(size_t index, double value) { _probabilities[index] = value; }
+        void set(size_t index, double value);
 
-        double get(size_t index) const { return _probabilities[index]; }
+        double get(size_t index) const;
 
-        std::vector<double> &getProbabilities() { return _probabilities; }
+        std::vector<double> &getProbabilities();
 
-        std::vector<double> getProbabilities() const { return _probabilities; }
+        std::vector<double> getProbabilities() const;
 
     private:
         std::vector<double> _probabilities;

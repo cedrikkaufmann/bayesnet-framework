@@ -23,9 +23,11 @@ namespace bayesNet {
 
     class Network {
     public:
-        Network() : _inferenceAlgorithm(nullptr), _nodeCounter(0), _init(false) {}
+        Network();
 
         explicit Network(const std::string &file);
+
+        virtual ~Network();
 
         void newNode(const std::string &name);
 

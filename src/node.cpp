@@ -43,10 +43,60 @@ namespace bayesNet {
         }
     }
 
+    Node::~Node() {
+
+    }
+
+    std::string Node::getName() const {
+        return _name;
+    }
+
+    dai::Var &Node::getDiscrete() {
+        return _discrete;
+    }
+
+    dai::Var Node::getDiscrete() const {
+        return _discrete;
+    }
+
+    dai::VarSet &Node::getConditionalDiscrete() {
+        return _conditionalDiscrete;
+    }
+
+    dai::VarSet Node::getConditionalDiscrete() const {
+        return _conditionalDiscrete;
+    }
+
+    std::vector<Node *> &Node::getChildren() {
+        return _children;
+    }
+
+    CPT &Node::getCPT() {
+        return _cpt;
+    }
+
+    void Node::setFactorGraphIndex(size_t index) {
+        _factorGraphIndex = index;
+    }
+
+    size_t Node::getFactorGraphIndex() const {
+        return _factorGraphIndex;
+    }
+
+    bool Node::isBinary() {
+        return _discrete.states() == 2;
+    }
+
     std::ostream &operator<<(std::ostream &os, Node &node) {
         os << node.getDiscrete() << " - " << node.getConditionalDiscrete() << " " << node.getFactor();
 
         return os;
+    }
+
+    SensorNode::SensorNode(const std::string &name, size_t label, size_t states, FuzzySet *set) : Node(name, label,
+                                                                                                       states),
+                                                                                                  _fuzzySet(set) {
+
     }
 
     void SensorNode::observe(double x) {
@@ -69,5 +119,9 @@ namespace bayesNet {
         }
 
         setCPT(cpt);
+    }
+
+    SensorNode::~SensorNode() {
+
     }
 }

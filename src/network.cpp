@@ -9,8 +9,16 @@
 
 namespace bayesNet {
 
-    Network::Network(const std::string &file) : _inferenceAlgorithm(nullptr), _nodeCounter(0), _init(false) {
+    Network::Network() : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {
+
+    }
+
+    Network::Network(const std::string &file) : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {
         load(file);
+    }
+
+    Network::~Network() {
+
     }
 
     void Network::newNode(const std::string &name, size_t states) {
@@ -217,7 +225,7 @@ namespace bayesNet {
     }
 
     void Network::save(const std::string &networkFilename, const std::string &algorithmFilename) {
-        if (_inferenceAlgorithm != nullptr) {
+        if (_inferenceAlgorithm != NULL) {
 
             _inferenceAlgorithm->save(algorithmFilename);
         }

@@ -14,22 +14,24 @@ namespace bayesNet {
 
     class MembershipFunction {
     public:
-        virtual ~MembershipFunction() {}
+        MembershipFunction();
+
+        virtual ~MembershipFunction();
 
         virtual double fx(double x) = 0;
 
-        virtual double findMaximum();
+        virtual double findMaximum() = 0;
     };
 
     class FuzzySet {
     public:
-        explicit FuzzySet(size_t states) : _nullBeliefTolerance(0), _mf(states) {}
+        explicit FuzzySet(size_t states);
 
-        explicit FuzzySet(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {}
+        explicit FuzzySet(size_t states, double tol);
 
-        void setMf(size_t state, MembershipFunction *mf) { _mf[state] = mf; }
+        void setMf(size_t state, MembershipFunction *mf);
 
-        MembershipFunction *getMf(size_t state) { return _mf[state]; }
+        MembershipFunction *getMf(size_t state);
 
         double findMaximum(size_t state);
 
@@ -42,20 +44,19 @@ namespace bayesNet {
 
     class FuzzyRule {
     public:
-        FuzzyRule() {}
+        FuzzyRule();
 
-        explicit FuzzyRule(const std::vector<size_t> &parentStates, size_t state) : _state(
-                state) { _parentStates = parentStates; }
+        explicit FuzzyRule(const std::vector<size_t> &parentStates, size_t state);
 
         void addParentState(size_t state);
 
-        void setParentStates(const std::vector<size_t> &parentStates) { _parentStates = parentStates; }
+        void setParentStates(const std::vector<size_t> &parentStates);
 
-        void setState(size_t state) { _state = state; }
+        void setState(size_t state);
 
-        std::vector<size_t> &getParentStates() { return _parentStates; }
+        std::vector<size_t> &getParentStates();
 
-        size_t getState() { return _state; }
+        size_t getState();
 
         size_t nrJointStates();
 
@@ -66,15 +67,15 @@ namespace bayesNet {
 
     class FuzzyRuleSet {
     public:
-        FuzzyRuleSet() {}
+        FuzzyRuleSet();
 
-        explicit FuzzyRuleSet(const std::vector<FuzzyRule *> &rules) { _rules = rules; }
+        explicit FuzzyRuleSet(const std::vector<FuzzyRule *> &rules);
 
         void addRule(FuzzyRule *rule);
 
-        void setRules(const std::vector<FuzzyRule *> &rules) { _rules = rules; }
+        void setRules(const std::vector<FuzzyRule *> &rules);
 
-        std::vector<FuzzyRule *> &getRules() { return _rules; }
+        std::vector<FuzzyRule *> &getRules();
 
     private:
         std::vector<FuzzyRule *> _rules;
@@ -82,13 +83,13 @@ namespace bayesNet {
 
     class FuzzyController {
     public:
-        FuzzyController() {}
+        FuzzyController();
 
         CPT &generateCPT(double x);
 
         void addFuzzySet(FuzzySet *set);
 
-        void setFuzzyRuleSet(FuzzyRuleSet *rules) { _rules = rules; }
+        void setFuzzyRuleSet(FuzzyRuleSet *rules);
 
     private:
         FuzzyRuleSet *_rules;
@@ -101,11 +102,9 @@ namespace bayesNet {
         public:
             explicit Linear(double fxMin, double fxMax);
 
-            virtual ~Linear() {}
-
             virtual double fx(double x);
 
-            virtual double findMaximum() { return _fxMax; }
+            virtual double findMaximum();
 
         private:
             double _m;
@@ -116,15 +115,11 @@ namespace bayesNet {
 
         class Triangle : public MembershipFunction {
         public:
-            explicit Triangle(double begin, double max, double end) : _begin(begin), _max(max), _end(end),
-                                                                      _increasing(_begin, _max),
-                                                                      _decreasing(_end, _max) {}
-
-            virtual ~Triangle() {}
+            explicit Triangle(double begin, double max, double end);
 
             virtual double fx(double x);
 
-            virtual double findMaximum() { return _max; }
+            virtual double findMaximum();
 
         private:
             double _begin;
@@ -136,13 +131,7 @@ namespace bayesNet {
 
         class Trapezoid : public MembershipFunction {
         public:
-            explicit Trapezoid(double x1, double x2, double x3, double x4) : _increasingBegin(x1),
-                                                                             _increasingEnd(x2), _decreasingBegin(x3),
-                                                                             _decreasingEnd(x4),
-                                                                             _increasingLinear(x1, x2),
-                                                                             _decreasingLinear(x4, x3) {}
-
-            virtual ~Trapezoid() {}
+            explicit Trapezoid(double x1, double x2, double x3, double x4);
 
             virtual double fx(double x);
 
@@ -159,15 +148,15 @@ namespace bayesNet {
 
         class SShape : public MembershipFunction {
         public:
-            explicit SShape(double a, double b) : _a(a), _b(b) {}
-
-            virtual ~SShape() {}
+            explicit SShape(double a, double b);
 
             virtual double fx(double x);
 
-            double getA() { return _a; }
+            double getA();
 
-            double getB() { return _b; }
+            double getB();
+
+            virtual double findMaximum();
 
         private:
             double _a;
@@ -176,15 +165,15 @@ namespace bayesNet {
 
         class ZShape : public MembershipFunction {
         public:
-            explicit ZShape(double a, double b) : _sShape(a, b) {}
-
-            virtual ~ZShape() {}
+            explicit ZShape(double a, double b);
 
             virtual double fx(double x);
 
-            double getA() { return _sShape.getA(); }
+            double getA();
 
-            double getB() { return _sShape.getB(); }
+            double getB();
+
+            virtual double findMaximum();
 
         private:
             SShape _sShape;
@@ -192,11 +181,11 @@ namespace bayesNet {
 
         class PiShape : public MembershipFunction {
         public:
-            explicit PiShape(double a, double b, double c, double d) : _sShape(a, b), _zShape(c, d) {}
-
-            virtual ~PiShape() {}
+            explicit PiShape(double a, double b, double c, double d);
 
             virtual double fx(double x);
+
+            virtual double findMaximum();
 
         private:
             SShape _sShape;
@@ -205,11 +194,11 @@ namespace bayesNet {
 
         class Sigmoidal : public MembershipFunction {
         public:
-            explicit Sigmoidal(double a, double c) : _a(a), _c(c) {}
-
-            virtual ~Sigmoidal() {}
+            explicit Sigmoidal(double a, double c);
 
             virtual double fx(double x);
+
+            virtual double findMaximum();
 
         private:
             double _a;
@@ -218,11 +207,11 @@ namespace bayesNet {
 
         class Bell : public MembershipFunction {
         public:
-            explicit Bell(double a, double b, double c) : _a(a), _b(b), _c(c) {}
-
-            virtual ~Bell() {}
+            explicit Bell(double a, double b, double c);
 
             virtual double fx(double x);
+
+            virtual double findMaximum();
 
         private:
             double _a;
@@ -232,15 +221,13 @@ namespace bayesNet {
 
         class Gaussian : public MembershipFunction {
         public:
-            explicit Gaussian(double mean, double deviation) : _mean(mean), _deviation(deviation) {}
-
-            virtual ~Gaussian() {}
+            explicit Gaussian(double mean, double deviation);
 
             virtual double fx(double x);
 
-            double getMean() { return _mean; }
+            double getMean();
 
-            virtual double findMaximum() { return _mean; }
+            virtual double findMaximum();
 
         private:
             double _mean;
@@ -249,10 +236,7 @@ namespace bayesNet {
 
         class Gaussian2 : public MembershipFunction {
         public:
-            explicit Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight) : _left(
-                    meanLeft, deviationLeft), _right(meanRight, deviationRight) {}
-
-            virtual ~Gaussian2() {}
+            explicit Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
 
             virtual double fx(double x);
 

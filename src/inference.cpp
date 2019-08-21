@@ -17,45 +17,20 @@ namespace bayesNet {
 
     namespace inference {
 
-        void Algorithm::generateInferenceInstance(dai::FactorGraph &fg) {
-            switch (_algorithm) {
+        Algorithm::Algorithm() : _algorithm(LOOPY_BELIEF_PROPAGATION),
+                                 _inferenceProperties(DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES),
+                                 _inferenceInstance(NULL) {
 
-                case inference::LOOPY_BELIEF_PROPAGATION: {
-                    _inferenceInstance = new dai::BP(fg, _inferenceProperties);
-                    break;
-                }
-
-                case inference::CONDITIONED_BELIEF_PROPAGATION: {
-                    _inferenceInstance = new dai::CBP(fg, _inferenceProperties);
-                    break;
-                }
-
-                case inference::FRACTIONAL_BELIEF_PROPAGATION: {
-                    _inferenceInstance = new dai::FBP(fg, _inferenceProperties);
-                    break;
-                }
-                case JUNCTION_TREE:
-                    _inferenceInstance = new dai::JTree(fg, _inferenceProperties);
-                    break;
-            }
         }
 
-        void Algorithm::save(const std::string &filename) {
-            std::ofstream file(filename);
+        Algorithm::Algorithm(const AlgorithmType &alg, const std::string &properties) : _algorithm(alg),
+                                                                                        _inferenceProperties(
+                                                                                                properties),
+                                                                                        _inferenceInstance(NULL) {
 
-            if (file.is_open()) {
-
-                file << *this;
-                file.close();
-
-                _filename = filename;
-            } else {
-
-                throw UnableWriteFileException();
-            }
         }
 
-        Algorithm::Algorithm(const std::string &filename) : _inferenceInstance(nullptr) {
+        Algorithm::Algorithm(const std::string &filename) : _inferenceInstance(NULL) {
             // load inference algorithm string from file
             std::ifstream inferenceAlgorithmFile(filename);
             std::string inferenceAlgorithm;
@@ -95,6 +70,72 @@ namespace bayesNet {
 
                 throw FileNotFoundException();
             }
+        }
+
+        Algorithm::~Algorithm() {
+
+        }
+
+        void Algorithm::generateInferenceInstance(dai::FactorGraph &fg) {
+            switch (_algorithm) {
+
+                case inference::LOOPY_BELIEF_PROPAGATION: {
+                    _inferenceInstance = new dai::BP(fg, _inferenceProperties);
+                    break;
+                }
+
+                case inference::CONDITIONED_BELIEF_PROPAGATION: {
+                    _inferenceInstance = new dai::CBP(fg, _inferenceProperties);
+                    break;
+                }
+
+                case inference::FRACTIONAL_BELIEF_PROPAGATION: {
+                    _inferenceInstance = new dai::FBP(fg, _inferenceProperties);
+                    break;
+                }
+                case JUNCTION_TREE:
+                    _inferenceInstance = new dai::JTree(fg, _inferenceProperties);
+                    break;
+            }
+        }
+
+        void Algorithm::save(const std::string &filename) {
+            std::ofstream file(filename);
+
+            if (file.is_open()) {
+
+                file << *this;
+                file.close();
+
+                _filename = filename;
+            } else {
+
+                throw UnableWriteFileException();
+            }
+        }
+
+        void Algorithm::save() {
+            save(_filename);
+        }
+
+        dai::InfAlg *Algorithm::getInstance() {
+            return _inferenceInstance;
+        }
+
+        AlgorithmType Algorithm::getType() const {
+            return _algorithm;
+        }
+
+        dai::PropertySet Algorithm::getProperties() const {
+            return _inferenceProperties;
+        }
+
+        dai::PropertySet &Algorithm::getProperties() {
+            return _inferenceProperties;
+        }
+
+        std::string Algorithm::getFilename() const {
+            return _filename;
         }
 
         std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm) {

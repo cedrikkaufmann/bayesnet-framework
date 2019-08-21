@@ -6,7 +6,7 @@ project(BayesNet_Framework)
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-march=x86-64 -Weverything -Wno-deprecated -arch x86_64")
+set(CMAKE_CXX_FLAGS "-march=x86-64 -Weverything -Wno-deprecated -Wno-padded -arch x86_64")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
 
@@ -156,7 +156,7 @@ endif ()
 # Json example
 add_executable(
         membershipFunctions
-        membershipFunctionsTest.cpp
+        examples/membershipFunctionsTest.cpp
 )
 
 target_link_libraries(

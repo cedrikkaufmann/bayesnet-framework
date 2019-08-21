@@ -29,33 +29,29 @@ namespace bayesNet {
 
         class Algorithm {
         public:
-            Algorithm() : _algorithm(LOOPY_BELIEF_PROPAGATION),
-                          _inferenceProperties(DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES),
-                          _inferenceInstance(nullptr) {}
+            Algorithm();
 
             explicit Algorithm(const std::string &filename);
 
-            explicit Algorithm(const AlgorithmType &alg, const std::string &properties) : _algorithm(alg),
-                                                                                          _inferenceProperties(
-                                                                                                  properties),
-                                                                                          _inferenceInstance(
-                                                                                                  nullptr) {}
+            explicit Algorithm(const AlgorithmType &alg, const std::string &properties);
+
+            virtual ~Algorithm();
 
             void generateInferenceInstance(dai::FactorGraph &fg);
 
-            void save() { save(_filename); }
+            void save();
 
             void save(const std::string &filename);
 
-            dai::InfAlg *getInstance() { return _inferenceInstance; }
+            dai::InfAlg *getInstance();
 
-            AlgorithmType getType() const { return _algorithm; }
+            AlgorithmType getType() const;
 
-            dai::PropertySet getProperties() const { return _inferenceProperties; }
+            dai::PropertySet getProperties() const;
 
-            dai::PropertySet &getProperties() { return _inferenceProperties; }
+            dai::PropertySet &getProperties();
 
-            std::string getFilename() const { return _filename; }
+            std::string getFilename() const;
 
         private:
             AlgorithmType _algorithm;

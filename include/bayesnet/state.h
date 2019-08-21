@@ -29,9 +29,9 @@ namespace bayesNet {
 
         class BayesBelief {
         public:
-            BayesBelief() : _beliefs(4, 0), _binary(false) {}
+            explicit BayesBelief(bool binary = false);
 
-            explicit BayesBelief(bool binary);
+            virtual ~BayesBelief();
 
             double &operator[](size_t index);
 
