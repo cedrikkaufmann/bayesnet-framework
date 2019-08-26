@@ -133,11 +133,11 @@ namespace bayesNet {
             return 1 - 2 * std::pow((x - _b) / (_b - _a), 2);
         }
 
-        double SShape::getA() {
+        double SShape::getMinPos() {
             return _a;
         }
 
-        double SShape::getB() {
+        double SShape::getMaxPos() {
             return _b;
         }
 
@@ -153,20 +153,20 @@ namespace bayesNet {
             return 1 - _sShape.fx(x);
         }
 
-        double ZShape::getA() {
-            return _sShape.getB();
+        double ZShape::getMaxPos() {
+            return _sShape.getMaxPos();
         }
 
-        double ZShape::getB() {
-            return _sShape.getA();
+        double ZShape::getMinPos() {
+            return _sShape.getMinPos();
         }
 
         double ZShape::findMaximum() {
-            return _sShape.getA();
+            return _sShape.getMinPos();
         }
 
         double PiShape::fx(double x) {
-            if (x <= _zShape.getA()) {
+            if (x <= _zShape.getMaxPos()) {
 
                 return _sShape.fx(x);
             }
@@ -243,7 +243,7 @@ namespace bayesNet {
         }
 
         double PiShape::findMaximum() {
-            return (_sShape.getB() + _zShape.getA()) / 2;
+            return (_sShape.getMaxPos() + _zShape.getMaxPos()) / 2;
         }
 
         Sigmoidal::Sigmoidal(double a, double c) : _a(a), _c(c) {
@@ -278,11 +278,11 @@ namespace bayesNet {
 
     }
 
-    MembershipFunction *FuzzySet::getMf(size_t state) {
+    MembershipFunction *FuzzySet::getMembershipFunction(size_t state) {
         return _mf[state];
     }
 
-    std::vector<double> FuzzySet::getBeliefs(double x) {
+    std::vector<double> FuzzySet::getBeliefs(double x, bool useTolerance) const {
         size_t states = _mf.size();
         std::vector<double> beliefs(states);
 
@@ -290,13 +290,24 @@ namespace bayesNet {
 
             beliefs[i] = _mf[i]->fx(x);
 
-            if (beliefs[i] < _nullBeliefTolerance) {
+            if (useTolerance && beliefs[i] < _nullBeliefTolerance) {
 
                 beliefs[i] = _nullBeliefTolerance;
             }
         }
 
         return beliefs;
+    }
+
+    double FuzzySet::getBelief(double x, size_t state, bool useTolerance) const {
+        double belief = _mf[state]->fx(x);
+
+        if (useTolerance && belief < _nullBeliefTolerance) {
+
+            belief = _nullBeliefTolerance;
+        }
+
+        return belief;
     }
 
     double FuzzySet::findMaximum(size_t state) {
@@ -311,40 +322,45 @@ namespace bayesNet {
 
     }
 
-    void FuzzySet::setMf(size_t state, MembershipFunction *mf) {
+    void FuzzySet::setMembershipFunction(size_t state, MembershipFunction *mf) {
         _mf[state] = mf;
     }
 
-    void FuzzyRule::addParentState(size_t state) {
-        _parentStates.push_back(state);
-    }
-
-    size_t FuzzyRule::nrJointStates() {
-        return 0;
-    }
-
-    FuzzyRule::FuzzyRule() : _state() {
-
-    }
-
-    FuzzyRule::FuzzyRule(const std::vector<size_t> &parentStates, size_t state) : _state(state) {
+    FuzzyRule::FuzzyRule(const std::vector<FuzzyRuleState *> &parentStates, FuzzyRuleState *state) : _state(*state) {
         _parentStates = parentStates;
     }
 
-    void FuzzyRule::setParentStates(const std::vector<size_t> &parentStates) {
-        _parentStates = parentStates;
-    }
-
-    void FuzzyRule::setState(size_t state) {
-        _state = state;
-    }
-
-    std::vector<size_t> &FuzzyRule::getParentStates() {
+    std::vector<FuzzyRuleState *> &FuzzyRule::getParentStates() {
         return _parentStates;
     }
 
-    size_t FuzzyRule::getState() {
+    FuzzyRuleState &FuzzyRule::getChildState() {
         return _state;
+    }
+
+    size_t FuzzyRule::nrJointStates() {
+        size_t jointStates = 1;
+        
+        if (_state.isBinary()) {
+
+            jointStates *= 2;
+        } else {
+
+            jointStates *= 4;
+        }
+
+        for (size_t i = 0; i < _parentStates.size(); ++i) {
+
+            if (_parentStates[i]->isBinary()) {
+
+                jointStates *= 2;
+            } else {
+
+                jointStates *= 4;
+            }
+        }
+
+        return jointStates;
     }
 
     void FuzzyRuleSet::addRule(FuzzyRule *rule) {
@@ -367,21 +383,127 @@ namespace bayesNet {
         return _rules;
     }
 
-    FuzzyController::FuzzyController() : _rules(NULL) {
+    size_t FuzzyRuleSet::nrJointStates() {
+        return _rules.size() * _rules[0]->nrJointStates();
+    }
+
+    FuzzyController::FuzzyController(const std::vector<FuzzySet *> &set, FuzzyRuleSet *rules, double tolerance)
+            : _rules(rules), _fuzzySet(set), _nullBeliefTolerance(tolerance) {
 
     }
 
-    void FuzzyController::addFuzzySet(FuzzySet *set) {
-        _fuzzySet.push_back(set);
+    FuzzyController::~FuzzyController() {
+
     }
 
-    CPT &FuzzyController::generateCPT(double x) {
-        CPT cpt;
+    CPT FuzzyController::inferCPT() {
+        std::vector<FuzzyRule *> &fuzzyRules = _rules->getRules();
+        size_t jointStates = fuzzyRules[0]->nrJointStates();
+        CPT cpt(jointStates);
+
+        std::vector<FuzzyRuleState *> &parentStates = fuzzyRules[0]->getParentStates();
+        std::vector<size_t> maxStates(parentStates.size());
+
+        for (size_t j = 0; j < parentStates.size(); ++j) {
+
+            if (parentStates[j]->isBinary()) {
+
+                maxStates[j] = 2;
+            } else {
+
+                maxStates[j] = 4;
+            }
+        }
+
+        utils::Counter stateCounter(parentStates.size(), maxStates);
+
+        do {
+
+            std::vector<double> inferred = infer(stateCounter.getCount());
+            size_t maxIncrement = stateCounter.getMaximumIncrement();
+
+            for (size_t i = 0; i < inferred.size(); i++) {
+
+                cpt[(i * maxIncrement) + stateCounter.getIncrement()] = inferred[i];
+            }
+        } while (stateCounter.countUp());
 
         return cpt;
     }
 
-    void FuzzyController::setFuzzyRuleSet(FuzzyRuleSet *rules) {
+    std::vector<double> FuzzyController::infer(const std::vector<size_t> &states) {
+        std::vector<double> max(states.size());
 
+        // find maximum for given states from fuzzy sets
+        for (size_t i = 0; i < states.size(); ++i) {
+
+            max[i] = _fuzzySet[i]->findMaximum(states[i]);
+        }
+
+        std::vector<FuzzyRule *> &rules = _rules->getRules();
+        std::vector<double> conclusions(rules.size());
+
+        for (size_t i = 0; i < rules.size(); ++i) {
+
+            double tNorm = 1;
+
+            for (size_t j = 0; j < states.size(); ++j) {
+
+                tNorm *= _fuzzySet[j]->getBelief(max[j], rules[i]->getParentStates()[j]->getState());
+            }
+
+            conclusions[i] = tNorm;
+        }
+
+        size_t nrStates;
+
+        if (_rules->getRules()[0]->getChildState().isBinary()) {
+
+            nrStates = 2;
+        } else {
+
+            nrStates = 4;
+        }
+
+        std::vector<double> inferredProbabilities(nrStates);
+
+        for (size_t i = 0; i < conclusions.size(); ++i) {
+
+            size_t state = rules[i]->getChildState().getState();
+
+            if (conclusions[i] > inferredProbabilities[state]) {
+
+                inferredProbabilities[state] = conclusions[i];
+            }
+        }
+
+        for (size_t i = 0; i < inferredProbabilities.size(); ++i) {
+
+            if (inferredProbabilities[i] < _nullBeliefTolerance) {
+
+                inferredProbabilities[i] = _nullBeliefTolerance;
+            }
+        }
+
+        // normalize
+        utils::vectorNormalize(inferredProbabilities);
+
+        return inferredProbabilities;
+    }
+
+    FuzzyRuleState::FuzzyRuleState(size_t state, bool binary) : _state(state), _binary(binary) {
+
+    }
+
+    FuzzyRuleState::~FuzzyRuleState() {
+
+    }
+
+    bool FuzzyRuleState::isBinary() {
+        return _binary;
+    }
+
+    size_t FuzzyRuleState::getState() {
+        return _state;
     }
 }

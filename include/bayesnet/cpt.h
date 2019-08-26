@@ -33,6 +33,8 @@ namespace bayesNet {
 
         std::vector<double> getProbabilities() const;
 
+        double &operator[](size_t index);
+
     private:
         std::vector<double> _probabilities;
     };

@@ -75,4 +75,13 @@ namespace bayesNet {
     std::vector<double> CPT::getProbabilities() const {
         return _probabilities;
     }
+
+    double &CPT::operator[](size_t index) {
+        if (index > _probabilities.size()) {
+
+            throw IndexOutOfBoundException();
+        }
+
+        return _probabilities[index];
+    }
 }

@@ -6,7 +6,7 @@ project(BayesNet_Framework)
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-march=x86-64 -Weverything -Wno-deprecated -Wno-padded -arch x86_64")
+set(CMAKE_CXX_FLAGS "-march=x86-64 -Weverything -Wno-deprecated -Wno-padded -Werror -arch x86_64")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
 
@@ -93,9 +93,11 @@ add_dependencies(
 )
 
 
+# Look for Qt5 dependecies
 set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
 find_package(Qt5 COMPONENTS Core GUI Widgets)
 
+# Build GUI components if Qt5 found
 if (Qt5_FOUND)
     # GUI Library
     add_library(

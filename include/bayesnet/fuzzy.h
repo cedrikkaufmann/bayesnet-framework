@@ -27,42 +27,51 @@ namespace bayesNet {
     public:
         explicit FuzzySet(size_t states);
 
-        explicit FuzzySet(size_t states, double tol);
+        FuzzySet(size_t states, double tol);
 
-        void setMf(size_t state, MembershipFunction *mf);
+        void setMembershipFunction(size_t state, MembershipFunction *mf);
 
-        MembershipFunction *getMf(size_t state);
+        MembershipFunction *getMembershipFunction(size_t state);
 
         double findMaximum(size_t state);
 
-        std::vector<double> getBeliefs(double x);
+        std::vector<double> getBeliefs(double x, bool useTolerance = false) const;
+
+        double getBelief(double x, size_t state, bool useTolerance = false) const;
 
     private:
         double _nullBeliefTolerance;
         std::vector<MembershipFunction *> _mf;
     };
 
-    class FuzzyRule {
+    class FuzzyRuleState {
     public:
-        FuzzyRule();
+        explicit FuzzyRuleState(size_t state, bool binary = false);
 
-        explicit FuzzyRule(const std::vector<size_t> &parentStates, size_t state);
+        ~FuzzyRuleState();
 
-        void addParentState(size_t state);
-
-        void setParentStates(const std::vector<size_t> &parentStates);
-
-        void setState(size_t state);
-
-        std::vector<size_t> &getParentStates();
+        bool isBinary();
 
         size_t getState();
+
+    private:
+        size_t _state;
+        bool _binary;
+    };
+
+    class FuzzyRule {
+    public:
+        explicit FuzzyRule(const std::vector<FuzzyRuleState *> &parentStates, FuzzyRuleState *state);
+
+        std::vector<FuzzyRuleState *> &getParentStates();
+
+        FuzzyRuleState &getChildState();
 
         size_t nrJointStates();
 
     private:
-        std::vector<size_t> _parentStates;
-        size_t _state;
+        std::vector<FuzzyRuleState *> _parentStates;
+        FuzzyRuleState &_state;
     };
 
     class FuzzyRuleSet {
@@ -77,30 +86,33 @@ namespace bayesNet {
 
         std::vector<FuzzyRule *> &getRules();
 
+        size_t nrJointStates();
+
     private:
         std::vector<FuzzyRule *> _rules;
     };
 
     class FuzzyController {
     public:
-        FuzzyController();
+        FuzzyController(const std::vector<FuzzySet *> &set, FuzzyRuleSet *rules, double tolerance = 0);
 
-        CPT &generateCPT(double x);
+        ~FuzzyController();
 
-        void addFuzzySet(FuzzySet *set);
-
-        void setFuzzyRuleSet(FuzzyRuleSet *rules);
+        CPT inferCPT();
 
     private:
         FuzzyRuleSet *_rules;
         std::vector<FuzzySet *> _fuzzySet;
+        double _nullBeliefTolerance;
+
+        std::vector<double> infer(const std::vector<size_t> &states);
     };
 
     namespace membershipFunctions {
 
         class Linear : public MembershipFunction {
         public:
-            explicit Linear(double fxMin, double fxMax);
+            Linear(double fxMin, double fxMax);
 
             virtual double fx(double x);
 
@@ -115,7 +127,7 @@ namespace bayesNet {
 
         class Triangle : public MembershipFunction {
         public:
-            explicit Triangle(double begin, double max, double end);
+            Triangle(double begin, double max, double end);
 
             virtual double fx(double x);
 
@@ -131,7 +143,7 @@ namespace bayesNet {
 
         class Trapezoid : public MembershipFunction {
         public:
-            explicit Trapezoid(double x1, double x2, double x3, double x4);
+            Trapezoid(double x1, double x2, double x3, double x4);
 
             virtual double fx(double x);
 
@@ -148,13 +160,13 @@ namespace bayesNet {
 
         class SShape : public MembershipFunction {
         public:
-            explicit SShape(double a, double b);
+            SShape(double a, double b);
 
             virtual double fx(double x);
 
-            double getA();
+            double getMinPos();
 
-            double getB();
+            double getMaxPos();
 
             virtual double findMaximum();
 
@@ -165,13 +177,13 @@ namespace bayesNet {
 
         class ZShape : public MembershipFunction {
         public:
-            explicit ZShape(double a, double b);
+            ZShape(double a, double b);
 
             virtual double fx(double x);
 
-            double getA();
+            double getMaxPos();
 
-            double getB();
+            double getMinPos();
 
             virtual double findMaximum();
 
@@ -181,7 +193,7 @@ namespace bayesNet {
 
         class PiShape : public MembershipFunction {
         public:
-            explicit PiShape(double a, double b, double c, double d);
+            PiShape(double a, double b, double c, double d);
 
             virtual double fx(double x);
 
@@ -194,7 +206,7 @@ namespace bayesNet {
 
         class Sigmoidal : public MembershipFunction {
         public:
-            explicit Sigmoidal(double a, double c);
+            Sigmoidal(double a, double c);
 
             virtual double fx(double x);
 
@@ -207,7 +219,7 @@ namespace bayesNet {
 
         class Bell : public MembershipFunction {
         public:
-            explicit Bell(double a, double b, double c);
+            Bell(double a, double b, double c);
 
             virtual double fx(double x);
 
@@ -221,7 +233,7 @@ namespace bayesNet {
 
         class Gaussian : public MembershipFunction {
         public:
-            explicit Gaussian(double mean, double deviation);
+            Gaussian(double mean, double deviation);
 
             virtual double fx(double x);
 
@@ -236,7 +248,7 @@ namespace bayesNet {
 
         class Gaussian2 : public MembershipFunction {
         public:
-            explicit Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
+            Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
 
             virtual double fx(double x);
 

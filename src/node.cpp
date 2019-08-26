@@ -4,6 +4,7 @@
 
 #include <bayesnet/node.h>
 #include <bayesnet/state.h>
+#include <include/bayesnet/util.h>
 
 namespace bayesNet {
 
@@ -100,24 +101,12 @@ namespace bayesNet {
     }
 
     void SensorNode::observe(double x) {
-        std::vector<double> beliefs = _fuzzySet->getBeliefs(x);
-        size_t states = beliefs.size();
-
-        CPT cpt(states);
+        std::vector<double> beliefs = _fuzzySet->getBeliefs(x, true);
 
         // normalize
-        double sum = 0;
+        utils::vectorNormalize(beliefs);
 
-        for (size_t i = 0; i < states; ++i) {
-
-            sum += beliefs[i];
-        }
-
-        for (size_t i = 0; i < states; ++i) {
-
-            cpt.set(i, beliefs[i] / sum);
-        }
-
+        CPT cpt(beliefs);
         setCPT(cpt);
     }
 

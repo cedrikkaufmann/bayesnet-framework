@@ -18,6 +18,10 @@ namespace bayesNet {
                 _beliefs = std::vector<double>(4, 0);
         }
 
+        BayesBelief::~BayesBelief() {
+
+        }
+
         void BayesBelief::set(BeliefState state, double belief) {
             _beliefs[state] = belief;
         }
