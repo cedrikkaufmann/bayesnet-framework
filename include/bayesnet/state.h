@@ -9,15 +9,13 @@
 #include <vector>
 #include <iostream>
 
-#define BAYESNET_STATES 2
-
 namespace bayesNet {
 
     namespace belief {
 
         /**
-     * Enumeration for better readability of bayes node prediction states
-     */
+        * Enumeration for better readability of bayes node prediction states
+        */
         enum BeliefState {
             GOOD = 0,
             PROBABLY_GOOD = 1,
