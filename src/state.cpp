@@ -62,6 +62,58 @@ namespace bayesNet {
             return _beliefs[index];
         }
 
+        std::ostream &operator<<(std::ostream &os, const State &state) {
+
+            switch (state) {
+
+                case GOOD: {
+
+                    os << "GOOD";
+                    break;
+                }
+                    
+                case PROBABLY_GOOD: {
+
+                    os << "PROBABLY_GOOD";
+                    break;
+                }
+
+                case PROBABLY_BAD: {
+
+                    os << "PROBABLY_BAD";
+                    break;
+                }
+
+                case BAD: {
+
+                    os << "BAD";
+                    break;
+                }
+            }
+
+            return os;
+        }
+
+        std::ostream &operator<<(std::ostream &os, const StateBinary &state) {
+
+            switch (state) {
+
+                case TRUE: {
+
+                    os << "TRUE";
+                    break;
+                }
+                    
+                case FALSE: {
+
+                    os << "FALSE";
+                    break;
+                }
+            }
+
+            return os;
+        }
+
         std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief) {
             os << "{";
 

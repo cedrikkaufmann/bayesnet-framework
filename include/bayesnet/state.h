@@ -46,6 +46,10 @@ namespace bayesNet {
             bool _binary;
         };
 
+        std::ostream &operator<<(std::ostream &os, const State &state);
+
+        std::ostream &operator<<(std::ostream &os, const StateBinary &state);
+
         std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief);
     }
 }
