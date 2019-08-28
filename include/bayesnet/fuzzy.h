@@ -25,9 +25,7 @@ namespace bayesNet {
 
     class FuzzySet {
     public:
-        explicit FuzzySet(size_t states);
-
-        FuzzySet(size_t states, double tol);
+        explicit FuzzySet(size_t states, double tol = 0);
 
         void setMembershipFunction(size_t state, MembershipFunction *mf);
 
@@ -35,9 +33,9 @@ namespace bayesNet {
 
         double findMaximum(size_t state);
 
-        std::vector<double> getBeliefs(double x, bool useTolerance = false) const;
+        std::vector<double> getBeliefs(double x) const;
 
-        double getBelief(double x, size_t state, bool useTolerance = false) const;
+        double getBelief(double x, size_t state) const;
 
     private:
         double _nullBeliefTolerance;

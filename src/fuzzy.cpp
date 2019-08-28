@@ -107,7 +107,7 @@ namespace bayesNet {
         }
 
         double Trapezoid::findMaximum() {
-            return utils::uniformRandom(_increasingEnd, _decreasingBegin);
+            return (_decreasingBegin - _increasingEnd) / 2.0;
         }
 
         SShape::SShape(double a, double b) : _a(a), _b(b) {
@@ -282,7 +282,7 @@ namespace bayesNet {
         return _mf[state];
     }
 
-    std::vector<double> FuzzySet::getBeliefs(double x, bool useTolerance) const {
+    std::vector<double> FuzzySet::getBeliefs(double x) const {
         size_t states = _mf.size();
         std::vector<double> beliefs(states);
 
@@ -290,7 +290,7 @@ namespace bayesNet {
 
             beliefs[i] = _mf[i]->fx(x);
 
-            if (useTolerance && beliefs[i] < _nullBeliefTolerance) {
+            if (beliefs[i] < _nullBeliefTolerance) {
 
                 beliefs[i] = _nullBeliefTolerance;
             }
@@ -299,10 +299,10 @@ namespace bayesNet {
         return beliefs;
     }
 
-    double FuzzySet::getBelief(double x, size_t state, bool useTolerance) const {
+    double FuzzySet::getBelief(double x, size_t state) const {
         double belief = _mf[state]->fx(x);
 
-        if (useTolerance && belief < _nullBeliefTolerance) {
+        if (belief < _nullBeliefTolerance) {
 
             belief = _nullBeliefTolerance;
         }
@@ -312,10 +312,6 @@ namespace bayesNet {
 
     double FuzzySet::findMaximum(size_t state) {
         return _mf[state]->findMaximum();
-    }
-
-    FuzzySet::FuzzySet(size_t states) : _nullBeliefTolerance(0), _mf(states) {
-
     }
 
     FuzzySet::FuzzySet(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {

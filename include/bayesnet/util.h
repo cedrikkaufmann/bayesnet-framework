@@ -17,8 +17,6 @@ namespace bayesNet {
 
         void readDirectory(const std::string &name, std::vector<std::string> &v);
 
-        double uniformRandom(double min, double max);
-
         double vectorMaximum(const std::vector<double> &v);
 
         double vectorSum(const std::vector<double> &v);

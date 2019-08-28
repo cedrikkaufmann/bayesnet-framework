@@ -40,12 +40,6 @@ namespace bayesNet {
             v.erase(v.begin(), v.begin() + 2);
         }
 
-        double uniformRandom(double min, double max) {
-            std::uniform_real_distribution<double> unif(min, max);
-            std::default_random_engine re;
-            return unif(re);
-        }
-
         double vectorMaximum(const std::vector<double> &v) {
             if (v.size() == 1) {
 

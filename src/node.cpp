@@ -101,7 +101,7 @@ namespace bayesNet {
     }
 
     void SensorNode::observe(double x) {
-        std::vector<double> beliefs = _fuzzySet->getBeliefs(x, true);
+        std::vector<double> beliefs = _fuzzySet->getBeliefs(x);
 
         // normalize
         utils::vectorNormalize(beliefs);

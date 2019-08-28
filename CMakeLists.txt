@@ -6,7 +6,6 @@ project(BayesNet_Framework)
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-march=x86-64 -Weverything -Wno-deprecated -Wno-padded -Werror -arch x86_64")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
 
@@ -53,6 +52,14 @@ target_link_libraries(
         gmp
         gmpxx
         dai
+)
+
+target_compile_options(
+        bayesnet_lib PRIVATE
+        -Weverything
+        -Wno-deprecated
+        -Wno-padded
+        -Werror
 )
 
 
@@ -130,6 +137,10 @@ if (Qt5_FOUND)
 
     add_dependencies(bayesnet_gui_lib bayesnet_lib)
 
+    target_compile_options(
+            bayesnet_gui_lib PRIVATE
+            -Weverything
+    )
 
     # Inference algorithm tool
     add_executable(inference_algorithm_tool tools/inference_algorithm_tool.cpp)
@@ -157,16 +168,16 @@ endif ()
 
 # Json example
 add_executable(
-        membershipFunctions
-        examples/membershipFunctionsTest.cpp
+        cpt_inference_example
+        examples/example_cpt_inference.cpp
 )
 
 target_link_libraries(
-        membershipFunctions
+        cpt_inference_example
         bayesnet_lib
 )
 
 add_dependencies(
-        membershipFunctions
+        cpt_inference_example
         bayesnet_lib
 )
