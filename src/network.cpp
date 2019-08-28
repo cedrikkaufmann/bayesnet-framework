@@ -239,15 +239,15 @@ namespace bayesNet {
         save(networkFilename);
     }
 
-    void Network::newSensor(const std::string &name, FuzzySet *set) {
+    void Network::newSensor(const std::string &name, fuzzyLogic::Set *set) {
         newSensorNode(name, 4, set);
     }
 
-    void Network::newBinarySensor(const std::string &name, FuzzySet *set) {
+    void Network::newBinarySensor(const std::string &name, fuzzyLogic::Set *set) {
         newSensorNode(name, 2, set);
     }
 
-    void Network::newSensorNode(const std::string &name, size_t states, FuzzySet *set) {
+    void Network::newSensorNode(const std::string &name, size_t states, fuzzyLogic::Set *set) {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {

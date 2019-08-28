@@ -7,69 +7,69 @@
 
 int main() {
     // setup mf
-    bayesNet::MembershipFunction *left = new bayesNet::membershipFunctions::ZShape(0, 5);
-    bayesNet::MembershipFunction *right = new bayesNet::membershipFunctions::SShape(0, 5);
-    bayesNet::MembershipFunction *gaussianLeft = new bayesNet::membershipFunctions::Gaussian(1, 0.7);
-    bayesNet::MembershipFunction *gaussianRight = new bayesNet::membershipFunctions::Gaussian(3, 0.7);
+    bayesNet::fuzzyLogic::MembershipFunction *mfFalseSprinkler = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(0, 0.35);
+    bayesNet::fuzzyLogic::MembershipFunction *mfTrueSprinkler = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(1, 0.35);
+    bayesNet::fuzzyLogic::MembershipFunction *mfFalseRainy = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(0, 0.35);
+    bayesNet::fuzzyLogic::MembershipFunction *mfTrueRainy = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(1, 0.35);
 
     // setup fuzzy sets
-    bayesNet::FuzzySet *fuzzySetSprinkler = new bayesNet::FuzzySet(2);
-    fuzzySetSprinkler->setMembershipFunction(0, left);
-    fuzzySetSprinkler->setMembershipFunction(1, right);
+    bayesNet::fuzzyLogic::Set *fuzzySetSprinkler = new bayesNet::fuzzyLogic::Set(2);
+    fuzzySetSprinkler->setMembershipFunction(bayesNet::state::FALSE, mfFalseSprinkler);
+    fuzzySetSprinkler->setMembershipFunction(bayesNet::state::TRUE, mfTrueSprinkler);
 
-    bayesNet::FuzzySet *fuzzySetRainy = new bayesNet::FuzzySet(2);
-    fuzzySetRainy->setMembershipFunction(0, gaussianLeft);
-    fuzzySetRainy->setMembershipFunction(1, gaussianRight);
+    bayesNet::fuzzyLogic::Set *fuzzySetRainy = new bayesNet::fuzzyLogic::Set(2);
+    fuzzySetRainy->setMembershipFunction(bayesNet::state::FALSE, mfFalseRainy);
+    fuzzySetRainy->setMembershipFunction(bayesNet::state::TRUE, mfTrueRainy);
 
-    std::vector<bayesNet::FuzzySet *> wetGrass;
+    std::vector<bayesNet::fuzzyLogic::Set *> wetGrass;
     wetGrass.push_back(fuzzySetSprinkler);
     wetGrass.push_back(fuzzySetRainy);
 
     // define states
-    bayesNet::FuzzyRuleState *stateTrue = new bayesNet::FuzzyRuleState(bayesNet::state::TRUE, true);
-    bayesNet::FuzzyRuleState *stateFalse = new bayesNet::FuzzyRuleState(bayesNet::state::FALSE, true);
+    bayesNet::fuzzyLogic::RuleState *stateTrue = new bayesNet::fuzzyLogic::RuleState(bayesNet::state::TRUE, true);
+    bayesNet::fuzzyLogic::RuleState *stateFalse = new bayesNet::fuzzyLogic::RuleState(bayesNet::state::FALSE, true);
 
     // define rules
 
     // S=0, R=0 => W=0
-    std::vector<bayesNet::FuzzyRuleState *> states_s_F_R_F;
+    std::vector<bayesNet::fuzzyLogic::RuleState *> states_s_F_R_F;
     states_s_F_R_F.push_back(stateFalse);
     states_s_F_R_F.push_back(stateFalse);
 
-    bayesNet::FuzzyRule *rule_s_F_R_F = new bayesNet::FuzzyRule(states_s_F_R_F, stateFalse);
+    bayesNet::fuzzyLogic::Rule *rule_s_F_R_F = new bayesNet::fuzzyLogic::Rule(states_s_F_R_F, stateFalse);
 
     // S=1, R=0 => W=1
-    std::vector<bayesNet::FuzzyRuleState *> states_s_T_R_F;
+    std::vector<bayesNet::fuzzyLogic::RuleState *> states_s_T_R_F;
     states_s_T_R_F.push_back(stateTrue);
     states_s_T_R_F.push_back(stateFalse);
 
-    bayesNet::FuzzyRule *rule_s_T_R_F = new bayesNet::FuzzyRule(states_s_T_R_F, stateTrue);
+    bayesNet::fuzzyLogic::Rule *rule_s_T_R_F = new bayesNet::fuzzyLogic::Rule(states_s_T_R_F, stateTrue);
 
     // S=0, R=1 => W=1
-    std::vector<bayesNet::FuzzyRuleState *> states_s_F_R_T;
+    std::vector<bayesNet::fuzzyLogic::RuleState *> states_s_F_R_T;
     states_s_F_R_T.push_back(stateFalse);
     states_s_F_R_T.push_back(stateTrue);
 
-    bayesNet::FuzzyRule *rule_s_F_R_T = new bayesNet::FuzzyRule(states_s_F_R_T, stateTrue);
+    bayesNet::fuzzyLogic::Rule *rule_s_F_R_T = new bayesNet::fuzzyLogic::Rule(states_s_F_R_T, stateTrue);
 
     // S=1, R=0 => W=1
-    std::vector<bayesNet::FuzzyRuleState *> states_s_T_R_T;
+    std::vector<bayesNet::fuzzyLogic::RuleState *> states_s_T_R_T;
     states_s_T_R_T.push_back(stateTrue);
     states_s_T_R_T.push_back(stateTrue);
 
-    bayesNet::FuzzyRule *rule_s_T_R_T = new bayesNet::FuzzyRule(states_s_T_R_T, stateTrue);
+    bayesNet::fuzzyLogic::Rule *rule_s_T_R_T = new bayesNet::fuzzyLogic::Rule(states_s_T_R_T, stateTrue);
 
     // combine rules
-    std::vector<bayesNet::FuzzyRule *> rulesWetGrass;
+    std::vector<bayesNet::fuzzyLogic::Rule *> rulesWetGrass;
     rulesWetGrass.push_back(rule_s_F_R_F);
     rulesWetGrass.push_back(rule_s_T_R_F);
     rulesWetGrass.push_back(rule_s_F_R_T);
     rulesWetGrass.push_back(rule_s_T_R_T);
 
-    bayesNet::FuzzyRuleSet *rules = new bayesNet::FuzzyRuleSet(rulesWetGrass);
+    bayesNet::fuzzyLogic::RuleSet *rules = new bayesNet::fuzzyLogic::RuleSet(rulesWetGrass);
 
     // create controller from fuzzy sets and -rules
-    bayesNet::FuzzyController *wetGrassCtrl = new bayesNet::FuzzyController(wetGrass, rules, 0.01);
+    bayesNet::fuzzyLogic::Controller *wetGrassCtrl = new bayesNet::fuzzyLogic::Controller(wetGrass, rules, 0.01);
 
     // infer cpts
     bayesNet::CPT wetGrassCPT = wetGrassCtrl->inferCPT();

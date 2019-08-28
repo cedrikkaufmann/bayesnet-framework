@@ -60,14 +60,14 @@ namespace bayesNet {
 
     class SensorNode : public Node {
     public:
-        explicit SensorNode(const std::string &name, size_t label, size_t states, FuzzySet *set);
+        explicit SensorNode(const std::string &name, size_t label, size_t states, fuzzyLogic::Set *set);
 
         virtual ~SensorNode();
 
         void observe(double x);
 
     private:
-        FuzzySet *_fuzzySet;
+        fuzzyLogic::Set *_fuzzySet;
     };
 
     std::ostream &operator<<(std::ostream &os, Node &node);

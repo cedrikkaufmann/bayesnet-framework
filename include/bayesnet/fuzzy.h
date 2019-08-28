@@ -12,250 +12,259 @@
 
 namespace bayesNet {
 
-    class MembershipFunction {
-    public:
-        MembershipFunction();
+    namespace fuzzyLogic {
 
-        virtual ~MembershipFunction();
-
-        virtual double fx(double x) = 0;
-
-        virtual double findMaximum() = 0;
-    };
-
-    class FuzzySet {
-    public:
-        explicit FuzzySet(size_t states, double tol = 0);
-
-        void setMembershipFunction(size_t state, MembershipFunction *mf);
-
-        MembershipFunction *getMembershipFunction(size_t state);
-
-        double findMaximum(size_t state);
-
-        std::vector<double> getBeliefs(double x) const;
-
-        double getBelief(double x, size_t state) const;
-
-    private:
-        double _nullBeliefTolerance;
-        std::vector<MembershipFunction *> _mf;
-    };
-
-    class FuzzyRuleState {
-    public:
-        explicit FuzzyRuleState(size_t state, bool binary = false);
-
-        ~FuzzyRuleState();
-
-        bool isBinary();
-
-        size_t getState();
-
-    private:
-        size_t _state;
-        bool _binary;
-    };
-
-    class FuzzyRule {
-    public:
-        explicit FuzzyRule(const std::vector<FuzzyRuleState *> &parentStates, FuzzyRuleState *state);
-
-        std::vector<FuzzyRuleState *> &getParentStates();
-
-        FuzzyRuleState &getChildState();
-
-        size_t nrJointStates();
-
-    private:
-        std::vector<FuzzyRuleState *> _parentStates;
-        FuzzyRuleState &_state;
-    };
-
-    class FuzzyRuleSet {
-    public:
-        FuzzyRuleSet();
-
-        explicit FuzzyRuleSet(const std::vector<FuzzyRule *> &rules);
-
-        void addRule(FuzzyRule *rule);
-
-        void setRules(const std::vector<FuzzyRule *> &rules);
-
-        std::vector<FuzzyRule *> &getRules();
-
-        size_t nrJointStates();
-
-    private:
-        std::vector<FuzzyRule *> _rules;
-    };
-
-    class FuzzyController {
-    public:
-        FuzzyController(const std::vector<FuzzySet *> &set, FuzzyRuleSet *rules, double tolerance = 0);
-
-        ~FuzzyController();
-
-        CPT inferCPT();
-
-    private:
-        FuzzyRuleSet *_rules;
-        std::vector<FuzzySet *> _fuzzySet;
-        double _nullBeliefTolerance;
-
-        std::vector<double> infer(const std::vector<size_t> &states);
-    };
-
-    namespace membershipFunctions {
-
-        class Linear : public MembershipFunction {
+        class MembershipFunction {
         public:
-            Linear(double fxMin, double fxMax);
+            MembershipFunction();
 
-            virtual double fx(double x);
+            virtual ~MembershipFunction();
 
-            virtual double findMaximum();
+            virtual double fx(double x) = 0;
 
-        private:
-            double _m;
-            double _b;
-            double _fxMin;
-            double _fxMax;
+            virtual double findMaximum() = 0;
         };
 
-        class Triangle : public MembershipFunction {
+        class Set {
         public:
-            Triangle(double begin, double max, double end);
+            explicit Set(size_t states, double tol = 0);
 
-            virtual double fx(double x);
+            ~Set();
 
-            virtual double findMaximum();
+            void setMembershipFunction(size_t state, MembershipFunction *mf);
+
+            MembershipFunction *getMembershipFunction(size_t state);
+
+            double findMaximum(size_t state);
+
+            std::vector<double> getBeliefs(double x) const;
+
+            double getBelief(double x, size_t state) const;
 
         private:
-            double _begin;
-            double _max;
-            double _end;
-            Linear _increasing;
-            Linear _decreasing;
+            double _nullBeliefTolerance;
+            std::vector<MembershipFunction *> _mf;
         };
 
-        class Trapezoid : public MembershipFunction {
+        class RuleState {
         public:
-            Trapezoid(double x1, double x2, double x3, double x4);
+            explicit RuleState(size_t state, bool binary = false);
 
-            virtual double fx(double x);
+            ~RuleState();
 
-            virtual double findMaximum();
+            bool isBinary();
+
+            size_t getState();
 
         private:
-            double _increasingBegin;
-            double _increasingEnd;
-            double _decreasingBegin;
-            double _decreasingEnd;
-            Linear _increasingLinear;
-            Linear _decreasingLinear;
+            size_t _state;
+            bool _binary;
         };
 
-        class SShape : public MembershipFunction {
+        class Rule {
         public:
-            SShape(double a, double b);
+            explicit Rule(const std::vector<RuleState *> &parentStates, RuleState *state);
 
-            virtual double fx(double x);
+            ~Rule();
 
-            double getMinPos();
+            std::vector<RuleState *> &getParentStates();
 
-            double getMaxPos();
+            RuleState &getChildState();
 
-            virtual double findMaximum();
+            size_t nrJointStates();
 
         private:
-            double _a;
-            double _b;
+            std::vector<RuleState *> _parentStates;
+            RuleState &_state;
         };
 
-        class ZShape : public MembershipFunction {
+        class RuleSet {
         public:
-            ZShape(double a, double b);
+            RuleSet();
 
-            virtual double fx(double x);
+            explicit RuleSet(const std::vector<Rule *> &rules);
 
-            double getMaxPos();
+            ~RuleSet();
 
-            double getMinPos();
+            void addRule(Rule *rule);
 
-            virtual double findMaximum();
+            void setRules(const std::vector<Rule *> &rules);
+
+            std::vector<Rule *> &getRules();
+
+            size_t nrJointStates();
 
         private:
-            SShape _sShape;
+            std::vector<Rule *> _rules;
         };
 
-        class PiShape : public MembershipFunction {
+        class Controller {
         public:
-            PiShape(double a, double b, double c, double d);
+            Controller(const std::vector<Set *> &set, RuleSet *rules, double tolerance = 0);
 
-            virtual double fx(double x);
+            ~Controller();
 
-            virtual double findMaximum();
+            CPT inferCPT();
 
         private:
-            SShape _sShape;
-            ZShape _zShape;
+            RuleSet *_rules;
+            std::vector<Set *> _fuzzySet;
+            double _nullBeliefTolerance;
+
+            std::vector<double> infer(const std::vector<size_t> &states);
         };
 
-        class Sigmoidal : public MembershipFunction {
-        public:
-            Sigmoidal(double a, double c);
+        namespace membershipFunctions {
 
-            virtual double fx(double x);
+            class Linear : public MembershipFunction {
+            public:
+                Linear(double fxMin, double fxMax);
 
-            virtual double findMaximum();
+                virtual double fx(double x);
 
-        private:
-            double _a;
-            double _c;
-        };
+                virtual double findMaximum();
 
-        class Bell : public MembershipFunction {
-        public:
-            Bell(double a, double b, double c);
+            private:
+                double _m;
+                double _b;
+                double _fxMin;
+                double _fxMax;
+            };
 
-            virtual double fx(double x);
+            class Triangle : public MembershipFunction {
+            public:
+                Triangle(double begin, double max, double end);
 
-            virtual double findMaximum();
+                virtual double fx(double x);
 
-        private:
-            double _a;
-            double _b;
-            double _c;
-        };
+                virtual double findMaximum();
 
-        class Gaussian : public MembershipFunction {
-        public:
-            Gaussian(double mean, double deviation);
+            private:
+                double _begin;
+                double _max;
+                double _end;
+                Linear _increasing;
+                Linear _decreasing;
+            };
 
-            virtual double fx(double x);
+            class Trapezoid : public MembershipFunction {
+            public:
+                Trapezoid(double x1, double x2, double x3, double x4);
 
-            double getMean();
+                virtual double fx(double x);
 
-            virtual double findMaximum();
+                virtual double findMaximum();
 
-        private:
-            double _mean;
-            double _deviation;
-        };
+            private:
+                double _increasingBegin;
+                double _increasingEnd;
+                double _decreasingBegin;
+                double _decreasingEnd;
+                Linear _increasingLinear;
+                Linear _decreasingLinear;
+            };
 
-        class Gaussian2 : public MembershipFunction {
-        public:
-            Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
+            class SShape : public MembershipFunction {
+            public:
+                SShape(double a, double b);
 
-            virtual double fx(double x);
+                virtual double fx(double x);
 
-            virtual double findMaximum();
+                double getMinPos();
 
-        private:
-            Gaussian _left;
-            Gaussian _right;
-        };
+                double getMaxPos();
+
+                virtual double findMaximum();
+
+            private:
+                double _a;
+                double _b;
+            };
+
+            class ZShape : public MembershipFunction {
+            public:
+                ZShape(double a, double b);
+
+                virtual double fx(double x);
+
+                double getMaxPos();
+
+                double getMinPos();
+
+                virtual double findMaximum();
+
+            private:
+                SShape _sShape;
+            };
+
+            class PiShape : public MembershipFunction {
+            public:
+                PiShape(double a, double b, double c, double d);
+
+                virtual double fx(double x);
+
+                virtual double findMaximum();
+
+            private:
+                SShape _sShape;
+                ZShape _zShape;
+            };
+
+            class Sigmoidal : public MembershipFunction {
+            public:
+                Sigmoidal(double a, double c);
+
+                virtual double fx(double x);
+
+                virtual double findMaximum();
+
+            private:
+                double _a;
+                double _c;
+            };
+
+            class Bell : public MembershipFunction {
+            public:
+                Bell(double a, double b, double c);
+
+                virtual double fx(double x);
+
+                virtual double findMaximum();
+
+            private:
+                double _a;
+                double _b;
+                double _c;
+            };
+
+            class Gaussian : public MembershipFunction {
+            public:
+                Gaussian(double mean, double deviation);
+
+                virtual double fx(double x);
+
+                double getMean();
+
+                virtual double findMaximum();
+
+            private:
+                double _mean;
+                double _deviation;
+            };
+
+            class Gaussian2 : public MembershipFunction {
+            public:
+                Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
+
+                virtual double fx(double x);
+
+                virtual double findMaximum();
+
+            private:
+                Gaussian _left;
+                Gaussian _right;
+            };
+        }   
     }
 }
 

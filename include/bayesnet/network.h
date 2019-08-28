@@ -33,9 +33,9 @@ namespace bayesNet {
 
         void newBinaryNode(const std::string &name);
 
-        void newSensor(const std::string &name, FuzzySet *set);
+        void newSensor(const std::string &name, fuzzyLogic::Set *set);
 
-        void newBinarySensor(const std::string &name, FuzzySet *set);
+        void newBinarySensor(const std::string &name, fuzzyLogic::Set *set);
 
         void newConnection(const std::string &parentName, const std::string &childName);
 
@@ -74,7 +74,7 @@ namespace bayesNet {
 
         void newNode(const std::string &name, size_t states);
 
-        void newSensorNode(const std::string &name, size_t states, FuzzySet *set);
+        void newSensorNode(const std::string &name, size_t states, fuzzyLogic::Set *set);
     };
 }
 

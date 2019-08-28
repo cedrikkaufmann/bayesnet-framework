@@ -94,7 +94,7 @@ namespace bayesNet {
         return os;
     }
 
-    SensorNode::SensorNode(const std::string &name, size_t label, size_t states, FuzzySet *set) : Node(name, label,
+    SensorNode::SensorNode(const std::string &name, size_t label, size_t states, fuzzyLogic::Set *set) : Node(name, label,
                                                                                                        states),
                                                                                                   _fuzzySet(set) {
 
