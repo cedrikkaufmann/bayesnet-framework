@@ -9,25 +9,41 @@
 
 namespace bayesNet {
 
-    namespace belief {
+    namespace state {
 
         BayesBelief::BayesBelief(bool binary) : _binary(binary) {
-            if (binary)
+            if (binary) {
+
                 _beliefs = std::vector<double>(2, 0);
-            else
+            } else {
+
                 _beliefs = std::vector<double>(4, 0);
+            }
         }
 
         BayesBelief::~BayesBelief() {
 
         }
 
-        void BayesBelief::set(BeliefState state, double belief) {
+        bool BayesBelief::isBinary() const {
+            return _binary;
+        }
+
+        void BayesBelief::set(size_t state, double belief) {
+            if (state >= _beliefs.size()) {
+
+                throw IndexOutOfBoundException();
+            }
+
             _beliefs[state] = belief;
         }
 
+        double BayesBelief::get(size_t state) const {
+            if (state >= _beliefs.size()) {
 
-        double BayesBelief::get(BeliefState state) const {
+                throw IndexOutOfBoundException();
+            }
+
             return _beliefs[state];
         }
 
@@ -38,14 +54,8 @@ namespace bayesNet {
         }
 
         double &BayesBelief::operator[](size_t index) {
-            size_t upperBoundary;
+            if (index >= _beliefs.size()) {
 
-            if (_binary)
-                upperBoundary = 1;
-            else
-                upperBoundary = 3;
-
-            if (index > upperBoundary) {
                 throw IndexOutOfBoundException();
             }
 
@@ -53,63 +63,67 @@ namespace bayesNet {
         }
 
         std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief) {
-            size_t upperBoundary;
-            size_t offset;
+            os << "{";
 
             if (bayesBelief.isBinary()) {
 
-                offset = 4;
-                upperBoundary = offset + 2; // 2 entries if binary
-            } else {
+                for (size_t i = 0; i < 2; ++i) {
 
-                offset = 0;
-                upperBoundary = offset + 4; // 4 entries if not binary
-            }
+                    switch (i) {
 
-            os << "{";
+                        case TRUE: {
 
-            for (size_t i = offset; i < upperBoundary; ++i) {
+                            os << "TRUE: ";
+                            break;
+                        }
 
-                switch (i) {
+                        case FALSE: {
 
-                    case GOOD: {
-                        os << "GOOD: ";
-                        break;
+                            os << "FALSE: ";
+                            break;
+                        }
+                            
                     }
 
-                    case PROBABLY_GOOD: {
-                        os << "PROBABLY GOOD: ";
-                        break;
+                    os << bayesBelief.get(i);
+
+                    if (i < 1) {
+                        
+                        os << "; ";
                     }
-
-                    case PROBABLY_BAD: {
-                        os << "PROBABLY BAD: ";
-                        break;
-                    }
-
-                    case BAD: {
-                        os << "BAD: ";
-                        break;
-                    }
-
-                    case TRUE: {
-                        os << "TRUE: ";
-                        break;
-                    }
-
-                    case FALSE:
-                        os << "FALSE: ";
-                        break;
-
-                    default:
-                        os << "UNKNOWN STATE: "; // should never happen
                 }
+            }  else {
 
-                os << bayesBelief.get(static_cast<BeliefState>(i - offset));
+                for (size_t i = 0; i < 2; ++i) {
 
-                if (i < upperBoundary - 1)
-                    os << "; ";
-            }
+                    switch (i) {
+
+                        case GOOD: {
+
+                            os << "GOOD: ";
+                            break;
+                        }
+
+                        case PROBABLY_GOOD: {
+
+                            os << "PROBABLY GOOD: ";
+                            break;
+                        }
+
+                        case PROBABLY_BAD: {
+
+                            os << "PROBABLY BAD: ";
+                            break;
+                        }
+
+                        case BAD: {
+
+                            os << "BAD: ";
+                            break;
+                        }
+                    }
+                }
+            }    
 
             os << "}";
 

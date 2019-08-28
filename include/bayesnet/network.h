@@ -41,7 +41,7 @@ namespace bayesNet {
 
         void init(inference::Algorithm *alg);
 
-        void setEvidence(const std::string &name, belief::BeliefState state);
+        void setEvidence(const std::string &name, size_t state);
 
         void observe(const std::string &name, double x);
 
@@ -51,7 +51,7 @@ namespace bayesNet {
 
         void doInference();
 
-        belief::BayesBelief getBelief(const std::string &name);
+        state::BayesBelief getBelief(const std::string &name);
 
         Node *getNode(const std::string &name);
 

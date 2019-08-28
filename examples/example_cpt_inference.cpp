@@ -26,8 +26,8 @@ int main() {
     wetGrass.push_back(fuzzySetRainy);
 
     // define states
-    bayesNet::FuzzyRuleState *stateTrue = new bayesNet::FuzzyRuleState(1, true);
-    bayesNet::FuzzyRuleState *stateFalse = new bayesNet::FuzzyRuleState(0, true);
+    bayesNet::FuzzyRuleState *stateTrue = new bayesNet::FuzzyRuleState(bayesNet::state::TRUE, true);
+    bayesNet::FuzzyRuleState *stateFalse = new bayesNet::FuzzyRuleState(bayesNet::state::FALSE, true);
 
     // define rules
 

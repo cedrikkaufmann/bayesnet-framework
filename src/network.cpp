@@ -79,41 +79,46 @@ namespace bayesNet {
         _init = true;
     }
 
-    void Network::setEvidence(const std::string &name, belief::BeliefState state) {
+    void Network::setEvidence(const std::string &name, size_t state) {
         if (!_init) {
+
             throw NotInitializedException();
         }
 
         try {
             Node *node = getNode(name);
 
-            if (node->getDiscrete().states() == 2 && state > 3 && state < 6) {
-                node->setEvidence(state - 4);
-            } else if (state > 3) {
-                throw IndexOutOfBoundException();
-            } else {
+            if (state < node->getDiscrete().states()) {
+
                 node->setEvidence(state);
+            } else {
+
+                throw IndexOutOfBoundException();
             }
 
             _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
             _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
         } catch (const std::exception &) {
+
             throw BayesNodeNotFoundException();
         }
     }
 
     void Network::clearEvidence(const std::string &name) {
         if (!_init) {
+
             throw NotInitializedException();
         }
 
         try {
+
             size_t nodeValue = _registry.at(name);
             Node *node = _nodes[nodeValue];
             node->clearEvidence();
             _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
             _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
         } catch (const std::exception &) {
+
             throw BayesNodeNotFoundException();
         }
     }
@@ -126,17 +131,19 @@ namespace bayesNet {
         this->_inferenceAlgorithm->getInstance()->run();
     }
 
-    belief::BayesBelief Network::getBelief(const std::string &name) {
+    state::BayesBelief Network::getBelief(const std::string &name) {
         if (!_init) {
+
             throw NotInitializedException();
         }
 
         Node *node = getNode(name);
 
         dai::Factor belief = this->_inferenceAlgorithm->getInstance()->belief(node->getDiscrete());
-        belief::BayesBelief bayesBelief(node->isBinary());
+        state::BayesBelief bayesBelief(node->isBinary());
 
         for (size_t i = 0; i < belief.nrStates(); ++i) {
+
             bayesBelief[i] = belief[i];
         }
 
@@ -175,8 +182,7 @@ namespace bayesNet {
         }
 
         // add cpt for nodes to network
-        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin();
-             it != iv->cpt.end(); it++) {
+        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin(); it != iv->cpt.end(); it++) {
 
             setCPT((*it).first, CPT((*it).second));
         }

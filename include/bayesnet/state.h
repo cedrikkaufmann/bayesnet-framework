@@ -11,18 +11,18 @@
 
 namespace bayesNet {
 
-    namespace belief {
+    namespace state {
 
-        /**
-        * Enumeration for better readability of bayes node prediction states
-        */
-        enum BeliefState {
+        enum State {
             GOOD = 0,
             PROBABLY_GOOD = 1,
             PROBABLY_BAD = 2,
-            BAD = 3,
-            FALSE = 4,
-            TRUE = 5
+            BAD = 3
+        };
+
+        enum StateBinary {
+            FALSE = 0,
+            TRUE = 1
         };
 
         class BayesBelief {
@@ -33,11 +33,11 @@ namespace bayesNet {
 
             double &operator[](size_t index);
 
-            bool isBinary() const { return _binary; }
+            bool isBinary() const;
 
-            void set(BeliefState state, double belief);
+            void set(size_t state, double belief);
 
-            double get(BeliefState state) const;
+            double get(size_t state) const;
 
             std::string toString() const;
 

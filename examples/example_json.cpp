@@ -12,9 +12,9 @@ using namespace std;
 int main( int argc, char **argv ) {
     bayesNet::Network net("../../networks/pregnancy.bayesnet");
 
-    net.setEvidence("scanningTest", bayesNet::belief::FALSE);
-    net.setEvidence("bloodTest", bayesNet::belief::FALSE);
-    net.setEvidence("urineTest", bayesNet::belief::FALSE);
+    net.setEvidence("scanningTest", bayesNet::state::FALSE);
+    net.setEvidence("bloodTest", bayesNet::state::FALSE);
+    net.setEvidence("urineTest", bayesNet::state::FALSE);
 
     net.doInference();
 

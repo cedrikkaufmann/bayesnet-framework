@@ -77,7 +77,7 @@ int main() {
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl << endl;
 
 
-    net.setEvidence("sprinkler", bayesNet::belief::TRUE);
+    net.setEvidence("sprinkler", bayesNet::state::TRUE);
     net.doInference();
 
     cout << "Variable marginals:" << endl;
