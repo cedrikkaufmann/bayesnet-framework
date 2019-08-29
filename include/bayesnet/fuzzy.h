@@ -61,6 +61,12 @@ namespace bayesNet {
             bool _binary;
         };
 
+        namespace rules {
+
+            RuleState *get(const state::State &state);
+            RuleState *get(const state::StateBinary &state);
+        }        
+
         class Rule {
         public:
             explicit Rule(const std::vector<RuleState *> &parentStates, RuleState *state);

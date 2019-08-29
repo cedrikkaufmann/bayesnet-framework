@@ -59,6 +59,7 @@ target_compile_options(
         -Weverything
         -Wno-deprecated
         -Wno-padded
+        -Wno-unused-function
         -Werror
 )
 

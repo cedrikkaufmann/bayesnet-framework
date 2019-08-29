@@ -109,7 +109,7 @@ namespace bayesNet {
                 }
 
                 double Trapezoid::findMaximum() {
-                    return (_decreasingBegin - _increasingEnd) / 2.0;
+                    return (_decreasingBegin - _increasingEnd) / 2;
                 }
 
                 SShape::SShape(double a, double b) : _a(a), _b(b) {
@@ -503,6 +503,56 @@ namespace bayesNet {
 
             size_t RuleState::getState() {
                 return _state;
+            }
+
+
+            namespace rules {
+
+                RuleState *get(const state::State &state) {
+                    switch (state) {
+
+                        case state::GOOD: {
+
+                            static RuleState *rule = new RuleState(state::GOOD);
+                            return rule;
+                        }
+
+                        case state::PROBABLY_GOOD: {
+
+                            static RuleState *rule = new RuleState(state::PROBABLY_GOOD);
+                            return rule;
+                        }
+
+                        case state::PROBABLY_BAD: {
+
+                            static RuleState *rule = new RuleState(state::PROBABLY_BAD);
+                            return rule;
+                        }
+
+                        case state::BAD: {
+
+                            static RuleState *rule = new RuleState(state::BAD);
+                            return rule;
+                        }
+                    }
+                }
+
+                RuleState *get(const state::StateBinary &state) {
+                    switch (state) {
+
+                        case state::TRUE: {
+
+                            static RuleState *rule = new RuleState(state::TRUE, true);
+                            return rule;
+                        }
+
+                        case state::FALSE: {
+
+                            static RuleState *rule = new RuleState(state::FALSE, true);
+                            return rule;
+                        }
+                    }
+                }
             }
     }
 }

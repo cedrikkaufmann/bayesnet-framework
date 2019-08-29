@@ -59,11 +59,6 @@ int main() {
     net.setCPT("rainy", rainy);
     net.setCPT("wetGrass", wetGrass);
 
-    std::cout << net.getNode("cloudy")->getDiscrete().label() << std::endl;
-    std::cout << net.getNode("sprinkler")->getDiscrete().label() << std::endl;
-    std::cout << net.getNode("rainy")->getDiscrete().label() << std::endl;
-    std::cout << net.getNode("wetGrass")->getDiscrete().label() << std::endl;
-
     bayesNet::inference::Algorithm *algo = new bayesNet::inference::Algorithm("../../algorithms/junction_tree_default.algorithm");
 
     net.init(algo);
