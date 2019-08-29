@@ -4,12 +4,12 @@
 
 #include <bayesnet/node.h>
 #include <bayesnet/state.h>
-#include <include/bayesnet/util.h>
+#include <bayesnet/util.h>
 
 namespace bayesNet {
 
     Node::Node(const std::string &name, size_t label, size_t states) : _name(name), _factor(Factor(states)),
-                                                                       _factorGraphIndex(0) {
+                                                                       _factorGraphIndex(0), _fuzzySet(states) {
         _discrete = dai::Var(label, states);
         _conditionalDiscrete = dai::VarSet(_discrete);
     }
@@ -72,6 +72,26 @@ namespace bayesNet {
         return _children;
     }
 
+    void Node::setMembershipFunction(size_t state, fuzzyLogic::MembershipFunction *mf) {
+        _fuzzySet.setMembershipFunction(state, mf);
+    }
+
+    void Node::setFuzzyRules(const fuzzyLogic::RuleSet &rules) {
+        _fuzzyRules = rules;
+    }
+
+    void Node::addFuzzyRule(fuzzyLogic::Rule *rule) {
+        _fuzzyRules.addRule(rule);
+    }
+
+    fuzzyLogic::Set &Node::getFuzzySet() {
+        return _fuzzySet;
+    }
+
+    fuzzyLogic::RuleSet &Node::getFuzzyRules() {
+        return _fuzzyRules;
+    }
+
     CPT &Node::getCPT() {
         return _cpt;
     }
@@ -94,14 +114,12 @@ namespace bayesNet {
         return os;
     }
 
-    SensorNode::SensorNode(const std::string &name, size_t label, size_t states, fuzzyLogic::Set *set) : Node(name, label,
-                                                                                                       states),
-                                                                                                  _fuzzySet(set) {
+    SensorNode::SensorNode(const std::string &name, size_t label, size_t states) : Node(name, label, states) {
 
     }
 
     void SensorNode::observe(double x) {
-        std::vector<double> beliefs = _fuzzySet->getBeliefs(x);
+        std::vector<double> beliefs = getFuzzySet().getBeliefs(x);
 
         // normalize
         utils::vectorNormalize(beliefs);

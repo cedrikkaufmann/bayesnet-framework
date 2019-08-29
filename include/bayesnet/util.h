@@ -27,7 +27,7 @@ namespace bayesNet {
 
         class Counter {
         public:
-            Counter(size_t digits, const std::vector<size_t>& states);
+            Counter(size_t digits, const std::vector<size_t> &states);
 
             ~Counter();
 

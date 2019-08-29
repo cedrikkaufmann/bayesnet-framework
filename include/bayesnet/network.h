@@ -13,6 +13,7 @@
 #include <bayesnet/state.h>
 #include <bayesnet/cpt.h>
 #include <bayesnet/inference.h>
+#include <bayesnet/fuzzy.h>
 #include <bayesnet/json.h>
 
 #include <dai/factor.h>
@@ -29,13 +30,9 @@ namespace bayesNet {
 
         virtual ~Network();
 
-        void newNode(const std::string &name);
+        void newNode(const std::string &name, bool binary = false);
 
-        void newBinaryNode(const std::string &name);
-
-        void newSensor(const std::string &name, fuzzyLogic::Set *set);
-
-        void newBinarySensor(const std::string &name, fuzzyLogic::Set *set);
+        void newSensorNode(const std::string &name, bool binary = false);
 
         void newConnection(const std::string &parentName, const std::string &childName);
 
@@ -72,9 +69,7 @@ namespace bayesNet {
         size_t _nodeCounter;
         bool _init;
 
-        void newNode(const std::string &name, size_t states);
-
-        void newSensorNode(const std::string &name, size_t states, fuzzyLogic::Set *set);
+        void refreshFactorGraph(Node *node);
     };
 }
 

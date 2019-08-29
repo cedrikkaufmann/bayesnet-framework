@@ -38,6 +38,16 @@ namespace bayesNet {
 
         void clearEvidence();
 
+        void setMembershipFunction(size_t state, fuzzyLogic::MembershipFunction *mf);
+
+        void setFuzzyRules(const fuzzyLogic::RuleSet &rules);
+
+        void addFuzzyRule(fuzzyLogic::Rule *rule);
+
+        fuzzyLogic::Set &getFuzzySet();
+
+        fuzzyLogic::RuleSet &getFuzzyRules();
+
         CPT &getCPT();
 
         void setCPT(const CPT &cpt);
@@ -55,19 +65,18 @@ namespace bayesNet {
         Factor _factor;
         size_t _factorGraphIndex;
         CPT _cpt;
+        fuzzyLogic::Set _fuzzySet;
+        fuzzyLogic::RuleSet _fuzzyRules;
         std::vector<Node *> _children;
     };
 
     class SensorNode : public Node {
     public:
-        explicit SensorNode(const std::string &name, size_t label, size_t states, fuzzyLogic::Set *set);
+        explicit SensorNode(const std::string &name, size_t label, size_t states);
 
         virtual ~SensorNode();
 
         void observe(double x);
-
-    private:
-        fuzzyLogic::Set *_fuzzySet;
     };
 
     std::ostream &operator<<(std::ostream &os, Node &node);

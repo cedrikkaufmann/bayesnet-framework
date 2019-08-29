@@ -21,7 +21,17 @@ namespace bayesNet {
 
     }
 
-    void Network::newNode(const std::string &name, size_t states) {
+    void Network::newNode(const std::string &name, bool binary) {
+        size_t states;
+
+        if (binary) {
+
+            states = 2;
+        } else {
+
+            states = 4;
+        }
+
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
@@ -35,14 +45,6 @@ namespace bayesNet {
 
         Node *node = new Node(name, nodeValue, states);
         _nodes.push_back(node);
-    }
-
-    void Network::newNode(const std::string &name) {
-        newNode(name, 4); // create node with 4 states as default
-    }
-
-    void Network::newBinaryNode(const std::string &name) {
-        newNode(name, 2); // create node with 2 states
     }
 
     void Network::newConnection(const std::string &parentName, const std::string &childName) {
@@ -115,8 +117,7 @@ namespace bayesNet {
             size_t nodeValue = _registry.at(name);
             Node *node = _nodes[nodeValue];
             node->clearEvidence();
-            _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
-            _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
+            refreshFactorGraph(node);
         } catch (const std::exception &) {
 
             throw BayesNodeNotFoundException();
@@ -168,7 +169,7 @@ namespace bayesNet {
         // add binary nodes to network
         for (size_t i = 0; i < iv->binaryNodes.size(); ++i) {
 
-            newBinaryNode(iv->binaryNodes[i]);
+            newNode(iv->binaryNodes[i], true);
         }
 
         // add connections for nodes to network
@@ -182,7 +183,8 @@ namespace bayesNet {
         }
 
         // add cpt for nodes to network
-        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin(); it != iv->cpt.end(); it++) {
+        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin();
+             it != iv->cpt.end(); it++) {
 
             setCPT((*it).first, CPT((*it).second));
         }
@@ -239,18 +241,21 @@ namespace bayesNet {
         save(networkFilename);
     }
 
-    void Network::newSensor(const std::string &name, fuzzyLogic::Set *set) {
-        newSensorNode(name, 4, set);
-    }
+    void Network::newSensorNode(const std::string &name, bool binary) {
+        size_t states;
 
-    void Network::newBinarySensor(const std::string &name, fuzzyLogic::Set *set) {
-        newSensorNode(name, 2, set);
-    }
+        if (binary) {
 
-    void Network::newSensorNode(const std::string &name, size_t states, fuzzyLogic::Set *set) {
+            states = 2;
+        } else {
+
+            states = 4;
+        }
+
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
+
             throw BayesNodeAlreadyDefinedException();
         }
 
@@ -259,12 +264,24 @@ namespace bayesNet {
         size_t nodeValue = _nodeCounter++;
         _registry[name] = nodeValue;
 
-        Node *node = new SensorNode(name, nodeValue, states, set);
+        Node *node = new SensorNode(name, nodeValue, states);
         _nodes.push_back(node);
     }
 
     void Network::observe(const std::string &name, double x) {
         SensorNode *node = dynamic_cast<SensorNode *>(getNode(name));
         node->observe(x);
+
+        refreshFactorGraph(node);
+    }
+
+    void Network::refreshFactorGraph(Node *node) {
+        if (!_init) {
+
+            throw NotInitializedException();
+        }
+
+        _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
+        _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
     }
 }

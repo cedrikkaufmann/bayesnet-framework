@@ -95,7 +95,8 @@ namespace bayesNet {
             }
         }
 
-        Counter::Counter(size_t digits, const std::vector<size_t> &states) : _count(digits), _states(states), _increment(0) {
+        Counter::Counter(size_t digits, const std::vector<size_t> &states) : _count(digits), _states(states),
+                                                                             _increment(0) {
 
         }
 

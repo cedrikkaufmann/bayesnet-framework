@@ -29,7 +29,7 @@ namespace bayesNet {
         public:
             explicit Set(size_t states, double tol = 0);
 
-            ~Set();
+            virtual ~Set();
 
             void setMembershipFunction(size_t state, MembershipFunction *mf);
 
@@ -50,7 +50,7 @@ namespace bayesNet {
         public:
             explicit RuleState(size_t state, bool binary = false);
 
-            ~RuleState();
+            virtual ~RuleState();
 
             bool isBinary();
 
@@ -64,14 +64,15 @@ namespace bayesNet {
         namespace rules {
 
             RuleState *get(const state::State &state);
+
             RuleState *get(const state::StateBinary &state);
-        }        
+        }
 
         class Rule {
         public:
             explicit Rule(const std::vector<RuleState *> &parentStates, RuleState *state);
 
-            ~Rule();
+            virtual ~Rule();
 
             std::vector<RuleState *> &getParentStates();
 
@@ -90,7 +91,7 @@ namespace bayesNet {
 
             explicit RuleSet(const std::vector<Rule *> &rules);
 
-            ~RuleSet();
+            virtual ~RuleSet();
 
             void addRule(Rule *rule);
 
@@ -108,7 +109,7 @@ namespace bayesNet {
         public:
             Controller(const std::vector<Set *> &set, RuleSet *rules, double tolerance = 0);
 
-            ~Controller();
+            virtual ~Controller();
 
             CPT inferCPT();
 
@@ -270,7 +271,7 @@ namespace bayesNet {
                 Gaussian _left;
                 Gaussian _right;
             };
-        }   
+        }
     }
 }
 

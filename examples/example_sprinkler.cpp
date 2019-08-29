@@ -13,10 +13,10 @@ using namespace std;
 int main() {
     bayesNet::Network net;
 
-    net.newBinaryNode("cloudy");
-    net.newBinaryNode("sprinkler");
-    net.newBinaryNode("rainy");
-    net.newBinaryNode("wetGrass");
+    net.newNode("cloudy", true);
+    net.newNode("sprinkler", true);
+    net.newNode("rainy", true);
+    net.newNode("wetGrass", true);
 
     net.newConnection("cloudy", "sprinkler"); // sprinkler given cloudy
     net.newConnection("cloudy", "rainy"); // rainy given cloudy

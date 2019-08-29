@@ -71,7 +71,7 @@ namespace bayesNet {
                     os << "GOOD";
                     break;
                 }
-                    
+
                 case PROBABLY_GOOD: {
 
                     os << "PROBABLY_GOOD";
@@ -103,7 +103,7 @@ namespace bayesNet {
                     os << "TRUE";
                     break;
                 }
-                    
+
                 case FALSE: {
 
                     os << "FALSE";
@@ -134,17 +134,17 @@ namespace bayesNet {
                             os << "FALSE: ";
                             break;
                         }
-                            
+
                     }
 
                     os << bayesBelief.get(i);
 
                     if (i < 1) {
-                        
+
                         os << "; ";
                     }
                 }
-            }  else {
+            } else {
 
                 for (size_t i = 0; i < 2; ++i) {
 
@@ -175,7 +175,7 @@ namespace bayesNet {
                         }
                     }
                 }
-            }    
+            }
 
             os << "}";
 
