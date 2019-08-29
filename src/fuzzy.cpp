@@ -7,7 +7,6 @@
 
 #include <bayesnet/fuzzy.h>
 #include <bayesnet/util.h>
-#include <bayesnet/exception.h>
 
 namespace bayesNet {
 
