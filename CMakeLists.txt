@@ -3,7 +3,7 @@ project(BayesNet_Framework)
 
 
 # settings and flags
-set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_CXX_COMPILER /usr/local/opt/llvm/bin/clang++)
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -35,11 +35,13 @@ target_include_directories(
         bayesnet_lib PUBLIC
         ${PROJECT_SOURCE_DIR}/include
         /usr/local/include
+        /usr/local/opt/llvm/include
 )
 
 target_link_directories(
         bayesnet_lib PUBLIC
         /usr/local/lib
+        /usr/local/opt/llvm/lib
 )
 
 set_target_properties(

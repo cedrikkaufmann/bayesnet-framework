@@ -40,17 +40,23 @@ namespace bayesNet {
 
         void setEvidence(const std::string &name, size_t state);
 
+        void setMembershipFunction(const std::string &name, size_t state, fuzzyLogic::MembershipFunction *mf);
+
         void observe(const std::string &name, double x);
 
         void clearEvidence(const std::string &name);
 
         void setCPT(const std::string &name, const CPT &cpt);
 
+        void inferCPT(const std::string &name);
+
         void doInference();
 
         state::BayesBelief getBelief(const std::string &name);
 
         Node *getNode(const std::string &name);
+
+        std::vector<Node *> getParents(Node *node);
 
         void load(const std::string &file);
 
@@ -70,6 +76,8 @@ namespace bayesNet {
         bool _init;
 
         void refreshFactorGraph(Node *node);
+
+
     };
 }
 

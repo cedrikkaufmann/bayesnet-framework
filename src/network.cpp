@@ -284,4 +284,54 @@ namespace bayesNet {
         _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
         _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
     }
+
+    void Network::setMembershipFunction(const std::string &name, size_t state, fuzzyLogic::MembershipFunction *mf) {
+        Node *node = getNode(name);
+        node->setMembershipFunction(state, mf);
+    }
+
+    void Network::inferCPT(const std::string &name) {
+        Node *node = getNode(name);
+        std::vector<Node *> parents = getParents(node);
+
+        std::vector<fuzzyLogic::Set *> fuzzySets(parents.size());
+
+        // collect fuzzy sets
+        for (size_t i = 0; i < parents.size(); ++i) {
+            fuzzySets[i] = &parents[i]->getFuzzySet();
+        }
+
+        // create inference controller instance
+        fuzzyLogic::Controller inferenceCtrl(fuzzySets, &node->getFuzzyRules());
+
+        // infer cpt
+        CPT cpt = inferenceCtrl.inferCPT();
+
+        // set cpt for node
+        setCPT(name, cpt);
+    }
+
+    std::vector<Node *> Network::getParents(Node *node) {
+        std::vector<Node *> parents;
+
+        // iterate over all nodes
+        for (size_t i = 0; i < _nodes.size(); ++i) {
+
+            std::vector<Node *> &children = _nodes[i]->getChildren();
+
+            // iterate over children
+            for (size_t j = 0; j < children.size(); ++j) {
+
+                // check if node has given node as child
+                if (children[j] == node) {
+
+                    // add parent to parents vector
+                    parents.push_back(_nodes[i]);
+                    break;
+                }
+            }
+        }
+
+        return parents;
+    }
 }
