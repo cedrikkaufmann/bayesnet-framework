@@ -14,7 +14,7 @@ namespace bayesNet {
 
     namespace gui {
 
-        InferenceWindow::InferenceWindow(QWidget *parent) : QWidget(parent), _algorithmView(nullptr) {
+        InferenceWindow::InferenceWindow(QWidget *parent) : QWidget(parent), _algorithmView(NULL) {
             setWindowTitle("Inference algorithm tool");
             setFixedSize(800, 800);
 
@@ -27,7 +27,7 @@ namespace bayesNet {
         }
 
         void InferenceWindow::algorithmSelectionChanged(QListWidgetItem *item) {
-            if (_algorithmView != nullptr) {
+            if (_algorithmView != NULL) {
 
                 _layout->removeWidget(_algorithmView);
                 delete _algorithmView;
