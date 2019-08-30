@@ -29,7 +29,7 @@ namespace bayesNet {
 
         class AlgorithmForm : public QFormLayout {
         public:
-            explicit AlgorithmForm(inference::Algorithm *algorithm, QWidget *parent = nullptr) : QFormLayout(parent),
+            explicit AlgorithmForm(inference::Algorithm *algorithm, QWidget *parent = NULL) : QFormLayout(parent),
                                                                                                  _algorithm(
                                                                                                          algorithm) {}
 
@@ -55,7 +55,7 @@ namespace bayesNet {
 
         class JunctionTreeView : public AlgorithmForm {
         public:
-            explicit JunctionTreeView(inference::Algorithm *algorithm, QWidget *parent = nullptr);
+            explicit JunctionTreeView(inference::Algorithm *algorithm, QWidget *parent = NULL);
 
             virtual void saveAlgorithm();
 
@@ -76,7 +76,7 @@ namespace bayesNet {
 
         class BeliefPropagationView : public AlgorithmForm {
         public:
-            explicit BeliefPropagationView(inference::Algorithm *algorithm, QWidget *parent = nullptr);
+            explicit BeliefPropagationView(inference::Algorithm *algorithm, QWidget *parent = NULL);
 
             virtual void saveAlgorithm();
 
@@ -104,7 +104,7 @@ namespace bayesNet {
         class AlgorithmList : public QListWidget {
         Q_OBJECT
         public:
-            explicit AlgorithmList(const std::string &path, QWidget *parent = nullptr);
+            explicit AlgorithmList(const std::string &path, QWidget *parent = NULL);
 
             std::string getFullFilepath(const std::string &file);
 
@@ -123,7 +123,7 @@ namespace bayesNet {
         class AlgorithmView : public QGroupBox {
         Q_OBJECT
         public:
-            explicit AlgorithmView(const std::string &file, QWidget *parent = nullptr);
+            explicit AlgorithmView(const std::string &file, QWidget *parent = NULL);
 
         public slots:
 
@@ -136,7 +136,7 @@ namespace bayesNet {
         class InferenceWindow : public QWidget {
         Q_OBJECT
         public:
-            explicit InferenceWindow(QWidget *parent = nullptr);
+            explicit InferenceWindow(QWidget *parent = NULL);
 
         public slots:
 
