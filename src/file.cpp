@@ -5,13 +5,13 @@
 #include <fstream>
 #include <regex>
 
-#include <bayesnet/json.h>
+#include <bayesnet/file.h>
 #include <bayesnet/util.h>
 #include <bayesnet/exception.h>
 
 namespace bayesNet {
 
-    namespace json {
+    namespace file {
 
         InitializationVector *parse(const std::string &filename) {
             // regular expressions to parse json file
@@ -39,24 +39,18 @@ namespace bayesNet {
                 std::smatch match;
 
                 while (getline(file, line)) {
-
                     // check for begin of file
                     if (!beginFile && std::regex_match(line, beginRegEx)) {
-
                         beginFile = true;
-
                         continue;
                     }
 
                     // check for node name and count of states
                     if (sectionNodes && std::regex_match(line, match, nodesRegEx)) {
-
                         // add node to iv
                         if (match.str(2) == "2") {
-
                             iv->binaryNodes.push_back(match.str(1));
                         } else {
-
                             iv->nodes.push_back(match.str(1));
                         }
 
@@ -64,7 +58,6 @@ namespace bayesNet {
                     }
 
                     if (sectionConnections && std::regex_match(line, match, connectionsRegEx)) {
-
                         // get connection list
                         std::string connections = match.str(2);
 
@@ -81,7 +74,6 @@ namespace bayesNet {
                     }
 
                     if (sectionCPT && std::regex_match(line, match, cptRegEx)) {
-
                         // get cpt list
                         std::string cpt = match.str(2);
 
@@ -103,10 +95,8 @@ namespace bayesNet {
 
                     // check for end of section/file
                     if (std::regex_match(line, match, endRegEx)) {
-
                         // end of section nodes/connections/cpt
                         if (sectionNodes || sectionConnections || sectionCPT) {
-
                             sectionConnections = false;
                             sectionNodes = false;
                             sectionCPT = false;
@@ -120,15 +110,11 @@ namespace bayesNet {
 
                     // check for section
                     if (std::regex_match(line, match, sectionRegEx)) {
-
                         if (match.str(1) == "nodes") {
-
                             sectionNodes = true;
                         } else if (match.str(1) == "connections") {
-
                             sectionConnections = true;
                         } else if (match.str(1) == "cpt") {
-
                             sectionCPT = true;
                         }
 
@@ -137,7 +123,6 @@ namespace bayesNet {
 
                     // check for inference option
                     if (std::regex_match(line, match, inferenceRegEx)) {
-
                         iv->inferenceAlgorithm = match.str(1);
                         continue;
                     }
@@ -149,7 +134,6 @@ namespace bayesNet {
                 // return initialization vector
                 return iv;
             } else {
-
                 throw FileNotFoundException();
             }
         }
@@ -160,14 +144,11 @@ namespace bayesNet {
 
             // check if file is open
             if (file.is_open()) {
-
                 // write data
                 file << *iv;
-
-                // close file
+                // close file descriptor
                 file.close();
             } else {
-
                 // error while opening file
                 throw UnableWriteFileException();
             }
@@ -184,7 +165,6 @@ namespace bayesNet {
 
             // write json begin
             os << "{" << std::endl;
-
             // write nodes section
             // begin nodes section
             os << indentSection << "\"nodes\": {" << std::endl;
@@ -192,35 +172,28 @@ namespace bayesNet {
             // write each node
             // binary nodes
             for (size_t i = 0; i < iv.binaryNodes.size(); ++i) {
-
                 os << indentSectionEntries << "\"" << iv.binaryNodes[i] << "\": 2";
 
                 if (i == iv.binaryNodes.size() - 1) {
-
                     os << std::endl;
                 } else {
-
                     os << "," << std::endl;
                 }
             }
 
             // nodes with 4 states
             for (size_t i = 0; i < iv.nodes.size(); ++i) {
-
                 os << indentSectionEntries << "\"" << iv.nodes[i] << "\": 4";
 
                 if (i == iv.nodes.size() - 1) {
-
                     os << std::endl;
                 } else {
-
                     os << "," << std::endl;
                 }
             }
 
             // end nodes section
             os << indentSection << "}," << std::endl;
-
             // write connections section
             // begin connections section
             os << indentSection << "\"connections\": {" << std::endl;
@@ -228,36 +201,28 @@ namespace bayesNet {
             // write each connection
             size_t itCounter = 0;
 
-            for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv.connections.begin();
-                 it != iv.connections.end(); it++) {
-
+            for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv.connections.begin(); it != iv.connections.end(); it++) {
                 os << indentSectionEntries << "\"" << (*it).first << "\": [";
 
                 for (size_t i = 0; i < (*it).second.size(); ++i) {
-
                     os << "\"" << (*it).second[i] << "\"";
 
                     if (i == (*it).second.size() - 1) {
-
                         os << "]";
                     } else {
-
                         os << ", ";
                     }
                 }
 
                 if (++itCounter < iv.connections.size()) {
-
                     os << "," << std::endl;
                 } else {
-
                     os << std::endl;
                 }
             }
 
             // end connections section
             os << indentSection << "}," << std::endl;
-
             // write cpt section
             // begin cpt section
             os << indentSection << "\"cpt\": {" << std::endl;
@@ -265,29 +230,22 @@ namespace bayesNet {
             // write each connection
             itCounter = 0;
 
-            for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv.cpt.begin();
-                 it != iv.cpt.end(); it++) {
-
+            for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv.cpt.begin(); it != iv.cpt.end(); it++) {
                 os << indentSectionEntries << "\"" << (*it).first << "\": [";
 
                 for (size_t i = 0; i < (*it).second.size(); ++i) {
-
                     os << (*it).second[i];
 
                     if (i == (*it).second.size() - 1) {
-
                         os << "]";
                     } else {
-
                         os << ", ";
                     }
                 }
 
                 if (++itCounter < iv.cpt.size()) {
-
                     os << "," << std::endl;
                 } else {
-
                     os << std::endl;
                 }
             }
@@ -297,11 +255,8 @@ namespace bayesNet {
 
             // inference section
             if (!iv.inferenceAlgorithm.empty()) {
-
-                os << "," << std::endl << indentSection << "\"inference\": \"" << iv.inferenceAlgorithm << "\""
-                   << std::endl;
+                os << "," << std::endl << indentSection << "\"inference\": \"" << iv.inferenceAlgorithm << "\"" << std::endl;
             } else {
-
                 os << std::endl;
             }
 

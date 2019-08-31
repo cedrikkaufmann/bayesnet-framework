@@ -16,26 +16,19 @@ namespace bayesNet {
 
             double Linear::fx(double x) {
                 if (_fxMin < _fxMax) {
-
                     if (x <= _fxMin) {
-
                         return 0;
                     }
 
                     if (x >= _fxMax) {
-
                         return 1;
                     }
-
                 } else {
-
                     if (x <= _fxMax) {
-
                         return 1;
                     }
 
                     if (x >= _fxMin) {
-
                         return 0;
                     }
                 }
@@ -60,17 +53,14 @@ namespace bayesNet {
 
             double Triangle::fx(double x) {
                 if (x <= _begin || x >= _end) {
-
                     return 0;
                 }
 
                 if (x > _begin && x < _max) {
-
                     return _increasing.fx(x);
                 }
 
                 if (x > _max && x < _end) {
-
                     return _decreasing.fx(x);
                 }
 
@@ -81,27 +71,20 @@ namespace bayesNet {
                 return _max;
             }
 
-            Trapezoid::Trapezoid(double x1, double x2, double x3, double x4) : _increasingBegin(x1),
-                                                                               _increasingEnd(x2), _decreasingBegin(x3),
-                                                                               _decreasingEnd(x4),
-                                                                               _increasingLinear(x1, x2),
-                                                                               _decreasingLinear(x4, x3) {
-
-            }
+            Trapezoid::Trapezoid(double x1, double x2, double x3, double x4) : _increasingBegin(x1), _increasingEnd(x2), 
+                                                                               _decreasingBegin(x3), _decreasingEnd(x4),
+                                                                               _increasingLinear(x1, x2), _decreasingLinear(x4, x3) {}
 
             double Trapezoid::fx(double x) {
                 if (x <= _increasingBegin || x >= _decreasingEnd) {
-
                     return 0;
                 }
 
                 if (x >= _increasingEnd && x <= _decreasingBegin) {
-
                     return 1;
                 }
 
                 if (x > _increasingBegin && x < _increasingEnd) {
-
                     return _increasingLinear.fx(x);
                 }
 
@@ -112,23 +95,18 @@ namespace bayesNet {
                 return (_decreasingBegin - _increasingEnd) / 2;
             }
 
-            SShape::SShape(double a, double b) : _a(a), _b(b) {
-
-            }
+            SShape::SShape(double a, double b) : _a(a), _b(b) {}
 
             double SShape::fx(double x) {
                 if (x <= _a) {
-
                     return 0;
                 }
 
                 if (x >= _b) {
-
                     return 1;
                 }
 
                 if (x > _a && x <= (_a + _b) / 2) {
-
                     return 2 * std::pow((x - _a) / (_b - _a), 2);
                 }
 
@@ -147,9 +125,7 @@ namespace bayesNet {
                 return _b;
             }
 
-            ZShape::ZShape(double a, double b) : _sShape(a, b) {
-
-            }
+            ZShape::ZShape(double a, double b) : _sShape(a, b) {}
 
             double ZShape::fx(double x) {
                 return 1 - _sShape.fx(x);
@@ -169,7 +145,6 @@ namespace bayesNet {
 
             double PiShape::fx(double x) {
                 if (x <= _zShape.getMaxPos()) {
-
                     return _sShape.fx(x);
                 }
 
@@ -180,9 +155,7 @@ namespace bayesNet {
                 return 1 / (1 + std::exp(-1 * _a * (x - _c)));
             }
 
-            Bell::Bell(double a, double b, double c) : _a(a), _b(b), _c(c) {
-
-            }
+            Bell::Bell(double a, double b, double c) : _a(a), _b(b), _c(c) {}
 
             double Bell::fx(double x) {
                 return 1 / (1 + std::pow(std::abs((x - _c) / _a), 2 * _b));
@@ -196,9 +169,7 @@ namespace bayesNet {
                 return std::exp(-std::pow(x - _mean, 2) / (2 * std::pow(_deviation, 2)));
             }
 
-            Gaussian::Gaussian(double mean, double deviation) : _mean(mean), _deviation(deviation) {
-
-            }
+            Gaussian::Gaussian(double mean, double deviation) : _mean(mean), _deviation(deviation) {}
 
             double Gaussian::getMean() {
                 return _mean;
@@ -208,29 +179,22 @@ namespace bayesNet {
                 return _mean;
             }
 
-            Gaussian2::Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight)
-                    : _left(
-                    meanLeft, deviationLeft), _right(meanRight, deviationRight) {
-
-            }
+            Gaussian2::Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight) : _left(meanLeft, deviationLeft), 
+                                                                                                                   _right(meanRight, deviationRight) {}
 
             double Gaussian2::fx(double x) {
                 double gaussianLeft;
                 double gaussianRight;
 
                 if (x >= _left.getMean()) {
-
                     gaussianLeft = 1;
                 } else {
-
                     gaussianLeft = _left.fx(x);
                 }
 
                 if (x <= _right.getMean()) {
-
                     gaussianRight = 1;
                 } else {
-
                     gaussianRight = _right.fx(x);
                 }
 
@@ -241,17 +205,13 @@ namespace bayesNet {
                 return (_left.getMean() + _right.getMean()) / 2;
             }
 
-            PiShape::PiShape(double a, double b, double c, double d) : _sShape(a, b), _zShape(c, d) {
-
-            }
+            PiShape::PiShape(double a, double b, double c, double d) : _sShape(a, b), _zShape(c, d) {}
 
             double PiShape::findMaximum() {
                 return (_sShape.getMaxPos() + _zShape.getMaxPos()) / 2;
             }
 
-            Sigmoidal::Sigmoidal(double a, double c) : _a(a), _c(c) {
-
-            }
+            Sigmoidal::Sigmoidal(double a, double c) : _a(a), _c(c) {}
 
             double Sigmoidal::findMaximum() {
                 double pos = _c;
@@ -273,13 +233,9 @@ namespace bayesNet {
             }
         }
 
-        MembershipFunction::MembershipFunction() {
+        MembershipFunction::MembershipFunction() {}
 
-        }
-
-        MembershipFunction::~MembershipFunction() {
-
-        }
+        MembershipFunction::~MembershipFunction() {}
 
         MembershipFunction *Set::getMembershipFunction(size_t state) {
             return _mf[state];
@@ -290,11 +246,9 @@ namespace bayesNet {
             std::vector<double> beliefs(states);
 
             for (size_t i = 0; i < states; ++i) {
-
                 beliefs[i] = _mf[i]->fx(x);
 
                 if (beliefs[i] < _nullBeliefTolerance) {
-
                     beliefs[i] = _nullBeliefTolerance;
                 }
             }
@@ -306,7 +260,6 @@ namespace bayesNet {
             double belief = _mf[state]->fx(x);
 
             if (belief < _nullBeliefTolerance) {
-
                 belief = _nullBeliefTolerance;
             }
 
@@ -317,13 +270,9 @@ namespace bayesNet {
             return _mf[state]->findMaximum();
         }
 
-        Set::Set(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {
+        Set::Set(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {}
 
-        }
-
-        Set::~Set() {
-
-        }
+        Set::~Set() {}
 
         void Set::setMembershipFunction(size_t state, MembershipFunction *mf) {
             _mf[state] = mf;
@@ -345,20 +294,15 @@ namespace bayesNet {
             size_t jointStates = 1;
 
             if (_state.isBinary()) {
-
                 jointStates *= 2;
             } else {
-
                 jointStates *= 4;
             }
 
             for (size_t i = 0; i < _parentStates.size(); ++i) {
-
                 if (_parentStates[i]->isBinary()) {
-
                     jointStates *= 2;
                 } else {
-
                     jointStates *= 4;
                 }
             }
@@ -366,25 +310,19 @@ namespace bayesNet {
             return jointStates;
         }
 
-        Rule::~Rule() {
-
-        }
+        Rule::~Rule() {}
 
         void RuleSet::addRule(Rule *rule) {
             _rules.push_back(rule);
         }
 
-        RuleSet::RuleSet() {
-
-        }
+        RuleSet::RuleSet() {}
 
         RuleSet::RuleSet(const std::vector<Rule *> &rules) {
             _rules = rules;
         }
 
-        RuleSet::~RuleSet() {
-
-        }
+        RuleSet::~RuleSet() {}
 
         void RuleSet::setRules(const std::vector<Rule *> &rules) {
             _rules = rules;
@@ -398,14 +336,12 @@ namespace bayesNet {
             return _rules.size() * _rules[0]->nrJointStates();
         }
 
-        Controller::Controller(const std::vector<Set *> &set, RuleSet *rules, double tolerance)
-                : _rules(rules), _fuzzySet(set), _nullBeliefTolerance(tolerance) {
+        Controller::Controller(const std::vector<Set *> &set, RuleSet *rules, double tolerance) : _rules(rules), _fuzzySet(set), 
+                                                                                                  _nullBeliefTolerance(tolerance) {
 
         }
 
-        Controller::~Controller() {
-
-        }
+        Controller::~Controller() {}
 
         CPT Controller::inferCPT() {
             std::vector<Rule *> &fuzzyRules = _rules->getRules();
@@ -416,12 +352,9 @@ namespace bayesNet {
             std::vector<size_t> maxStates(parentStates.size());
 
             for (size_t j = 0; j < parentStates.size(); ++j) {
-
                 if (parentStates[j]->isBinary()) {
-
                     maxStates[j] = 2;
                 } else {
-
                     maxStates[j] = 4;
                 }
             }
@@ -429,12 +362,10 @@ namespace bayesNet {
             utils::Counter stateCounter(parentStates.size(), maxStates);
 
             do {
-
                 std::vector<double> inferred = infer(stateCounter.getCount());
                 size_t maxIncrement = stateCounter.getMaximumIncrement();
 
                 for (size_t i = 0; i < inferred.size(); i++) {
-
                     cpt[(i * maxIncrement) + stateCounter.getIncrement()] = inferred[i];
                 }
             } while (stateCounter.countUp());
@@ -447,7 +378,6 @@ namespace bayesNet {
 
             // find maximum for given states from fuzzy sets
             for (size_t i = 0; i < states.size(); ++i) {
-
                 max[i] = _fuzzySet[i]->findMaximum(states[i]);
             }
 
@@ -455,11 +385,9 @@ namespace bayesNet {
             std::vector<double> conclusions(rules.size());
 
             for (size_t i = 0; i < rules.size(); ++i) {
-
                 double tNorm = 1;
 
                 for (size_t j = 0; j < states.size(); ++j) {
-
                     tNorm *= _fuzzySet[j]->getBelief(max[j], rules[i]->getParentStates()[j]->getState());
                 }
 
@@ -469,29 +397,23 @@ namespace bayesNet {
             size_t nrStates;
 
             if (_rules->getRules()[0]->getChildState().isBinary()) {
-
                 nrStates = 2;
             } else {
-
                 nrStates = 4;
             }
 
             std::vector<double> inferredProbabilities(nrStates);
 
             for (size_t i = 0; i < conclusions.size(); ++i) {
-
                 size_t state = rules[i]->getChildState().getState();
 
                 if (conclusions[i] > inferredProbabilities[state]) {
-
                     inferredProbabilities[state] = conclusions[i];
                 }
             }
 
             for (size_t i = 0; i < inferredProbabilities.size(); ++i) {
-
                 if (inferredProbabilities[i] < _nullBeliefTolerance) {
-
                     inferredProbabilities[i] = _nullBeliefTolerance;
                 }
             }
@@ -502,13 +424,9 @@ namespace bayesNet {
             return inferredProbabilities;
         }
 
-        RuleState::RuleState(size_t state, bool binary) : _state(state), _binary(binary) {
+        RuleState::RuleState(size_t state, bool binary) : _state(state), _binary(binary) {}
 
-        }
-
-        RuleState::~RuleState() {
-
-        }
+        RuleState::~RuleState() {}
 
         bool RuleState::isBinary() {
             return _binary;
@@ -518,32 +436,26 @@ namespace bayesNet {
             return _state;
         }
 
-
         namespace rules {
 
             RuleState *get(const state::State &state) {
                 switch (state) {
-
                     case state::GOOD: {
-
                         static RuleState *rule = new RuleState(state::GOOD);
                         return rule;
                     }
 
                     case state::PROBABLY_GOOD: {
-
                         static RuleState *rule = new RuleState(state::PROBABLY_GOOD);
                         return rule;
                     }
 
                     case state::PROBABLY_BAD: {
-
                         static RuleState *rule = new RuleState(state::PROBABLY_BAD);
                         return rule;
                     }
 
                     case state::BAD: {
-
                         static RuleState *rule = new RuleState(state::BAD);
                         return rule;
                     }
@@ -552,15 +464,12 @@ namespace bayesNet {
 
             RuleState *get(const state::StateBinary &state) {
                 switch (state) {
-
                     case state::TRUE: {
-
                         static RuleState *rule = new RuleState(state::TRUE, true);
                         return rule;
                     }
 
                     case state::FALSE: {
-
                         static RuleState *rule = new RuleState(state::FALSE, true);
                         return rule;
                     }

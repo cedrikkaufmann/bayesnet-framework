@@ -23,7 +23,7 @@ add_library(
         ${PROJECT_SOURCE_DIR}/src/exception.cpp
         ${PROJECT_SOURCE_DIR}/src/factor.cpp
         ${PROJECT_SOURCE_DIR}/src/inference.cpp
-        ${PROJECT_SOURCE_DIR}/src/json.cpp
+        ${PROJECT_SOURCE_DIR}/src/file.cpp
         ${PROJECT_SOURCE_DIR}/src/network.cpp
         ${PROJECT_SOURCE_DIR}/src/node.cpp
         ${PROJECT_SOURCE_DIR}/src/state.cpp

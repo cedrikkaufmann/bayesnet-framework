@@ -7,21 +7,13 @@
 
 namespace bayesNet {
 
-    CPT::CPT() {
+    CPT::CPT() {}
 
-    }
+    CPT::CPT(size_t jointSize) : _probabilities(jointSize) {}
 
-    CPT::CPT(size_t jointSize) : _probabilities(jointSize) {
+    CPT::CPT(const Factor &factor) : _probabilities(factor.nrStates()) {}
 
-    }
-
-    CPT::CPT(const Factor &factor) : _probabilities(factor.nrStates()) {
-
-    }
-
-    CPT::~CPT() {
-
-    }
+    CPT::~CPT() {}
 
     CPT::CPT(std::vector<double> probabilities) {
         // try to calculate complementary probability if missing
@@ -32,21 +24,18 @@ namespace bayesNet {
             if (probabilities[i] + probabilities[i + states] < 1) {
 
                 if (probabilities[i] > 0 && probabilities[i + states] > 0) {
-
                     // cannot calculate complement, thus throw exception
                     throw InvalidCPTException();
                 }
 
                 // calculate complementary probability
                 if (probabilities[i] > 0) {
-
                     probabilities[i + states] = 1 - probabilities[i];
                 } else {
-
                     probabilities[i] = 1 - probabilities[i + states];
                 }
-            } else if (probabilities[i] + probabilities[i + states] > 1) {
 
+            } else if (probabilities[i] + probabilities[i + states] > 1) {
                 // probability and its complement are greater than 1, thus throw exception
                 throw InvalidCPTException();
             }
@@ -78,7 +67,6 @@ namespace bayesNet {
 
     double &CPT::operator[](size_t index) {
         if (index > _probabilities.size()) {
-
             throw IndexOutOfBoundException();
         }
 

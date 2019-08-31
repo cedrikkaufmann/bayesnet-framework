@@ -19,16 +19,12 @@ namespace bayesNet {
 
         Algorithm::Algorithm() : _algorithm(LOOPY_BELIEF_PROPAGATION),
                                  _inferenceProperties(DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES),
-                                 _inferenceInstance(NULL) {
-
-        }
+                                 _inferenceInstance(NULL) {}
 
         Algorithm::Algorithm(const AlgorithmType &alg, const std::string &properties) : _algorithm(alg),
                                                                                         _inferenceProperties(
                                                                                                 properties),
-                                                                                        _inferenceInstance(NULL) {
-
-        }
+                                                                                        _inferenceInstance(NULL) {}
 
         Algorithm::Algorithm(const std::string &filename) : _inferenceInstance(NULL) {
             // load inference algorithm string from file
@@ -37,7 +33,6 @@ namespace bayesNet {
             std::string inferenceAlgorithmType;
 
             if (inferenceAlgorithmFile.is_open()) {
-
                 // read algorithm type
                 getline(inferenceAlgorithmFile, inferenceAlgorithmType);
                 // read algorithm string
@@ -48,26 +43,20 @@ namespace bayesNet {
 
                 // generate inference algorithm from string
                 if (inferenceAlgorithmType == "BP") {
-
                     _algorithm = LOOPY_BELIEF_PROPAGATION;
                 } else if (inferenceAlgorithmType == "CBP") {
-
                     _algorithm = CONDITIONED_BELIEF_PROPAGATION;
                 } else if (inferenceAlgorithmType == "FBP") {
-
                     _algorithm = FRACTIONAL_BELIEF_PROPAGATION;
                 } else if (inferenceAlgorithmType == "JT") {
-
                     _algorithm = JUNCTION_TREE;
                 } else {
-
                     throw InvalidAlgorithmFile();
                 }
 
                 _inferenceProperties = dai::PropertySet(inferenceAlgorithm);
                 _filename = filename;
             } else {
-
                 throw FileNotFoundException();
             }
         }
@@ -78,7 +67,6 @@ namespace bayesNet {
 
         void Algorithm::generateInferenceInstance(dai::FactorGraph &fg) {
             switch (_algorithm) {
-
                 case inference::LOOPY_BELIEF_PROPAGATION: {
                     _inferenceInstance = new dai::BP(fg, _inferenceProperties);
                     break;
@@ -93,9 +81,11 @@ namespace bayesNet {
                     _inferenceInstance = new dai::FBP(fg, _inferenceProperties);
                     break;
                 }
-                case JUNCTION_TREE:
+
+                case JUNCTION_TREE: {
                     _inferenceInstance = new dai::JTree(fg, _inferenceProperties);
                     break;
+                }
             }
         }
 
@@ -103,13 +93,11 @@ namespace bayesNet {
             std::ofstream file(filename);
 
             if (file.is_open()) {
-
                 file << *this;
                 file.close();
 
                 _filename = filename;
             } else {
-
                 throw UnableWriteFileException();
             }
         }
@@ -139,9 +127,7 @@ namespace bayesNet {
         }
 
         std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm) {
-
             switch (algorithm.getType()) {
-
                 case inference::LOOPY_BELIEF_PROPAGATION: {
                     os << "BP" << std::endl;
                     break;
@@ -157,9 +143,10 @@ namespace bayesNet {
                     break;
                 }
 
-                case JUNCTION_TREE:
+                case JUNCTION_TREE: {
                     os << "JT" << std::endl;
                     break;
+                }
             }
 
             os << algorithm.getProperties();

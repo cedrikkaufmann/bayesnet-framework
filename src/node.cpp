@@ -114,21 +114,19 @@ namespace bayesNet {
         return os;
     }
 
-    SensorNode::SensorNode(const std::string &name, size_t label, size_t states) : Node(name, label, states) {
-
-    }
+    SensorNode::SensorNode(const std::string &name, size_t label, size_t states) : Node(name, label, states) {}
 
     void SensorNode::observe(double x) {
+        // get beliefs from fuzzy set
         std::vector<double> beliefs = getFuzzySet().getBeliefs(x);
 
         // normalize
         utils::vectorNormalize(beliefs);
 
+        // set cpt for node
         CPT cpt(beliefs);
         setCPT(cpt);
     }
 
-    SensorNode::~SensorNode() {
-
-    }
+    SensorNode::~SensorNode() {}
 }

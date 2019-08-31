@@ -2,8 +2,8 @@
 // Created by Cedrik Kaufmann on 2019-08-03.
 //
 
-#ifndef BAYESNET_FRAMEWORK_JSON_H
-#define BAYESNET_FRAMEWORK_JSON_H
+#ifndef BAYESNET_FRAMEWORK_FILE_H
+#define BAYESNET_FRAMEWORK_FILE_H
 
 #include <string>
 #include <vector>
@@ -12,7 +12,7 @@
 
 namespace bayesNet {
 
-    namespace json {
+    namespace file {
 
         struct InitializationVector {
             std::vector<std::string> binaryNodes;
@@ -32,4 +32,4 @@ namespace bayesNet {
     }
 }
 
-#endif //BAYESNET_FRAMEWORK_JSON_H
+#endif //BAYESNET_FRAMEWORK_FILE_H

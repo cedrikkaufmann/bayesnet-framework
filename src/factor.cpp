@@ -7,22 +7,17 @@
 
 namespace bayesNet {
 
-    Factor::Factor(size_t states) : dai::Factor(), _backupFactor(states, 0), _states(states), _isEvidence(false) {
-
-    }
+    Factor::Factor(size_t states) : dai::Factor(), _backupFactor(states, 0), _states(states), _isEvidence(false) {}
 
     Factor::Factor(dai::VarSet &vars, size_t states) : dai::Factor(vars), _backupFactor(vars.nrStates().get_ui()),
-                                                       _states(states), _isEvidence(false) {
+                                                       _states(states), _isEvidence(false) {}
 
-    }
-
-    Factor::~Factor() {
-
-    }
+    Factor::~Factor() {}
 
     void Factor::setEvidence(size_t state) {
-        if (state > _states - 1)
+        if (state > _states - 1) {
             throw IndexOutOfBoundException();
+        }
 
         if (_isEvidence) {
             restore();
@@ -36,7 +31,6 @@ namespace bayesNet {
         size_t evidenceEndIndex = evidenceBeginIndex + evidenceEntries;
 
         for (size_t i = 0; i < jointStates; i++) {
-
             if (i < evidenceBeginIndex || i >= evidenceEndIndex) {
                 this->set(i, 0);
             }

@@ -9,26 +9,20 @@
 
 namespace bayesNet {
 
-    Network::Network() : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {
-
-    }
+    Network::Network() : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {}
 
     Network::Network(const std::string &file) : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {
-        load(file);
+        load(file::parse(file));
     }
 
-    Network::~Network() {
-
-    }
+    Network::~Network() {}
 
     void Network::newNode(const std::string &name, bool binary) {
         size_t states;
 
         if (binary) {
-
             states = 2;
         } else {
-
             states = 4;
         }
 
@@ -83,7 +77,6 @@ namespace bayesNet {
 
     void Network::setEvidence(const std::string &name, size_t state) {
         if (!_init) {
-
             throw NotInitializedException();
         }
 
@@ -91,35 +84,29 @@ namespace bayesNet {
             Node *node = getNode(name);
 
             if (state < node->getDiscrete().states()) {
-
                 node->setEvidence(state);
             } else {
-
                 throw IndexOutOfBoundException();
             }
 
             _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
             _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
         } catch (const std::exception &) {
-
             throw BayesNodeNotFoundException();
         }
     }
 
     void Network::clearEvidence(const std::string &name) {
         if (!_init) {
-
             throw NotInitializedException();
         }
 
         try {
-
             size_t nodeValue = _registry.at(name);
             Node *node = _nodes[nodeValue];
             node->clearEvidence();
             refreshFactorGraph(node);
         } catch (const std::exception &) {
-
             throw BayesNodeNotFoundException();
         }
     }
@@ -134,7 +121,6 @@ namespace bayesNet {
 
     state::BayesBelief Network::getBelief(const std::string &name) {
         if (!_init) {
-
             throw NotInitializedException();
         }
 
@@ -144,7 +130,6 @@ namespace bayesNet {
         state::BayesBelief bayesBelief(node->isBinary());
 
         for (size_t i = 0; i < belief.nrStates(); ++i) {
-
             bayesBelief[i] = belief[i];
         }
 
@@ -155,37 +140,26 @@ namespace bayesNet {
         getNode(name)->setCPT(cpt);
     }
 
-    void Network::load(const std::string &file) {
-        load(json::parse(file));
-    }
-
-    void Network::load(json::InitializationVector *iv) {
+    void Network::load(file::InitializationVector *iv) {
         // add nodes with 4 states to network
         for (size_t i = 0; i < iv->nodes.size(); ++i) {
-
             newNode(iv->nodes[i]);
         }
 
         // add binary nodes to network
         for (size_t i = 0; i < iv->binaryNodes.size(); ++i) {
-
             newNode(iv->binaryNodes[i], true);
         }
 
         // add connections for nodes to network
-        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv->connections.begin();
-             it != iv->connections.end(); it++) {
-
+        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv->connections.begin(); it != iv->connections.end(); it++) {
             for (size_t i = 0; i < (*it).second.size(); ++i) {
-
                 newConnection((*it).first, (*it).second[i]);
             }
         }
 
         // add cpt for nodes to network
-        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin();
-             it != iv->cpt.end(); it++) {
-
+        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin(); it != iv->cpt.end(); it++) {
             setCPT((*it).first, CPT((*it).second));
         }
 
@@ -197,18 +171,15 @@ namespace bayesNet {
     }
 
     void Network::save(const std::string &filename) {
-        json::InitializationVector *iv = new json::InitializationVector();
+        file::InitializationVector *iv = new file::InitializationVector();
 
         for (size_t i = 0; i < _nodeNames.size(); ++i) {
-
             Node *node = getNode(_nodeNames[i]);
 
             // add node names to iv
             if (node->isBinary()) {
-
                 iv->binaryNodes.push_back(node->getName());
             } else {
-
                 iv->nodes.push_back(node->getName());
             }
 
@@ -216,7 +187,6 @@ namespace bayesNet {
             std::vector<Node *> children = node->getChildren();
 
             for (size_t j = 0; j < children.size(); ++j) {
-
                 iv->connections[node->getName()].push_back(children[j]->getName());
             }
 
@@ -229,12 +199,11 @@ namespace bayesNet {
             }
         }
 
-        json::save(filename, iv);
+        file::save(filename, iv);
     }
 
     void Network::save(const std::string &networkFilename, const std::string &algorithmFilename) {
         if (_inferenceAlgorithm != NULL) {
-
             _inferenceAlgorithm->save(algorithmFilename);
         }
 
@@ -245,17 +214,14 @@ namespace bayesNet {
         size_t states;
 
         if (binary) {
-
             states = 2;
         } else {
-
             states = 4;
         }
 
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
-
             throw BayesNodeAlreadyDefinedException();
         }
 
@@ -277,7 +243,6 @@ namespace bayesNet {
 
     void Network::refreshFactorGraph(Node *node) {
         if (!_init) {
-
             throw NotInitializedException();
         }
 
@@ -316,15 +281,12 @@ namespace bayesNet {
 
         // iterate over all nodes
         for (size_t i = 0; i < _nodes.size(); ++i) {
-
             std::vector<Node *> &children = _nodes[i]->getChildren();
 
             // iterate over children
             for (size_t j = 0; j < children.size(); ++j) {
-
                 // check if node has given node as child
                 if (children[j] == node) {
-
                     // add parent to parents vector
                     parents.push_back(_nodes[i]);
                     break;
@@ -333,5 +295,10 @@ namespace bayesNet {
         }
 
         return parents;
+    }
+
+    std::vector<Node *> Network::getParents(const std::string &name) {
+        Node *node = getNode(name);
+        return getParents(node);
     }
 }

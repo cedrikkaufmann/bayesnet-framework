@@ -14,7 +14,7 @@
 #include <bayesnet/cpt.h>
 #include <bayesnet/inference.h>
 #include <bayesnet/fuzzy.h>
-#include <bayesnet/json.h>
+#include <bayesnet/file.h>
 
 #include <dai/factor.h>
 #include <dai/factorgraph.h>
@@ -48,19 +48,17 @@ namespace bayesNet {
 
         void setCPT(const std::string &name, const CPT &cpt);
 
+        void setFuzzyRules(const std::string &file);
+
         void inferCPT(const std::string &name);
 
         void doInference();
 
-        state::BayesBelief getBelief(const std::string &name);
-
         Node *getNode(const std::string &name);
 
-        std::vector<Node *> getParents(Node *node);
+        std::vector<Node *> getParents(const std::string &name);
 
-        void load(const std::string &file);
-
-        void load(json::InitializationVector *iv);
+        state::BayesBelief getBelief(const std::string &name);
 
         void save(const std::string &filename);
 
@@ -75,9 +73,11 @@ namespace bayesNet {
         size_t _nodeCounter;
         bool _init;
 
+        void load(file::InitializationVector *iv);
+
         void refreshFactorGraph(Node *node);
 
-
+        std::vector<Node *> getParents(Node *node);
     };
 }
 
