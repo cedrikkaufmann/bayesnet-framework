@@ -141,30 +141,40 @@ namespace bayesNet {
     }
 
     void Network::load(file::InitializationVector *iv) {
-        // add nodes with 4 states to network
-        for (size_t i = 0; i < iv->nodes.size(); ++i) {
-            newNode(iv->nodes[i]);
-        }
+        // add nodes to network
+        std::vector<file::Node *> &nodes = iv->getNodes();
 
-        // add binary nodes to network
-        for (size_t i = 0; i < iv->binaryNodes.size(); ++i) {
-            newNode(iv->binaryNodes[i], true);
-        }
+        for (size_t i = 0; i < nodes.size(); i++) {
 
-        // add connections for nodes to network
-        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = iv->connections.begin(); it != iv->connections.end(); it++) {
+            if (nodes[i]->isSensor()) {
+                newSensorNode(nodes[i]->getName(), nodes[i]->isBinary());
+                continue;
+            }
+
+            newNode(nodes[i]->getName(), nodes[i]->isBinary());
+        }
+        
+         // add connections for nodes to network
+        std::unordered_map<std::string, std::vector<std::string> > &connections = iv->getConnections();
+
+        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = connections.begin(); it != connections.end(); it++) {
             for (size_t i = 0; i < (*it).second.size(); ++i) {
                 newConnection((*it).first, (*it).second[i]);
             }
         }
 
         // add cpt for nodes to network
-        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = iv->cpt.begin(); it != iv->cpt.end(); it++) {
+        std::unordered_map<std::string, std::vector<double> > &cpts = iv->getCPTs();
+
+        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = cpts.begin(); it != cpts.end(); it++) {
             setCPT((*it).first, CPT((*it).second));
         }
 
         // generate inference algorithm from string
-        inference::Algorithm *algorithm = new inference::Algorithm(iv->inferenceAlgorithm);
+        inference::Algorithm *algorithm = new inference::Algorithm(iv->getInferenceAlgorithm());
+
+        // free memory of iv
+        delete iv;
 
         // initialize network
         init(algorithm);
@@ -173,29 +183,50 @@ namespace bayesNet {
     void Network::save(const std::string &filename) {
         file::InitializationVector *iv = new file::InitializationVector();
 
-        for (size_t i = 0; i < _nodeNames.size(); ++i) {
-            Node *node = getNode(_nodeNames[i]);
+        for (size_t i = 0; i < _nodes.size(); ++i) {
+            bool isSensor = false;
 
             // add node names to iv
-            if (node->isBinary()) {
-                iv->binaryNodes.push_back(node->getName());
+            SensorNode *sensorNode = dynamic_cast<SensorNode *>(_nodes[i]);
+
+            if (sensorNode != NULL) {
+                isSensor = true;
+            }
+
+            if (_nodes[i]->isBinary()) {
+                iv->addNode(_nodes[i]->getName(), 2, isSensor);
             } else {
-                iv->nodes.push_back(node->getName());
+                iv->addNode(_nodes[i]->getName(), 4, isSensor);
             }
 
             // add connections to iv
-            std::vector<Node *> children = node->getChildren();
+            std::vector<Node *> children = _nodes[i]->getChildren();
+
+            std::vector<std::string> connections;
 
             for (size_t j = 0; j < children.size(); ++j) {
-                iv->connections[node->getName()].push_back(children[j]->getName());
+                connections.push_back(children[j]->getName());
+            }
+
+            if (connections.size() > 0) {
+                iv->setConnections(_nodes[i]->getName(), connections);
             }
 
             // add cpt to iv
-            iv->cpt[node->getName()] = node->getCPT().getProbabilities();
+            std::vector<double> &probabilies = _nodes[i]->getCPT().getProbabilities();
+            
+            if (probabilies.size() > 0) {
+                iv->setCPT(_nodes[i]->getName(), _nodes[i]->getCPT().getProbabilities());
+            }
+
+            // add fuzzy sets
+            if (isSensor) {
+            
+            }
 
             // add inference algorithm
             if (_init && !_inferenceAlgorithm->getFilename().empty()) {
-                iv->inferenceAlgorithm = _inferenceAlgorithm->getFilename();
+                iv->setInferenceAlgorithm(_inferenceAlgorithm->getFilename());
             }
         }
 

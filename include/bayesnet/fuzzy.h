@@ -20,10 +20,14 @@ namespace bayesNet {
 
             virtual ~MembershipFunction();
 
-            virtual double fx(double x) = 0;
+            virtual double fx(double x) const = 0;
 
-            virtual double findMaximum() = 0;
+            virtual double findMaximum() const = 0;
+
+            virtual std::string toString() const = 0;
         };
+
+        std::ostream &operator<<(std::ostream &os, MembershipFunction &mf);
 
         class Set {
         public:
@@ -35,16 +39,20 @@ namespace bayesNet {
 
             MembershipFunction *getMembershipFunction(size_t state);
 
-            double findMaximum(size_t state);
+            double findMaximum(size_t state) const;
 
             std::vector<double> getBeliefs(double x) const;
 
             double getBelief(double x, size_t state) const;
 
+            size_t nrStates() const;
+
         private:
             double _nullBeliefTolerance;
             std::vector<MembershipFunction *> _mf;
         };
+
+        std::ostream &operator<<(std::ostream &os, Set &set);
 
         class RuleState {
         public:
@@ -52,9 +60,9 @@ namespace bayesNet {
 
             virtual ~RuleState();
 
-            bool isBinary();
+            bool isBinary() const;
 
-            size_t getState();
+            size_t getState() const;
 
         private:
             size_t _state;
@@ -78,7 +86,7 @@ namespace bayesNet {
 
             RuleState &getChildState();
 
-            size_t nrJointStates();
+            size_t nrJointStates() const;
 
         private:
             std::vector<RuleState *> _parentStates;
@@ -99,7 +107,7 @@ namespace bayesNet {
 
             std::vector<Rule *> &getRules();
 
-            size_t nrJointStates();
+            size_t nrJointStates() const;
 
         private:
             std::vector<Rule *> _rules;
@@ -123,13 +131,17 @@ namespace bayesNet {
 
         namespace membershipFunctions {
 
+            MembershipFunction *fromString(std::string curve);
+
             class Linear : public MembershipFunction {
             public:
                 Linear(double fxMin, double fxMax);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 double _m;
@@ -142,9 +154,11 @@ namespace bayesNet {
             public:
                 Triangle(double begin, double max, double end);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 double _begin;
@@ -158,9 +172,11 @@ namespace bayesNet {
             public:
                 Trapezoid(double x1, double x2, double x3, double x4);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 double _increasingBegin;
@@ -175,13 +191,15 @@ namespace bayesNet {
             public:
                 SShape(double a, double b);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                double getMinPos();
+                double getMinPos() const;
 
-                double getMaxPos();
+                double getMaxPos() const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 double _a;
@@ -192,13 +210,15 @@ namespace bayesNet {
             public:
                 ZShape(double a, double b);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                double getMaxPos();
+                double getMaxPos() const;
 
-                double getMinPos();
+                double getMinPos() const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 SShape _sShape;
@@ -208,9 +228,11 @@ namespace bayesNet {
             public:
                 PiShape(double a, double b, double c, double d);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 SShape _sShape;
@@ -221,9 +243,11 @@ namespace bayesNet {
             public:
                 Sigmoidal(double a, double c);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 double _a;
@@ -234,9 +258,11 @@ namespace bayesNet {
             public:
                 Bell(double a, double b, double c);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 double _a;
@@ -248,11 +274,15 @@ namespace bayesNet {
             public:
                 Gaussian(double mean, double deviation);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                double getMean();
+                double getMean() const;
 
-                virtual double findMaximum();
+                double getDeviation() const;
+
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 double _mean;
@@ -263,9 +293,11 @@ namespace bayesNet {
             public:
                 Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
 
-                virtual double fx(double x);
+                virtual double fx(double x) const;
 
-                virtual double findMaximum();
+                virtual double findMaximum() const;
+
+                virtual std::string toString() const;
 
             private:
                 Gaussian _left;

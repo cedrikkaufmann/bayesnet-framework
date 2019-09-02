@@ -102,6 +102,22 @@ add_dependencies(
         bayesnet_lib
 )
 
+# Network save example
+add_executable(
+        save_example
+        examples/example_save_network.cpp
+
+)
+
+target_link_libraries(
+        save_example
+        bayesnet_lib
+)
+
+add_dependencies(
+        save_example
+        bayesnet_lib
+)
 
 # Look for Qt5 dependecies
 set(CMAKE_PREFIX_PATH /usr/local/opt/qt)

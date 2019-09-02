@@ -4,6 +4,8 @@
 
 #include <math.h>
 #include <limits>
+#include <sstream>
+#include <regex>
 
 #include <bayesnet/fuzzy.h>
 #include <bayesnet/util.h>
@@ -14,7 +16,12 @@ namespace bayesNet {
 
         namespace membershipFunctions {
 
-            double Linear::fx(double x) {
+            Linear::Linear(double fxMin, double fxMax) : _fxMin(fxMin), _fxMax(fxMax) {
+                _m = 1 / (fxMax - fxMin);
+                _b = fxMin;
+            }
+
+            double Linear::fx(double x) const {
                 if (_fxMin < _fxMax) {
                     if (x <= _fxMin) {
                         return 0;
@@ -36,13 +43,14 @@ namespace bayesNet {
                 return (_m * (x - _b));
             }
 
-            Linear::Linear(double fxMin, double fxMax) : _fxMin(fxMin), _fxMax(fxMax) {
-                _m = 1 / (fxMax - fxMin);
-                _b = fxMin;
+            double Linear::findMaximum() const {
+                return _fxMax;
             }
 
-            double Linear::findMaximum() {
-                return _fxMax;
+            std::string Linear::toString() const {
+                std::stringstream ss;
+                ss << "\"linear\": " << "[" << _fxMin << ", " << _fxMax << "]";
+                return ss.str();
             }
 
             Triangle::Triangle(double begin, double max, double end) : _begin(begin), _max(max), _end(end),
@@ -51,7 +59,7 @@ namespace bayesNet {
 
             }
 
-            double Triangle::fx(double x) {
+            double Triangle::fx(double x) const {
                 if (x <= _begin || x >= _end) {
                     return 0;
                 }
@@ -67,15 +75,21 @@ namespace bayesNet {
                 return 1;
             }
 
-            double Triangle::findMaximum() {
+            double Triangle::findMaximum() const {
                 return _max;
+            }
+
+            std::string Triangle::toString() const {
+                std::stringstream ss;
+                ss << "\"triangle\": " << "[" << _begin << ", " << _max << ", " << _end << "]";
+                return ss.str();
             }
 
             Trapezoid::Trapezoid(double x1, double x2, double x3, double x4) : _increasingBegin(x1), _increasingEnd(x2), 
                                                                                _decreasingBegin(x3), _decreasingEnd(x4),
                                                                                _increasingLinear(x1, x2), _decreasingLinear(x4, x3) {}
 
-            double Trapezoid::fx(double x) {
+            double Trapezoid::fx(double x) const {
                 if (x <= _increasingBegin || x >= _decreasingEnd) {
                     return 0;
                 }
@@ -91,13 +105,19 @@ namespace bayesNet {
                 return _decreasingLinear.fx(x);
             }
 
-            double Trapezoid::findMaximum() {
+            double Trapezoid::findMaximum() const {
                 return (_decreasingBegin - _increasingEnd) / 2;
+            }
+
+            std::string Trapezoid::toString() const {
+                std::stringstream ss;
+                ss << "\"trapezoid\": " << "[" << _increasingBegin << ", " << _increasingEnd << ", " << _decreasingBegin << ", " << _decreasingEnd << "]";
+                return ss.str();
             }
 
             SShape::SShape(double a, double b) : _a(a), _b(b) {}
 
-            double SShape::fx(double x) {
+            double SShape::fx(double x) const {
                 if (x <= _a) {
                     return 0;
                 }
@@ -113,76 +133,92 @@ namespace bayesNet {
                 return 1 - 2 * std::pow((x - _b) / (_b - _a), 2);
             }
 
-            double SShape::getMinPos() {
+            double SShape::getMinPos() const {
                 return _a;
             }
 
-            double SShape::getMaxPos() {
+            double SShape::getMaxPos() const {
                 return _b;
             }
 
-            double SShape::findMaximum() {
+            double SShape::findMaximum() const {
                 return _b;
+            }
+
+            std::string SShape::toString() const{
+                std::stringstream ss;
+                ss << "\"sshape\": " << "[" << _a << ", " << _b << "]";
+                return ss.str();
             }
 
             ZShape::ZShape(double a, double b) : _sShape(a, b) {}
 
-            double ZShape::fx(double x) {
+            double ZShape::fx(double x) const {
                 return 1 - _sShape.fx(x);
             }
 
-            double ZShape::getMaxPos() {
+            double ZShape::getMaxPos() const {
                 return _sShape.getMaxPos();
             }
 
-            double ZShape::getMinPos() {
+            double ZShape::getMinPos() const {
                 return _sShape.getMinPos();
             }
 
-            double ZShape::findMaximum() {
+            double ZShape::findMaximum() const {
                 return _sShape.getMinPos();
             }
 
-            double PiShape::fx(double x) {
-                if (x <= _zShape.getMaxPos()) {
-                    return _sShape.fx(x);
-                }
-
-                return _zShape.fx(x);
-            }
-
-            double Sigmoidal::fx(double x) {
-                return 1 / (1 + std::exp(-1 * _a * (x - _c)));
+            std::string ZShape::toString() const {
+                std::stringstream ss;
+                ss << "\"zshape\": " << "[" << getMaxPos() << ", " << getMinPos() << "]";
+                return ss.str();
             }
 
             Bell::Bell(double a, double b, double c) : _a(a), _b(b), _c(c) {}
 
-            double Bell::fx(double x) {
+            double Bell::fx(double x) const {
                 return 1 / (1 + std::pow(std::abs((x - _c) / _a), 2 * _b));
             }
 
-            double Bell::findMaximum() {
+            double Bell::findMaximum() const {
                 return _c;
             }
 
-            double Gaussian::fx(double x) {
+            std::string Bell::toString() const {
+                std::stringstream ss;
+                ss << "\"linear\": " << "[" << _a << ", " << _b << ", " << _c << "]";
+                return ss.str();
+            }
+
+            double Gaussian::fx(double x) const {
                 return std::exp(-std::pow(x - _mean, 2) / (2 * std::pow(_deviation, 2)));
             }
 
             Gaussian::Gaussian(double mean, double deviation) : _mean(mean), _deviation(deviation) {}
 
-            double Gaussian::getMean() {
+            double Gaussian::getMean() const {
                 return _mean;
             }
 
-            double Gaussian::findMaximum() {
+            double Gaussian::getDeviation() const {
+                return _deviation;
+            }
+
+            double Gaussian::findMaximum() const {
                 return _mean;
+            }
+
+            std::string Gaussian::toString() const {
+                std::stringstream ss;
+                ss << "\"gaussian\": " << "[" << _mean << ", " << _deviation;
+                return ss.str();
             }
 
             Gaussian2::Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight) : _left(meanLeft, deviationLeft), 
                                                                                                                    _right(meanRight, deviationRight) {}
 
-            double Gaussian2::fx(double x) {
+            double Gaussian2::fx(double x) const {
                 double gaussianLeft;
                 double gaussianRight;
 
@@ -201,19 +237,43 @@ namespace bayesNet {
                 return gaussianLeft * gaussianRight;
             }
 
-            double Gaussian2::findMaximum() {
+            double Gaussian2::findMaximum() const {
                 return (_left.getMean() + _right.getMean()) / 2;
+            }
+
+            std::string Gaussian2::toString() const{
+                std::stringstream ss;
+                ss << "\"gaussian2\": " << "[" << _left.getMean() << ", " << _left.getDeviation() << ", " << _right.getMean() << ", " << _right.getDeviation() << "]";
+                return ss.str();
             }
 
             PiShape::PiShape(double a, double b, double c, double d) : _sShape(a, b), _zShape(c, d) {}
 
-            double PiShape::findMaximum() {
+            double PiShape::fx(double x) const {
+                if (x <= _zShape.getMaxPos()) {
+                    return _sShape.fx(x);
+                }
+
+                return _zShape.fx(x);
+            }
+
+            double PiShape::findMaximum() const {
                 return (_sShape.getMaxPos() + _zShape.getMaxPos()) / 2;
+            }
+
+            std::string PiShape::toString() const {
+                std::stringstream ss;
+                ss << "\"pishape\": " << "[" << _sShape.getMinPos() << ", " << _sShape.getMaxPos() << ", " << _zShape.getMaxPos() << ", " << _zShape.getMinPos() << "]";
+                return ss.str();
             }
 
             Sigmoidal::Sigmoidal(double a, double c) : _a(a), _c(c) {}
 
-            double Sigmoidal::findMaximum() {
+            double Sigmoidal::fx(double x) const {
+                return 1 / (1 + std::exp(-1 * _a * (x - _c)));
+            }
+
+            double Sigmoidal::findMaximum() const {
                 double pos = _c;
                 double step = 0.1;
 
@@ -231,11 +291,96 @@ namespace bayesNet {
 
                 return pos;
             }
+
+            std::string Sigmoidal::toString() const {
+                std::stringstream ss;
+                ss << "\"sigmoidal\": " << "[" << _a << ", " << _c << "]";
+                return ss.str();
+            }
+
+            MembershipFunction *fromString(std::string curve) {
+                std::regex curveRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
+                std::smatch match;
+
+                // triangle:[0,1,2]
+                std::regex_match(curve, match, curveRegEx);
+                std::vector<std::string> valuesStr = utils::split(match.str(2), ',');
+                std::vector<double> values;
+
+                for (size_t i = 0; i < valuesStr.size(); i++) {
+                    values.push_back(std::stod(valuesStr[i]));
+                }
+                
+                MembershipFunction *mf = NULL;
+
+                std::string curveName = match.str(1);
+
+                if (curveName == "linear") {
+                    mf = new Linear(values[0], values[1]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "triangle") {
+                    mf = new Triangle(values[0], values[1], values[2]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "trapezoid") {
+                    mf = new Trapezoid(values[0], values[1], values[2], values[4]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "sshape") {
+                    mf = new SShape(values[0], values[1]);
+                    goto factoryReturn;
+                } 
+
+                if (curveName == "zshape") {
+                    mf = new ZShape(values[0], values[1]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "pishape") {
+                    mf = new PiShape(values[0], values[1], values[2], values[4]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "sigmoidal") {
+                    mf = new Sigmoidal(values[0], values[1]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "bell") {
+                    mf = new Bell(values[0], values[1], values[2]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "gaussian") {
+                    mf = new Gaussian(values[0], values[1]);
+                    goto factoryReturn;
+                }
+
+                if (curveName == "gaussian2") {
+                    mf = new Gaussian2(values[0], values[1], values[2], values[4]);
+                }
+
+            factoryReturn:
+                return mf;    
+            }
         }
 
         MembershipFunction::MembershipFunction() {}
 
         MembershipFunction::~MembershipFunction() {}
+
+        std::ostream &operator<<(std::ostream &os, MembershipFunction &mf) {
+            os << mf.toString();
+            return os;
+        }
+
+        Set::Set(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {}
+
+        Set::~Set() {}
 
         MembershipFunction *Set::getMembershipFunction(size_t state) {
             return _mf[state];
@@ -266,16 +411,24 @@ namespace bayesNet {
             return belief;
         }
 
-        double Set::findMaximum(size_t state) {
+        double Set::findMaximum(size_t state) const {
             return _mf[state]->findMaximum();
         }
 
-        Set::Set(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {}
-
-        Set::~Set() {}
-
         void Set::setMembershipFunction(size_t state, MembershipFunction *mf) {
             _mf[state] = mf;
+        }
+
+        size_t Set::nrStates() const {
+            return _mf.size();
+        }
+
+        std::ostream &operator<<(std::ostream &os, Set &set) {
+            for (size_t i = 0; i < set.nrStates(); i++) {
+                os << i << ": " << std::endl << *(set.getMembershipFunction(i)) << std::endl;
+            }
+            
+            return os;
         }
 
         Rule::Rule(const std::vector<RuleState *> &parentStates, RuleState *state) : _state(*state) {
@@ -290,7 +443,7 @@ namespace bayesNet {
             return _state;
         }
 
-        size_t Rule::nrJointStates() {
+        size_t Rule::nrJointStates() const {
             size_t jointStates = 1;
 
             if (_state.isBinary()) {
@@ -332,7 +485,7 @@ namespace bayesNet {
             return _rules;
         }
 
-        size_t RuleSet::nrJointStates() {
+        size_t RuleSet::nrJointStates() const {
             return _rules.size() * _rules[0]->nrJointStates();
         }
 
@@ -428,11 +581,11 @@ namespace bayesNet {
 
         RuleState::~RuleState() {}
 
-        bool RuleState::isBinary() {
+        bool RuleState::isBinary() const {
             return _binary;
         }
 
-        size_t RuleState::getState() {
+        size_t RuleState::getState() const {
             return _state;
         }
 

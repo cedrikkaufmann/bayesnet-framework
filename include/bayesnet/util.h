@@ -25,6 +25,8 @@ namespace bayesNet {
 
         void vectorNormalize(std::vector<double> &v);
 
+        bool isWhitespaceOrQuotationMark(char c);
+
         class Counter {
         public:
             Counter(size_t digits, const std::vector<size_t> &states);

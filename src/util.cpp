@@ -86,6 +86,10 @@ namespace bayesNet {
             }
         }
 
+        bool isWhitespaceOrQuotationMark(char c) {
+            return c == ' ' || c == '"';
+        }
+
         Counter::Counter(size_t digits, const std::vector<size_t> &states) : _count(digits), _states(states), _increment(0) {}
 
         Counter::~Counter() {}
