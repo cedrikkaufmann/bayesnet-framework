@@ -1,11 +1,14 @@
-//
-// Created by Cedrik Kaufmann on 2019-06-13.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <sstream>
 
 #include <bayesnet/state.h>
 #include <bayesnet/exception.h>
+
 
 namespace bayesNet {
 
@@ -26,18 +29,22 @@ namespace bayesNet {
         }
 
         void BayesBelief::set(size_t state, double belief) {
+            // check if index is in bounds
             if (state >= _beliefs.size()) {
                 BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
+            // set belief
             _beliefs[state] = belief;
         }
 
         double BayesBelief::get(size_t state) const {
+            // check if index is in bounds
             if (state >= _beliefs.size()) {
                 BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
+            // return belief
             return _beliefs[state];
         }
 
@@ -100,7 +107,9 @@ namespace bayesNet {
         std::ostream &operator<<(std::ostream &os, const BayesBelief &bayesBelief) {
             os << "{";
 
+            // check if belief is binary
             if (bayesBelief.isBinary()) {
+                // iterate over belief states
                 for (size_t i = 0; i < 2; ++i) {
                     switch (i) {
                         case TRUE: {
@@ -121,6 +130,7 @@ namespace bayesNet {
                     }
                 }
             } else {
+                // iterate over belief states
                 for (size_t i = 0; i < 2; ++i) {
                     switch (i) {
                         case GOOD: {

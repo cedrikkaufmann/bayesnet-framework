@@ -43,7 +43,8 @@ namespace bayesNet {
 
         /// Constructs a CPT from factor @a factor
         explicit CPT(const Factor &factor);
-
+    //@}
+    
         /// Returns the joint size of the CPT
         size_t size() const;
 
