@@ -325,7 +325,7 @@ namespace bayesNet {
                 }
 
                 if (curveName == "trapezoid") {
-                    mf = new Trapezoid(values[0], values[1], values[2], values[4]);
+                    mf = new Trapezoid(values[0], values[1], values[2], values[3]);
                     goto factoryReturn;
                 }
 
@@ -340,7 +340,7 @@ namespace bayesNet {
                 }
 
                 if (curveName == "pishape") {
-                    mf = new PiShape(values[0], values[1], values[2], values[4]);
+                    mf = new PiShape(values[0], values[1], values[2], values[3]);
                     goto factoryReturn;
                 }
 

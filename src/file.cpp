@@ -234,15 +234,13 @@ namespace bayesNet {
 
         std::ostream &operator<<(std::ostream &os, InitializationVector &iv) {
             // set indentations
-            std::string indentSection(2, ' ');
-            std::string indentSectionEntries(4, ' ');
-            std::string indentSubSectionEntries(6, ' ');
+            std::string indent(2, ' ');
 
             // write json begin
             os << "{" << std::endl;
             // write nodes section
             // begin nodes section
-            os << indentSection << "\"nodes\": {" << std::endl;
+            os << indent << "\"nodes\": {" << std::endl;
 
             // write each node
             std::vector<Node *> &nodes = iv.getNodes();
@@ -259,7 +257,7 @@ namespace bayesNet {
 
             // write normal nodes
             for (size_t i = 0; i < normalNodes.size(); ++i) {
-                os << indentSectionEntries << "\"" << nodes[i]->getName();
+                os << indent << indent << "\"" << nodes[i]->getName();
 
                 if (normalNodes[i]->isBinary()) {
                     os << "\": 2";
@@ -275,15 +273,15 @@ namespace bayesNet {
             }
 
             // end nodes section
-            os << indentSection << "}," << std::endl;
+            os << indent << "}," << std::endl;
 
             // write sensor nodes section
             // begin sensor nodes section
-            os << indentSection << "\"sensors\": {" << std::endl;
+            os << indent << "\"sensors\": {" << std::endl;
 
             // write sensor nodes
             for (size_t i = 0; i < sensorNodes.size(); ++i) {
-                os << indentSectionEntries << "\"" << sensorNodes[i]->getName();
+                os << indent << indent << "\"" << sensorNodes[i]->getName();
 
                 if (sensorNodes[i]->isBinary()) {
                     os << "\": 2";
@@ -299,11 +297,11 @@ namespace bayesNet {
             }
 
             // end sensor nodes section
-            os << indentSection << "}," << std::endl;
+            os << indent << "}," << std::endl;
 
             // write connections section
             // begin connections section
-            os << indentSection << "\"connections\": {" << std::endl;
+            os << indent << "\"connections\": {" << std::endl;
 
             // write each connection
             size_t itCounter = 0;
@@ -311,7 +309,7 @@ namespace bayesNet {
             std::unordered_map<std::string, std::vector<std::string> > &connections = iv.getConnections();
 
             for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = connections.begin(); it != connections.end(); it++) {
-                os << indentSectionEntries << "\"" << (*it).first << "\": [";
+                os << indent << indent << "\"" << (*it).first << "\": [";
 
                 for (size_t i = 0; i < (*it).second.size(); ++i) {
                     os << "\"" << (*it).second[i] << "\"";
@@ -331,10 +329,10 @@ namespace bayesNet {
             }
 
             // end connections section
-            os << indentSection << "}," << std::endl;
+            os << indent << "}," << std::endl;
             // write cpt section
             // begin cpt section
-            os << indentSection << "\"cpt\": {" << std::endl;
+            os << indent << "\"cpt\": {" << std::endl;
 
             // write each connection
             itCounter = 0;
@@ -342,7 +340,7 @@ namespace bayesNet {
             std::unordered_map<std::string, std::vector<double> > &cpts = iv.getCPTs();
 
             for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = cpts.begin(); it != cpts.end(); it++) {
-                os << indentSectionEntries << "\"" << (*it).first << "\": [";
+                os << indent << indent << "\"" << (*it).first << "\": [";
 
                 for (size_t i = 0; i < (*it).second.size(); ++i) {
                     os << (*it).second[i];
@@ -362,44 +360,46 @@ namespace bayesNet {
             }
 
             // end cpt section
-            os << indentSection << "}," << std::endl;
+            os << indent << "}," << std::endl;
 
             // write fuzzy sets section
             // begin fuzzy sets section
-            os << indentSection << "\"fuzzySets\": {" << std::endl;
+            os << indent << "\"fuzzySets\": {" << std::endl;
 
             // write each fuzzy set
             std::unordered_map<std::string, std::vector<std::string> > &fuzzySets = iv.getFuzzySets();
 
+            itCounter = 0;
+
             for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = fuzzySets.begin(); it != fuzzySets.end(); it++) {
-                os << indentSectionEntries << "\"" << (*it).first << "\": {" << std::endl;
+                os << indent << indent << "\"" << (*it).first << "\": {" << std::endl;
 
                 for (size_t i = 0; i < (*it).second.size(); ++i) {
-                    os << indentSectionEntries << indentSection << i << ": {" << std::endl;
-                    os << indentSectionEntries << indentSection << indentSection << (*it).second[i] << std::endl;
+                    os << indent << indent << indent << i << ": {" << std::endl;
+                    os << indent << indent << indent << indent << (*it).second[i] << std::endl;
 
                     if (i == (*it).second.size() - 1) {
-                        os << indentSectionEntries << indentSection << "}" << std::endl;
+                        os << indent << indent << indent << "}" << std::endl;
                     } else {
-                        os << indentSectionEntries << indentSection  << "}," << std::endl;
+                        os << indent << indent << indent  << "}," << std::endl;
                     }
                 }
 
                 if (++itCounter < fuzzySets.size()) {
-                    os << indentSectionEntries << "}," << std::endl;
+                    os << indent << indent << "}," << std::endl;
                 } else {
-                    os << indentSectionEntries << "}" << std::endl;
+                    os << indent << indent << "}" << std::endl;
                 }
             }
 
             // end fuzzy section
-            os << indentSection << "}";
+            os << indent << "}";
 
             // inference section
             std::string algorithm = iv.getInferenceAlgorithm();
-
+            
             if (!algorithm.empty()) {
-                os << "," << std::endl << indentSection << "\"inference\": \"" << algorithm << "\"" << std::endl;
+                os << "," << std::endl << indent << "\"inference\": \"" << algorithm << "\"" << std::endl;
             } else {
                 os << std::endl;
             }

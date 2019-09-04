@@ -41,6 +41,7 @@ int main() {
     net.newConnection("cloudy", "rainy"); // rainy given cloudy
     net.newConnection("rainy", "wetGrass"); // wet grass given rainy
     net.newConnection("sprinkler", "wetGrass"); // wet grass given sprinkler
+    net.newConnection("sensor1", "cloudy");
 
     std::vector<double> pCloudy;
     pCloudy.push_back(0.5);
