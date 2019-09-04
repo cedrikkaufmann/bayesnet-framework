@@ -1,9 +1,12 @@
-//
-// Created by Cedrik Kaufmann on 2019-07-02.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <bayesnet/cpt.h>
 #include <bayesnet/exception.h>
+
 
 namespace bayesNet {
 
@@ -66,10 +69,12 @@ namespace bayesNet {
     }
 
     double &CPT::operator[](size_t index) {
+        // check if index is in bounds
         if (index > _probabilities.size()) {
             BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
         }
 
+        // access value
         return _probabilities[index];
     }
 }
