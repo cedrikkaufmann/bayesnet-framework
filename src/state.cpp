@@ -27,7 +27,7 @@ namespace bayesNet {
 
         void BayesBelief::set(size_t state, double belief) {
             if (state >= _beliefs.size()) {
-                throw IndexOutOfBoundException();
+                BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
             _beliefs[state] = belief;
@@ -35,7 +35,7 @@ namespace bayesNet {
 
         double BayesBelief::get(size_t state) const {
             if (state >= _beliefs.size()) {
-                throw IndexOutOfBoundException();
+                BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
             return _beliefs[state];
@@ -49,7 +49,7 @@ namespace bayesNet {
 
         double &BayesBelief::operator[](size_t index) {
             if (index >= _beliefs.size()) {
-                throw IndexOutOfBoundException();
+                BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
             return _beliefs[index];

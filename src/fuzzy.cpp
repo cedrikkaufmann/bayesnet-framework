@@ -9,6 +9,7 @@
 
 #include <bayesnet/fuzzy.h>
 #include <bayesnet/util.h>
+#include <bayesnet/exception.h>
 
 namespace bayesNet {
 
@@ -299,72 +300,80 @@ namespace bayesNet {
             }
 
             MembershipFunction *fromString(std::string curve) {
+                // regex for curve string processing and matching
                 std::regex curveRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\]$");
                 std::smatch match;
 
-                std::regex_match(curve, match, curveRegEx);
-                std::vector<std::string> valuesStr = utils::split(match.str(2), ',');
-                std::vector<double> values;
+                // match string against regex
+                if (std::regex_match(curve, match, curveRegEx)) {
+                    std::vector<std::string> valuesStr = utils::split(match.str(2), ',');
+                    std::vector<double> values;
 
-                for (size_t i = 0; i < valuesStr.size(); i++) {
-                    values.push_back(std::stod(valuesStr[i]));
+                    for (size_t i = 0; i < valuesStr.size(); i++) {
+                        values.push_back(std::stod(valuesStr[i]));
+                    }
+                    
+                    MembershipFunction *mf = NULL;
+
+                    std::string curveName = match.str(1);
+
+                    if (curveName == "linear") {
+                        mf = new Linear(values[0], values[1]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "triangle") {
+                        mf = new Triangle(values[0], values[1], values[2]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "trapezoid") {
+                        mf = new Trapezoid(values[0], values[1], values[2], values[3]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "sshape") {
+                        mf = new SShape(values[0], values[1]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "zshape") {
+                        mf = new ZShape(values[0], values[1]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "pishape") {
+                        mf = new PiShape(values[0], values[1], values[2], values[3]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "sigmoidal") {
+                        mf = new Sigmoidal(values[0], values[1]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "bell") {
+                        mf = new Bell(values[0], values[1], values[2]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "gaussian") {
+                        mf = new Gaussian(values[0], values[1]);
+                        goto factoryReturn;
+                    }
+
+                    if (curveName == "gaussian2") {
+                        mf = new Gaussian2(values[0], values[1], values[2], values[3]);
+                        goto factoryReturn;
+                    }
+
+                    BAYESNET_THROWE(INVALID_CURVE_STRING, curve);
+
+                    factoryReturn:
+                        return mf;  
                 }
-                
-                MembershipFunction *mf = NULL;
 
-                std::string curveName = match.str(1);
-
-                if (curveName == "linear") {
-                    mf = new Linear(values[0], values[1]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "triangle") {
-                    mf = new Triangle(values[0], values[1], values[2]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "trapezoid") {
-                    mf = new Trapezoid(values[0], values[1], values[2], values[3]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "sshape") {
-                    mf = new SShape(values[0], values[1]);
-                    goto factoryReturn;
-                } 
-
-                if (curveName == "zshape") {
-                    mf = new ZShape(values[0], values[1]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "pishape") {
-                    mf = new PiShape(values[0], values[1], values[2], values[3]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "sigmoidal") {
-                    mf = new Sigmoidal(values[0], values[1]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "bell") {
-                    mf = new Bell(values[0], values[1], values[2]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "gaussian") {
-                    mf = new Gaussian(values[0], values[1]);
-                    goto factoryReturn;
-                }
-
-                if (curveName == "gaussian2") {
-                    mf = new Gaussian2(values[0], values[1], values[2], values[3]);
-                }
-
-            factoryReturn:
-                return mf;    
+                BAYESNET_THROWE(INVALID_CURVE_STRING, curve);
             }
         }
 

@@ -212,7 +212,7 @@ namespace bayesNet {
                 // return initialization vector
                 return iv;
             } else {
-                throw FileNotFoundException();
+                BAYESNET_THROW(FILE_NOT_FOUND);
             }
         }
 
@@ -228,7 +228,7 @@ namespace bayesNet {
                 file.close();
             } else {
                 // error while opening file
-                throw UnableWriteFileException();
+                BAYESNET_THROW(UNABLE_TO_WRITE_FILE);
             }
         }
 

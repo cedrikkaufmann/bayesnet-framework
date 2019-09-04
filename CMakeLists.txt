@@ -63,6 +63,8 @@ target_compile_options(
         -Wno-deprecated
         -Wno-padded
         -Wno-unused-function
+        -Wno-exit-time-destructors
+        -Wno-global-constructors
         -Werror
 )
 

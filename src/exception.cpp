@@ -6,35 +6,37 @@
 
 namespace bayesNet {
 
-    const char *NotInitializedException::what() const throw() {
-        return "Bayesian network not initialized";
+    Exception::Exception(Code code, const char *filename, const char *function, const char *line, const std::string& detailedMsg) :
+            std::runtime_error(ErrorStrings[code] + (detailedMsg.empty() ? "" : (": " + detailedMsg)) + " [File " + filename + ", line " + line + ", function: " + function + "]"), 
+            _errorCode(code), _detailedMsg(detailedMsg), _filename(filename), _function(function), _line(line) {}
+
+    Exception::~Exception() throw() {}
+
+    Exception::Code Exception::getCode() const {
+        return _errorCode;
     }
 
-    const char *BayesNodeAlreadyDefinedException::what() const throw() {
-        return "Bayes node with the same identifier already registered";
+    const std::string &Exception::getMsg() const {
+        return ErrorStrings[_errorCode];
     }
 
-    const char *BayesNodeNotFoundException::what() const throw() {
-        return "Bayes node with given identifier does not exist";
+    const std::string &Exception::getDetailedMsg() const {
+        return _detailedMsg;
     }
 
-    const char *IndexOutOfBoundException::what() const throw() {
-        return "Index out of bounds for bayes belief";
+    const std::string &Exception::message(const Code c) const {
+        return ErrorStrings[c];
     }
 
-    const char *InvalidCPTException::what() const throw() {
-        return "CPT not valid for given probabilities";
-    }
-
-    const char *FileNotFoundException::what() const throw() {
-        return "Unable to load file";
-    }
-
-    const char *UnableWriteFileException::what() const throw() {
-        return "Unable to write file";
-    }
-
-    const char *InvalidAlgorithmFile::what() const throw() {
-        return "Invalid algorithm file";
-    }
+    std::string Exception::ErrorStrings[Exception::NUM_ERRORS] = {
+        "Bayesian network not initialized",
+        "Bayes node already exists",
+        "Bayes node not found",
+        "Index out of bounds",
+        "File not found",
+        "Unable to write file",
+        "Invalid bayes algorithm file",
+        "Invalid conditional probability table",
+        "Invalid curve string"
+    };
 }

@@ -25,7 +25,7 @@ namespace bayesNet {
 
                 if (probabilities[i] > 0 && probabilities[i + states] > 0) {
                     // cannot calculate complement, thus throw exception
-                    throw InvalidCPTException();
+                    BAYESNET_THROW(INVALID_CPT);
                 }
 
                 // calculate complementary probability
@@ -37,7 +37,7 @@ namespace bayesNet {
 
             } else if (probabilities[i] + probabilities[i + states] > 1) {
                 // probability and its complement are greater than 1, thus throw exception
-                throw InvalidCPTException();
+                BAYESNET_THROW(INVALID_CPT);
             }
         }
 
@@ -67,7 +67,7 @@ namespace bayesNet {
 
     double &CPT::operator[](size_t index) {
         if (index > _probabilities.size()) {
-            throw IndexOutOfBoundException();
+            BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
         }
 
         return _probabilities[index];

@@ -51,13 +51,13 @@ namespace bayesNet {
                 } else if (inferenceAlgorithmType == "JT") {
                     _algorithm = JUNCTION_TREE;
                 } else {
-                    throw InvalidAlgorithmFile();
+                    BAYESNET_THROW(INVALID_ALGORITHM_FILE);
                 }
 
                 _inferenceProperties = dai::PropertySet(inferenceAlgorithm);
                 _filename = filename;
             } else {
-                throw FileNotFoundException();
+                BAYESNET_THROW(INVALID_ALGORITHM_FILE);
             }
         }
 
@@ -98,7 +98,7 @@ namespace bayesNet {
 
                 _filename = filename;
             } else {
-                throw UnableWriteFileException();
+                BAYESNET_THROW(UNABLE_TO_WRITE_FILE);
             }
         }
 

@@ -29,7 +29,7 @@ namespace bayesNet {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
-            throw BayesNodeAlreadyDefinedException();
+            BAYESNET_THROW(NODE_ALREADY_EXISTS);
         }
 
         _nodeNames.push_back(name);
@@ -77,7 +77,7 @@ namespace bayesNet {
 
     void Network::setEvidence(const std::string &name, size_t state) {
         if (!_init) {
-            throw NotInitializedException();
+            BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         try {
@@ -86,19 +86,19 @@ namespace bayesNet {
             if (state < node->getDiscrete().states()) {
                 node->setEvidence(state);
             } else {
-                throw IndexOutOfBoundException();
+                BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
             _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
             _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
         } catch (const std::exception &) {
-            throw BayesNodeNotFoundException();
+            BAYESNET_THROW(NODE_NOT_FOUND);
         }
     }
 
     void Network::clearEvidence(const std::string &name) {
         if (!_init) {
-            throw NotInitializedException();
+            BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         try {
@@ -107,13 +107,13 @@ namespace bayesNet {
             node->clearEvidence();
             refreshFactorGraph(node);
         } catch (const std::exception &) {
-            throw BayesNodeNotFoundException();
+            BAYESNET_THROW(NODE_NOT_FOUND);
         }
     }
 
     void Network::doInference() {
         if (!_init) {
-            throw NotInitializedException();
+            BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         this->_inferenceAlgorithm->getInstance()->run();
@@ -121,7 +121,7 @@ namespace bayesNet {
 
     state::BayesBelief Network::getBelief(const std::string &name) {
         if (!_init) {
-            throw NotInitializedException();
+            BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         Node *node = getNode(name);
@@ -260,7 +260,7 @@ namespace bayesNet {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
-            throw BayesNodeAlreadyDefinedException();
+            BAYESNET_THROW(NODE_ALREADY_EXISTS);
         }
 
         _nodeNames.push_back(name);
@@ -281,7 +281,7 @@ namespace bayesNet {
 
     void Network::refreshFactorGraph(Node *node) {
         if (!_init) {
-            throw NotInitializedException();
+            BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);

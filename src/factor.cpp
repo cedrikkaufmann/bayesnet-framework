@@ -16,7 +16,7 @@ namespace bayesNet {
 
     void Factor::setEvidence(size_t state) {
         if (state > _states - 1) {
-            throw IndexOutOfBoundException();
+            BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
         }
 
         if (_isEvidence) {

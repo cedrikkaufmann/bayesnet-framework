@@ -55,7 +55,7 @@ namespace bayesNet {
                 return max;
             }
 
-            throw IndexOutOfBoundException();
+            BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
         }
 
         double vectorSum(const std::vector<double> &v) {
