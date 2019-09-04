@@ -46,8 +46,7 @@ namespace bayesNet {
         public:
         /// @name Constructors and desctructors
         //@{
-            /// Constructs a bayesian belief
-            /// @arg @binary Binary belief
+            /// Constructs a bayesian belief 
             explicit BayesBelief(bool binary = false);
 
             /// Destructor

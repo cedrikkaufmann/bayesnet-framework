@@ -1,12 +1,15 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-08.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <sstream>
 #include <dirent.h>
 
 #include <bayesnet/util.h>
 #include <include/bayesnet/exception.h>
+
 
 namespace bayesNet {
 
@@ -101,14 +104,17 @@ namespace bayesNet {
         bool Counter::countUp() {
             size_t digit = 0;
 
+            // increment counter
             _increment++;
             _count[digit]++;
 
+            // increment each digit til no digit overflow has happend
             while (digit < _count.size() && _count[digit] == _states[digit]) {
                 _count[digit] = 0;
                 _count[++digit]++;
             }
 
+            // check if whole counter overflow has happpend
             bool overflow = true;
 
             for (size_t i = 0; i < _count.size(); ++i) {
