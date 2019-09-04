@@ -31,21 +31,6 @@ namespace bayesNet {
             size_t _states;
             bool _isSensor;
         };
-        
-        class FuzzyCurve {
-        public:
-            explicit FuzzyCurve(const std::string &name);
-
-            std::string getName();
-
-            void addValue(double value);
-
-            std::vector<double> &getValues();
-
-        private:
-            std::string _name;
-            std::vector<double> _values;
-        };
 
         class InitializationVector {
         public:
@@ -65,9 +50,9 @@ namespace bayesNet {
 
             std::unordered_map<std::string, std::vector<double> > &getCPTs();
 
-            void setFuzzySet(const std::string &sensorName, std::vector<FuzzyCurve *> curves);
+            void setFuzzySet(const std::string &sensorName, std::vector<std::string> curves);
 
-            std::unordered_map<std::string, std::vector<FuzzyCurve *> > &getFuzzySets();
+            std::unordered_map<std::string, std::vector<std::string> > &getFuzzySets();
 
             void setInferenceAlgorithm(const std::string &algo);
 
@@ -77,7 +62,7 @@ namespace bayesNet {
             std::vector<Node *> _nodes;
             std::unordered_map<std::string, std::vector<std::string> > _connections;
             std::unordered_map<std::string, std::vector<double> > _cpt;
-            std::unordered_map<std::string, std::vector<FuzzyCurve*> > _fuzzySets;
+            std::unordered_map<std::string, std::vector<std::string> > _fuzzySets;
             std::string _inferenceAlgorithm;
         };
 
@@ -86,8 +71,6 @@ namespace bayesNet {
         void save(const std::string &filename, InitializationVector *iv);
 
         std::ostream &operator<<(std::ostream &os, InitializationVector &iv);
-
-        std::ostream &operator<<(std::ostream &os, FuzzyCurve &curve);
     }
 }
 

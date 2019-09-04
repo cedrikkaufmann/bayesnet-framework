@@ -21,6 +21,22 @@ int main() {
     net.newSensorNode("sensor1", true);
     net.newSensorNode("sensor2");
 
+    bayesNet::fuzzyLogic::MembershipFunction *mfTrue = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(0, 0.8);
+    bayesNet::fuzzyLogic::MembershipFunction *mfFalse = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(1, 2, 2.5);
+
+    bayesNet::fuzzyLogic::MembershipFunction *mfGood = new bayesNet::fuzzyLogic::membershipFunctions::Bell(0, 2, 5);
+    bayesNet::fuzzyLogic::MembershipFunction *mfProbGood = new bayesNet::fuzzyLogic::membershipFunctions::SShape(3, 5);
+    bayesNet::fuzzyLogic::MembershipFunction *mfProbBad = new bayesNet::fuzzyLogic::membershipFunctions::PiShape(5, 7, 8, 9);
+    bayesNet::fuzzyLogic::MembershipFunction *mfBad = bayesNet::fuzzyLogic::membershipFunctions::fromString("\"gaussian2\": [9, 0.8, 12, 0.6]");
+
+    net.setMembershipFunction("sensor1", bayesNet::state::TRUE, mfTrue);
+    net.setMembershipFunction("sensor1", bayesNet::state::FALSE, mfFalse);
+
+    net.setMembershipFunction("sensor2", bayesNet::state::GOOD, mfGood);
+    net.setMembershipFunction("sensor2", bayesNet::state::PROBABLY_GOOD, mfProbGood);
+    net.setMembershipFunction("sensor2", bayesNet::state::PROBABLY_BAD, mfProbBad);
+    net.setMembershipFunction("sensor2", bayesNet::state::BAD, mfBad);
+
     net.newConnection("cloudy", "sprinkler"); // sprinkler given cloudy
     net.newConnection("cloudy", "rainy"); // rainy given cloudy
     net.newConnection("rainy", "wetGrass"); // wet grass given rainy

@@ -211,7 +211,7 @@ namespace bayesNet {
 
             std::string Gaussian::toString() const {
                 std::stringstream ss;
-                ss << "\"gaussian\": " << "[" << _mean << ", " << _deviation;
+                ss << "\"gaussian\": " << "[" << _mean << ", " << _deviation << "]";
                 return ss.str();
             }
 
@@ -299,10 +299,9 @@ namespace bayesNet {
             }
 
             MembershipFunction *fromString(std::string curve) {
-                std::regex curveRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
+                std::regex curveRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\]$");
                 std::smatch match;
 
-                // triangle:[0,1,2]
                 std::regex_match(curve, match, curveRegEx);
                 std::vector<std::string> valuesStr = utils::split(match.str(2), ',');
                 std::vector<double> values;
@@ -361,7 +360,7 @@ namespace bayesNet {
                 }
 
                 if (curveName == "gaussian2") {
-                    mf = new Gaussian2(values[0], values[1], values[2], values[4]);
+                    mf = new Gaussian2(values[0], values[1], values[2], values[3]);
                 }
 
             factoryReturn:
@@ -421,14 +420,6 @@ namespace bayesNet {
 
         size_t Set::nrStates() const {
             return _mf.size();
-        }
-
-        std::ostream &operator<<(std::ostream &os, Set &set) {
-            for (size_t i = 0; i < set.nrStates(); i++) {
-                os << i << ": " << std::endl << *(set.getMembershipFunction(i)) << std::endl;
-            }
-            
-            return os;
         }
 
         Rule::Rule(const std::vector<RuleState *> &parentStates, RuleState *state) : _state(*state) {

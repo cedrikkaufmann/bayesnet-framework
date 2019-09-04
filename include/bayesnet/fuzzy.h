@@ -52,8 +52,6 @@ namespace bayesNet {
             std::vector<MembershipFunction *> _mf;
         };
 
-        std::ostream &operator<<(std::ostream &os, Set &set);
-
         class RuleState {
         public:
             explicit RuleState(size_t state, bool binary = false);

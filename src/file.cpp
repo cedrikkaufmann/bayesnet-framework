@@ -32,20 +32,6 @@ namespace bayesNet {
             return _isSensor;
         }
 
-        FuzzyCurve::FuzzyCurve(const std::string &name) : _name(name) {}
-
-        std::string FuzzyCurve::getName() {
-            return _name;
-        }
-
-        void FuzzyCurve::addValue(double value) {
-            _values.push_back(value);
-        }
-
-        std::vector<double> &FuzzyCurve::getValues() {
-            return _values;
-        }
-
         InitializationVector::InitializationVector() {}
         
         void InitializationVector::addNode(const std::string &name, size_t states, bool isSensor) {
@@ -77,11 +63,11 @@ namespace bayesNet {
             return _cpt;
         }
 
-        void InitializationVector::setFuzzySet(const std::string &sensorName, std::vector<FuzzyCurve *> curves) {
+        void InitializationVector::setFuzzySet(const std::string &sensorName, std::vector<std::string> curves) {
             _fuzzySets[sensorName] = curves;
         }
 
-        std::unordered_map<std::string, std::vector<FuzzyCurve *> > &InitializationVector::getFuzzySets() {
+        std::unordered_map<std::string, std::vector<std::string> > &InitializationVector::getFuzzySets() {
             return _fuzzySets;
         }
 
@@ -376,28 +362,26 @@ namespace bayesNet {
             }
 
             // end cpt section
-            os << indentSection << "}";
+            os << indentSection << "}," << std::endl;
 
             // write fuzzy sets section
             // begin fuzzy sets section
             os << indentSection << "\"fuzzySets\": {" << std::endl;
 
             // write each fuzzy set
-            itCounter = 0;
+            std::unordered_map<std::string, std::vector<std::string> > &fuzzySets = iv.getFuzzySets();
 
-            std::unordered_map<std::string, std::vector<FuzzyCurve *> > &fuzzySets = iv.getFuzzySets();
-
-            for (std::unordered_map<std::string, std::vector<FuzzyCurve *> >::const_iterator it = fuzzySets.begin(); it != fuzzySets.end(); it++) {
-                os << indentSectionEntries << "\"" << (*it).first << "\": {";
+            for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = fuzzySets.begin(); it != fuzzySets.end(); it++) {
+                os << indentSectionEntries << "\"" << (*it).first << "\": {" << std::endl;
 
                 for (size_t i = 0; i < (*it).second.size(); ++i) {
-                    os << indentSectionEntries << indentSection << i << ": {";
-                    os << indentSectionEntries << indentSection << indentSection << *(*it).second[i] << std::endl;
+                    os << indentSectionEntries << indentSection << i << ": {" << std::endl;
+                    os << indentSectionEntries << indentSection << indentSection << (*it).second[i] << std::endl;
 
                     if (i == (*it).second.size() - 1) {
-                        os << "}";
+                        os << indentSectionEntries << indentSection << "}" << std::endl;
                     } else {
-                        os << "}, ";
+                        os << indentSectionEntries << indentSection  << "}," << std::endl;
                     }
                 }
 
@@ -422,28 +406,6 @@ namespace bayesNet {
 
             // write end json file
             os << "}" << std::endl;
-
-            return os;
-        }
-
-        std::ostream &operator<<(std::ostream &os, FuzzyCurve &curve) {
-            // write curve name
-            os << "\"" << curve.getName() << "\": ";
-
-            // get curve values
-            std::vector<double> &values = curve.getValues();
-            // write curve array
-            os << "[";
-
-            for (size_t i = 0; i < values.size(); i++) {
-                os << values[i];
-
-                if (i < values.size() - 1) {
-                    os << ", ";
-                }
-            }
-
-            os << "]";
 
             return os;
         }

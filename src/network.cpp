@@ -221,7 +221,14 @@ namespace bayesNet {
 
             // add fuzzy sets
             if (isSensor) {
-            
+                fuzzyLogic::Set &fuzzySet = _nodes[i]->getFuzzySet();
+                std::vector<std::string> curves(fuzzySet.nrStates());
+
+                for (size_t j = 0; j < fuzzySet.nrStates(); j++) {
+                    curves[j] = fuzzySet.getMembershipFunction(j)->toString();
+                }
+
+                iv->setFuzzySet(_nodes[i]->getName(), curves);
             }
 
             // add inference algorithm
