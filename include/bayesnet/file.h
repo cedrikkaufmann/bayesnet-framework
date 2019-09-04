@@ -50,13 +50,15 @@ namespace bayesNet {
 
             std::unordered_map<std::string, std::vector<double> > &getCPTs();
 
-            void setFuzzySet(const std::string &sensorName, std::vector<std::string> curves);
+            void setFuzzySet(const std::string &sensorName, std::vector<std::string> mf);
+
+            void addFuzzySetMembershipFunction(const std::string &sensorName, std::string mf);
 
             std::unordered_map<std::string, std::vector<std::string> > &getFuzzySets();
 
             void setInferenceAlgorithm(const std::string &algo);
 
-            std::string const getInferenceAlgorithm();
+            std::string const &getInferenceAlgorithm() const;
 
         private:
             std::vector<Node *> _nodes;

@@ -10,6 +10,8 @@
 #include <bayesnet/cpt.h>
 #include <bayesnet/state.h>
 
+#define FUZZY_RULE(s) bayesNet::fuzzyLogic::rules::get(bayesNet::state::s)
+
 namespace bayesNet {
 
     namespace fuzzyLogic {

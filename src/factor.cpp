@@ -1,9 +1,12 @@
-//
-// Created by Cedrik Kaufmann on 2019-05-31.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <bayesnet/factor.h>
 #include <bayesnet/exception.h>
+
 
 namespace bayesNet {
 
@@ -15,16 +18,20 @@ namespace bayesNet {
     Factor::~Factor() {}
 
     void Factor::setEvidence(size_t state) {
+        // check if state is available
         if (state > _states - 1) {
             BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
         }
 
+        // check if factor is evidence
         if (_isEvidence) {
             restore();
         }
 
+        // backup factor
         backup();
 
+        // calculate factor states which has to be set to probaility 1
         size_t jointStates = nrStates();
         size_t evidenceEntries = jointStates / _states;
         size_t evidenceBeginIndex = evidenceEntries * state;
@@ -36,6 +43,7 @@ namespace bayesNet {
             }
         }
 
+        // set evidence flag
         _isEvidence = true;
     }
 
@@ -45,12 +53,14 @@ namespace bayesNet {
     }
 
     void Factor::backup() {
+        // backup factor probabilities
         for (size_t i = 0; i < nrStates(); ++i) {
             _backupFactor[i] = get(i);
         }
     }
 
     void Factor::restore() {
+        // restore factor probabilities
         for (size_t i = 0; i < nrStates(); ++i) {
             set(i, _backupFactor[i]);
         }

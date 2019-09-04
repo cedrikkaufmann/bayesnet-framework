@@ -122,6 +122,23 @@ add_dependencies(
         bayesnet_lib
 )
 
+# Load example
+add_executable(
+        load_example
+        examples/example_load.cpp
+
+)
+
+target_link_libraries(
+        load_example
+        bayesnet_lib
+)
+
+add_dependencies(
+        load_example
+        bayesnet_lib
+)
+
 # Look for Qt5 dependecies
 set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
 find_package(Qt5 COMPONENTS Core GUI Widgets)

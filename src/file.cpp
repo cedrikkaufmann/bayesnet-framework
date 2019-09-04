@@ -63,8 +63,12 @@ namespace bayesNet {
             return _cpt;
         }
 
-        void InitializationVector::setFuzzySet(const std::string &sensorName, std::vector<std::string> curves) {
-            _fuzzySets[sensorName] = curves;
+        void InitializationVector::setFuzzySet(const std::string &sensorName, std::vector<std::string> mf) {
+            _fuzzySets[sensorName] = mf;
+        }
+
+        void InitializationVector::addFuzzySetMembershipFunction(const std::string &sensorName, std::string mf) {
+            _fuzzySets[sensorName].push_back(mf);
         }
 
         std::unordered_map<std::string, std::vector<std::string> > &InitializationVector::getFuzzySets() {
@@ -75,18 +79,20 @@ namespace bayesNet {
             _inferenceAlgorithm = algo;
         }
 
-        std::string const InitializationVector::getInferenceAlgorithm() {
+        std::string const &InitializationVector::getInferenceAlgorithm() const {
             return _inferenceAlgorithm;
         }
 
         InitializationVector *parse(const std::string &filename) {
-            // regular expressions to parse json file
+            // regular expressions to parse file
             std::regex beginRegEx("^\\s*\\{\\s*$");
             std::regex endRegEx("^\\s*}\\s*,?\\s*$");
-            std::regex sectionRegEx("^\\s*\"(nodes|sensors|connections|cpt)\"\\s*:\\s*\\{\\s*$");
+            std::regex sectionRegEx("^\\s*\"(nodes|sensors|connections|cpt|fuzzySets)\"\\s*:\\s*\\{\\s*$");
             std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
             std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9_]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9_]+)\"\\s*,?)*)\\],?$");
             std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
+            std::regex fuzzySetsRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\{\\s*$");
+            std::regex fuzzySetSensorStateRegEx("^\\s*[0-9]+\\s*:\\s*\\{(\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*[0-9]+\\.?)\\s*,?)*\\]\\s*)\\},?$");
             std::regex inferenceRegEx("^\\s*\"inference\"\\s*:\\s*\"([a-zA-Z0-9_.\\/]*)\"\\s*$");
 
             // open file
@@ -102,14 +108,40 @@ namespace bayesNet {
                 bool sectionSensors = false;
                 bool sectionConnections = false;
                 bool sectionCPT = false;
+                bool sectionFuzzySets = false;
+                bool sectionSensorFuzzySetBegin = false;
 
                 std::smatch match;
+                std::string lastSensorName;
 
                 while (getline(file, line)) {
                     // check for begin of file
                     if (!beginFile && std::regex_match(line, beginRegEx)) {
                         beginFile = true;
                         continue;
+                    }
+
+                    // check for end of section/file
+                    if (std::regex_match(line, match, endRegEx)) {
+                        if (sectionSensorFuzzySetBegin) {
+                            sectionSensorFuzzySetBegin = false;
+                            std::cout << "Fuzzy sets sensor end detected";
+                            continue;
+                        }
+
+                        // end of section nodes/sensors/connections/cpt/fuzzySets
+                        if (sectionNodes || sectionSensors || sectionConnections || sectionCPT || sectionFuzzySets) {
+                            sectionNodes = false;
+                            sectionSensors = false;
+                            sectionConnections = false;
+                            sectionCPT = false;
+                            sectionFuzzySets = false;
+
+                            continue;
+                        }
+
+                        // end of json file, stop parsing
+                        break;
                     }
 
                     // check for node name and count of states
@@ -169,31 +201,36 @@ namespace bayesNet {
                         continue;
                     }
 
-                    // check for end of section/file
-                    if (std::regex_match(line, match, endRegEx)) {
-                        // end of section nodes/connections/cpt
-                        if (sectionNodes || sectionSensors || sectionConnections || sectionCPT) {
-                            sectionConnections = false;
-                            sectionNodes = false;
-                            sectionCPT = false;
+                    // check for fuzzy set membership function
+                    if (sectionSensorFuzzySetBegin && std::regex_match(line, match, fuzzySetSensorStateRegEx)) {
+                        iv->addFuzzySetMembershipFunction(lastSensorName, match.str(1));
 
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        // end of json file, stop parsing
-                        break;
+                    // check for fuzzy sets 
+                    if (sectionFuzzySets && std::regex_match(line, match, fuzzySetsRegEx)) {
+                        std::cout << "Sensor fuzzy set detected!"<< std::endl;
+                        sectionSensorFuzzySetBegin = true;
+                        lastSensorName = match.str(1);
+
+                        continue;
                     }
 
                     // check for section
                     if (std::regex_match(line, match, sectionRegEx)) {
-                        if (match.str(1) == "nodes") {
+                        std::string section = match.str(1);
+
+                        if (section == "nodes") {
                             sectionNodes = true;
-                        } else if (match.str(1) == "sensors") {
+                        } else if (section == "sensors") {
                             sectionSensors = true;
-                        } else if (match.str(1) == "connections") {
+                        } else if (section == "connections") {
                             sectionConnections = true;
-                        } else if (match.str(1) == "cpt") {
+                        } else if (section == "cpt") {
                             sectionCPT = true;
+                        } else if (section == "fuzzySets") {
+                            sectionFuzzySets = true;
                         }
 
                         continue;
@@ -375,13 +412,13 @@ namespace bayesNet {
                 os << indent << indent << "\"" << (*it).first << "\": {" << std::endl;
 
                 for (size_t i = 0; i < (*it).second.size(); ++i) {
-                    os << indent << indent << indent << i << ": {" << std::endl;
-                    os << indent << indent << indent << indent << (*it).second[i] << std::endl;
+                    os << indent << indent << indent << i << ": {";
+                    os << (*it).second[i];
 
                     if (i == (*it).second.size() - 1) {
-                        os << indent << indent << indent << "}" << std::endl;
+                        os << "}" << std::endl;
                     } else {
-                        os << indent << indent << indent  << "}," << std::endl;
+                        os << "}," << std::endl;
                     }
                 }
 

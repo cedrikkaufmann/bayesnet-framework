@@ -154,7 +154,7 @@ namespace bayesNet {
             newNode(nodes[i]->getName(), nodes[i]->isBinary());
         }
         
-         // add connections for nodes to network
+        // add connections for nodes to network
         std::unordered_map<std::string, std::vector<std::string> > &connections = iv->getConnections();
 
         for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = connections.begin(); it != connections.end(); it++) {
@@ -168,6 +168,17 @@ namespace bayesNet {
 
         for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = cpts.begin(); it != cpts.end(); it++) {
             setCPT((*it).first, CPT((*it).second));
+        }
+
+        // add fuzzy sets for sensor nodes
+        std::unordered_map<std::string, std::vector<std::string> > &fuzzySets = iv->getFuzzySets();
+
+        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = fuzzySets.begin(); it != fuzzySets.end(); it++) {
+            for (size_t i = 0; i < (*it).second.size(); ++i) {
+                // compile membership function from string
+                fuzzyLogic::MembershipFunction *mf = fuzzyLogic::membershipFunctions::fromString((*it).second[i]);
+                setMembershipFunction((*it).first, i, mf);
+            }
         }
 
         // generate inference algorithm from string

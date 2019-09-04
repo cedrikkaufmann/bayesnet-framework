@@ -1,8 +1,11 @@
-//
-// Created by Cedrik Kaufmann on 2019-06-12.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <bayesnet/exception.h>
+
 
 namespace bayesNet {
 
