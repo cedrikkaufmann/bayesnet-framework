@@ -24,65 +24,81 @@ namespace bayesNet {
     void Network::newNode(const std::string &name, bool binary) {
         size_t states;
 
+        // set states based on binary flag
         if (binary) {
             states = 2;
         } else {
             states = 4;
         }
 
+        // look up name and throw exception if already exists
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
             BAYESNET_THROW(NODE_ALREADY_EXISTS);
         }
 
+        // increment node counter
         size_t nodeValue = _nodeCounter++;
+        // use current node counter as label and save in map
         _registry[name] = nodeValue;
 
+        // create new node
         Node *node = new Node(name, nodeValue, states);
+        // save node reference
         _nodes.push_back(node);
     }
 
     void Network::newConnection(const std::string &parentName, const std::string &childName) {
-        size_t nodeChildValue = _registry.at(childName);
-        size_t nodeParentValue = _registry.at(parentName);
+        // lookup labels
+        size_t nodeChildValue = _registry[childName];
+        size_t nodeParentValue = _registry[parentName];
 
+        // add node as child to parent
         Node *node = _nodes[nodeChildValue];
         _nodes[nodeParentValue]->addChild(node);
     }
 
     Node *Network::getNode(const std::string &name) {
+        // lookup and return node
         size_t nodeValue = _registry.at(name);
         return _nodes[nodeValue];
     }
 
     void Network::init(inference::Algorithm *alg) {
+        // get factors from nodes
         std::vector<dai::Factor> factors;
 
         for (size_t i = 0; i < _nodes.size(); ++i) {
             factors.push_back(_nodes[i]->getFactor());
         }
 
+        // create factorgraph from factors
         _factorGraph = dai::FactorGraph(factors);
 
+        // lookup factorgraph index and set in node
         for (size_t i = 0; i < _nodes.size(); ++i) {
             size_t factorIndex = _factorGraph.findFactor(_nodes[i]->getConditionalDiscrete());
             _nodes[i]->setFactorGraphIndex(factorIndex);
         }
 
+        // create inference algorithm instance using factorgraph
         _inferenceAlgorithm = alg;
         alg->generateInferenceInstance(_factorGraph);
         alg->getInstance()->init();
 
+        // set initialized flag
         _init = true;
     }
 
     void Network::setEvidence(const std::string &name, size_t state) {
+        // check if initialized
         if (!_init) {
             BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         try {
+            // set evidence on node
             Node *node = getNode(name);
 
             if (state < node->getDiscrete().states()) {
@@ -91,22 +107,25 @@ namespace bayesNet {
                 BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
-            _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
-            _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
+            // update factorgraph
+            refreshFactorGraph(node);
         } catch (const std::exception &) {
             BAYESNET_THROW(NODE_NOT_FOUND);
         }
     }
 
     void Network::clearEvidence(const std::string &name) {
+        // check if initialized
         if (!_init) {
             BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         try {
+            // clear evidence
             size_t nodeValue = _registry.at(name);
             Node *node = _nodes[nodeValue];
             node->clearEvidence();
+            // update factorgraph
             refreshFactorGraph(node);
         } catch (const std::exception &) {
             BAYESNET_THROW(NODE_NOT_FOUND);
@@ -114,18 +133,22 @@ namespace bayesNet {
     }
 
     void Network::doInference() {
+        // check if initialized
         if (!_init) {
             BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
+        // run infernece algorithm
         this->_inferenceAlgorithm->getInstance()->run();
     }
 
     state::BayesBelief Network::getBelief(const std::string &name) {
+        // check if initialized
         if (!_init) {
             BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
+        // get node and read belief from factorgraph
         Node *node = getNode(name);
 
         dai::Factor belief = this->_inferenceAlgorithm->getInstance()->belief(node->getDiscrete());
@@ -264,29 +287,37 @@ namespace bayesNet {
     void Network::newSensorNode(const std::string &name, bool binary) {
         size_t states;
 
+        // set states based on binary flag
         if (binary) {
             states = 2;
         } else {
             states = 4;
         }
 
+        // lookup name if already exists
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
             BAYESNET_THROW(NODE_ALREADY_EXISTS);
         }
 
+        // increment node counter
         size_t nodeValue = _nodeCounter++;
+        // use node counter as label
         _registry[name] = nodeValue;
 
+        // create new node
         Node *node = new SensorNode(name, nodeValue, states);
+        // save reference to node 
         _nodes.push_back(node);
     }
 
     void Network::observe(const std::string &name, double x) {
+        // cast node to sensor node
         SensorNode *node = dynamic_cast<SensorNode *>(getNode(name));
+        // set oberved variable
         node->observe(x);
-
+        // update factorgraph
         refreshFactorGraph(node);
     }
 
@@ -295,6 +326,7 @@ namespace bayesNet {
             BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
+        // update corresponding factor in factorgraph
         _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
         _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
     }
