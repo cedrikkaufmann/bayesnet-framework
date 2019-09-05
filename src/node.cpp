@@ -1,10 +1,13 @@
-//
-// Created by Cedrik Kaufmann on 2019-05-28.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <bayesnet/node.h>
 #include <bayesnet/state.h>
 #include <bayesnet/util.h>
+
 
 namespace bayesNet {
 
@@ -48,7 +51,7 @@ namespace bayesNet {
 
     }
 
-    std::string Node::getName() const {
+    const std::string &Node::getName() const {
         return _name;
     }
 

@@ -41,26 +41,6 @@ namespace bayesNet {
             v.erase(v.begin(), v.begin() + 2);
         }
 
-        double vectorMaximum(const std::vector<double> &v) {
-            if (v.size() == 1) {
-                return v[0];
-            }
-
-            if (v.size() > 1) {
-                double max = v[0];
-
-                for (size_t i = 1; i < v.size(); ++i) {
-                    if (v[i] > max) {
-                        max = v[i];
-                    }
-                }
-
-                return max;
-            }
-
-            BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
-        }
-
         double vectorSum(const std::vector<double> &v) {
             double sum = 0;
 

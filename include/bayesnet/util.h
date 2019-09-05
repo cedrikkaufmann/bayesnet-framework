@@ -23,19 +23,19 @@ namespace bayesNet {
 
     namespace utils {
 
-        /// Returns splitted string. Splits @a s by @a delimiter 
+        /// Returns split string. Splits @a s by @a delimiter
+        /// @return vector of split string
         std::vector<std::string> split(const std::string &s, char delimiter);
 
         /// Writes file list of directory @a name to @a v
         void readDirectory(const std::string &name, std::vector<std::string> &v);
 
-        /// Returns the maximum entry of vector @a v
-        double vectorMaximum(const std::vector<double> &v);
-
         /// Returns the sum of the entries of the vector @a v
+        /// @return sum
         double vectorSum(const std::vector<double> &v);
 
-        /// Returns the product of the entrues of the vector @a v
+        /// Returns the product of the entries of the vector @a v
+        /// @return product
         size_t vectorProduct(const std::vector<size_t> &v);
 
         /// Normalizes the vector @a v
@@ -44,7 +44,7 @@ namespace bayesNet {
         /// Returns true if @a c is whitespace or quotation character
         bool isWhitespaceOrQuotationMark(char c);
 
-        /// Bitwise counter class
+        /// Digitwise counter class
         /**
          * The class increments a number by each digit seperatly with overflow carry if maximum state is reached.
          * Least significant digit is at zero position of vector.
@@ -53,7 +53,7 @@ namespace bayesNet {
         public:
         /// @name Constructors and Destructors
         //@{
-            /// Constructs a Counter with @a digits and maxmimum @a states for eaxch digit
+            /// Constructs a Counter with @a digits and maximum @a states for eaxch digit
             Counter(size_t digits, const std::vector<size_t> &states);
 
             /// Destructor
@@ -61,18 +61,22 @@ namespace bayesNet {
         //@}
 
             /// Increments the counter and returns false if maxiumum was reached
+            /// @return overflow happend
             bool countUp();
 
             /// Returns current incremental
+            /// @return increment
             size_t getIncrement() const;
 
             /// Returns the maximum possible increment befor overflow
+            /// @return maximum increment
             size_t getMaximumIncrement() const;
 
             /// Resets the counter
             void reset();
 
             /// Returns the current counter value as digits
+            /// @return counter vector
             std::vector<size_t> &getCount();
 
         private:
@@ -87,5 +91,6 @@ namespace bayesNet {
         };
     }
 }
+
 
 #endif //BAYESNET_FRAMEWORK_UTIL_H

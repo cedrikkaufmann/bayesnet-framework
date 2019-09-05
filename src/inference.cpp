@@ -1,6 +1,8 @@
-//
-// Created by Cedrik Kaufmann on 2019-06-15.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <fstream>
 
@@ -21,7 +23,7 @@ namespace bayesNet {
                                  _inferenceProperties(DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES),
                                  _inferenceInstance(NULL) {}
 
-        Algorithm::Algorithm(const AlgorithmType &alg, const std::string &properties) : _algorithm(alg),
+        Algorithm::Algorithm(const Algorithm::Type &alg, const std::string &properties) : _algorithm(alg),
                                                                                         _inferenceProperties(
                                                                                                 properties),
                                                                                         _inferenceInstance(NULL) {}
@@ -67,22 +69,22 @@ namespace bayesNet {
 
         void Algorithm::generateInferenceInstance(dai::FactorGraph &fg) {
             switch (_algorithm) {
-                case inference::LOOPY_BELIEF_PROPAGATION: {
+                case Algorithm::LOOPY_BELIEF_PROPAGATION: {
                     _inferenceInstance = new dai::BP(fg, _inferenceProperties);
                     break;
                 }
 
-                case inference::CONDITIONED_BELIEF_PROPAGATION: {
+                case Algorithm::CONDITIONED_BELIEF_PROPAGATION: {
                     _inferenceInstance = new dai::CBP(fg, _inferenceProperties);
                     break;
                 }
 
-                case inference::FRACTIONAL_BELIEF_PROPAGATION: {
+                case Algorithm::FRACTIONAL_BELIEF_PROPAGATION: {
                     _inferenceInstance = new dai::FBP(fg, _inferenceProperties);
                     break;
                 }
 
-                case JUNCTION_TREE: {
+                case Algorithm::JUNCTION_TREE: {
                     _inferenceInstance = new dai::JTree(fg, _inferenceProperties);
                     break;
                 }
@@ -110,7 +112,7 @@ namespace bayesNet {
             return _inferenceInstance;
         }
 
-        AlgorithmType Algorithm::getType() const {
+        Algorithm::Type Algorithm::getType() const {
             return _algorithm;
         }
 
@@ -128,22 +130,22 @@ namespace bayesNet {
 
         std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm) {
             switch (algorithm.getType()) {
-                case inference::LOOPY_BELIEF_PROPAGATION: {
+                case Algorithm::LOOPY_BELIEF_PROPAGATION: {
                     os << "BP" << std::endl;
                     break;
                 }
 
-                case inference::CONDITIONED_BELIEF_PROPAGATION: {
+                case Algorithm::CONDITIONED_BELIEF_PROPAGATION: {
                     os << "CBP" << std::endl;
                     break;
                 }
 
-                case inference::FRACTIONAL_BELIEF_PROPAGATION: {
+                case Algorithm::FRACTIONAL_BELIEF_PROPAGATION: {
                     os << "FBP" << std::endl;
                     break;
                 }
 
-                case JUNCTION_TREE: {
+                case Algorithm::JUNCTION_TREE: {
                     os << "JT" << std::endl;
                     break;
                 }

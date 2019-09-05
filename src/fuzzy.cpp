@@ -1,15 +1,19 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-16.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <math.h>
 #include <limits>
 #include <sstream>
 #include <regex>
 
+
 #include <bayesnet/fuzzy.h>
 #include <bayesnet/util.h>
 #include <bayesnet/exception.h>
+
 
 namespace bayesNet {
 

@@ -55,6 +55,7 @@
  */
 #define BAYESNET_THROWE(code,msg) throw bayesNet::Exception(bayesNet::Exception::code, __FILE__, FUNCTION_NAME, BAYESNET_TOSTRING(__LINE__), msg)
 
+
 namespace bayesNet {
 
     /// Error handling in libBayesNet is done by throwing an instance of the Exception class.
@@ -85,24 +86,31 @@ namespace bayesNet {
         ~Exception() throw();
 
         /// Returns error code of this exception
+        /// @return exception error code
         Code getCode() const;
 
         /// Returns short error message of this exception
+        /// @return exception short error message
         const std::string &getMsg() const;
 
         /// Returns detailed error message of this exception
+        /// @return exception detailes errror message
         const std::string &getDetailedMsg() const;
 
         /// Returns filename where this exception was thrown
+        /// @return exception filename occurrence
         const std::string& getFilename() const;
 
         // Returns function name where this exception was thrown
+        /// @return exception function name occurrence
         const std::string& getFunction() const;
 
         // Returns line number where this exception was thrown
+        /// @return exception line number occurrence
         const std::string& getLine() const;
 
-        /// Returns error message corresponding to an error code
+        /// Returns error message corresponding to an error code @a c 
+        /// @return error message
         const std::string & message(const Code c) const;
 
     private:
@@ -125,5 +133,6 @@ namespace bayesNet {
         static std::string ErrorStrings[NUM_ERRORS];
     };
 }
+
 
 #endif //BAYESNET_FRAMEWORK_EXCEPTION_H

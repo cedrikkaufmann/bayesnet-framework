@@ -51,7 +51,6 @@ namespace bayesNet {
             _newPrompt->setComboBoxItems(list);
 
             if (!_newPrompt->exec()) {
-
                 delete _newPrompt;
                 return;
             }
@@ -64,7 +63,6 @@ namespace bayesNet {
             _newPrompt->setLabelText("Filename (without \".algorithm\"):");
 
             if (!_newPrompt->exec()) {
-
                 delete _newPrompt;
                 return;
             }
@@ -75,25 +73,17 @@ namespace bayesNet {
             inference::Algorithm *algorithm;
 
             if (type == "LOOPY BELIEF PROPAGATION") {
-
-                algorithm = new inference::Algorithm(inference::LOOPY_BELIEF_PROPAGATION,
-                                                     DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES);
+                algorithm = new inference::Algorithm(inference::Algorithm::LOOPY_BELIEF_PROPAGATION, DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES);
             } else if (type == "FRACTIONAL BELIEF PROPAGATION") {
-
-                algorithm = new inference::Algorithm(inference::FRACTIONAL_BELIEF_PROPAGATION,
-                                                     DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES);
+                algorithm = new inference::Algorithm(inference::Algorithm::FRACTIONAL_BELIEF_PROPAGATION, DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES);
             } else if (type == "CONDITIONED BELIEF PROPAGATION") {
-
-                algorithm = new inference::Algorithm(inference::CONDITIONED_BELIEF_PROPAGATION,
-                                                     DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES);
+                algorithm = new inference::Algorithm(inference::Algorithm::CONDITIONED_BELIEF_PROPAGATION, DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES);
             } else {
-
-                algorithm = new inference::Algorithm(inference::JUNCTION_TREE, DEFAULT_JUNCTION_TREE_PROPERTIES);
+                algorithm = new inference::Algorithm(inference::Algorithm::JUNCTION_TREE, DEFAULT_JUNCTION_TREE_PROPERTIES);
             }
 
             algorithm->save(_algorithmList->getFullFilepath(filename.append(".algorithm")));
             delete algorithm;
-
 
             std::string path = _algorithmList->getPath();
 
@@ -122,12 +112,9 @@ namespace bayesNet {
             _dirPrompt->setFileMode(QFileDialog::ExistingFile);
 
             if (_dirPrompt->exec()) {
-
-                _algorithmList = new AlgorithmList(_dirPrompt->directory().absolutePath().toStdString().append("/"),
-                                                   this);
+                _algorithmList = new AlgorithmList(_dirPrompt->directory().absolutePath().toStdString().append("/"), this);
                 delete _dirPrompt;
             } else {
-
                 exit(1);
             }
 
@@ -164,9 +151,7 @@ namespace bayesNet {
             utils::readDirectory(_path, algorithmFile);
 
             // populate algorithm files
-
             for (size_t i = 0; i < algorithmFile.size(); ++i) {
-
                 addItem(QString(algorithmFile[i].c_str()));
             }
         }
@@ -194,23 +179,22 @@ namespace bayesNet {
             inference::Algorithm *algorithm = new inference::Algorithm(file);
 
             switch (algorithm->getType()) {
-
-                case inference::LOOPY_BELIEF_PROPAGATION:
+                case inference::Algorithm::LOOPY_BELIEF_PROPAGATION:
                     setTitle("LOOPY BELIEF PROPAGATION");
                     _algorithmForm = new BeliefPropagationView(algorithm);
                     break;
 
-                case inference::CONDITIONED_BELIEF_PROPAGATION:
+                case inference::Algorithm::CONDITIONED_BELIEF_PROPAGATION:
                     setTitle("CONDITIONED BELIEF PROPAGATION");
                     _algorithmForm = new BeliefPropagationView(algorithm);
                     break;
 
-                case inference::FRACTIONAL_BELIEF_PROPAGATION:
+                case inference::Algorithm::FRACTIONAL_BELIEF_PROPAGATION:
                     setTitle("FRACTIONAL BELIEF PROPAGATION");
                     _algorithmForm = new BeliefPropagationView(algorithm);
                     break;
 
-                case inference::JUNCTION_TREE:
+                case inference::Algorithm::JUNCTION_TREE:
                     setTitle("JUNCTION TREE");
                     _algorithmForm = new JunctionTreeView(algorithm);
                     break;
@@ -225,8 +209,7 @@ namespace bayesNet {
         }
 
 
-        BeliefPropagationView::BeliefPropagationView(inference::Algorithm *algorithm, QWidget *parent) : AlgorithmForm(
-                algorithm, parent) {
+        BeliefPropagationView::BeliefPropagationView(inference::Algorithm *algorithm, QWidget *parent) : AlgorithmForm(algorithm, parent) {
             createLabels();
             createInputs();
             initFormLayout();
@@ -286,46 +269,36 @@ namespace bayesNet {
             dai::PropertySet properties = _algorithm->getProperties();
 
             if (properties.hasKey("maxiter")) {
-
                 _valueMaxIter->setValue(properties.getStringAs<int>("maxiter"));
             }
 
             if (properties.hasKey("maxtime")) {
-
                 _valueMaxTime->setText(QString(boost::any_cast<std::string>(properties.get("maxtime")).c_str()));
             }
 
             if (properties.hasKey("tol")) {
-
                 _valueTol->setText(QString(boost::any_cast<std::string>(properties.get("tol")).c_str()));
             }
 
             if (properties.hasKey("damping")) {
-
                 _valueDamping->setText(QString(boost::any_cast<std::string>(properties.get("damping")).c_str()));
             }
 
             if (properties.hasKey("updates")) {
-
-                int i = _valueUpdates->findData(
-                        QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
+                int i = _valueUpdates->findData(QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
                 _valueUpdates->setCurrentIndex(i);
             }
 
             if (properties.hasKey("inference")) {
-
-                int i = _valueInference->findData(
-                        QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
+                int i = _valueInference->findData(QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
                 _valueInference->setCurrentIndex(i);
             }
 
             if (properties.hasKey("logdomain")) {
-
                 _valueLogDomain->setChecked(properties.getStringAs<bool>("logdomain"));
             }
 
             if (properties.hasKey("verbose")) {
-
                 _valueVerbose->setChecked(properties.getStringAs<bool>("verbose"));
             }
         }
@@ -342,21 +315,18 @@ namespace bayesNet {
             QString maxTime = _valueMaxTime->text();
 
             if (maxTime != "") {
-
                 properties.set("tol", size_t(maxTime.toInt()));
             }
 
             QString tol = _valueTol->text();
 
             if (tol != "") {
-
                 properties.set("tol", dai::Real(tol.toDouble()));
             }
 
             QString damping = _valueDamping->text();
 
             if (damping != "") {
-
                 properties.set("damping", damping.toDouble());
             }
 
@@ -414,33 +384,25 @@ namespace bayesNet {
             dai::PropertySet properties = _algorithm->getProperties();
 
             if (properties.hasKey("maxmem")) {
-
                 _valueMaxMem->setValue(properties.getStringAs<int>("maxmem"));
             }
 
             if (properties.hasKey("updates")) {
-
-                int i = _valueUpdates->findData(
-                        QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
+                int i = _valueUpdates->findData(QVariant(boost::any_cast<std::string>(properties.get("updates")).c_str()));
                 _valueUpdates->setCurrentIndex(i);
             }
 
             if (properties.hasKey("inference")) {
-
-                int i = _valueInference->findData(
-                        QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
+                int i = _valueInference->findData(QVariant(boost::any_cast<std::string>(properties.get("inference")).c_str()));
                 _valueInference->setCurrentIndex(i);
             }
 
             if (properties.hasKey("heuristic")) {
-
-                int i = _valueHeuristic->findData(
-                        QVariant(boost::any_cast<std::string>(properties.get("heuristic")).c_str()));
+                int i = _valueHeuristic->findData(QVariant(boost::any_cast<std::string>(properties.get("heuristic")).c_str()));
                 _valueHeuristic->setCurrentIndex(i);
             }
 
             if (properties.hasKey("verbose")) {
-
                 _valueVerbose->setChecked(properties.getStringAs<bool>("verbose"));
             }
         }

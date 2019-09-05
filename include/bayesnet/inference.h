@@ -20,20 +20,20 @@ namespace bayesNet {
 
     namespace inference {
 
-        enum AlgorithmType {
-            LOOPY_BELIEF_PROPAGATION,
-            CONDITIONED_BELIEF_PROPAGATION,
-            FRACTIONAL_BELIEF_PROPAGATION,
-            JUNCTION_TREE
-        };
-
         class Algorithm {
         public:
+            enum Type {
+                LOOPY_BELIEF_PROPAGATION,
+                CONDITIONED_BELIEF_PROPAGATION,
+                FRACTIONAL_BELIEF_PROPAGATION,
+                JUNCTION_TREE
+            };
+
             Algorithm();
 
             explicit Algorithm(const std::string &filename);
 
-            explicit Algorithm(const AlgorithmType &alg, const std::string &properties);
+            explicit Algorithm(const Algorithm::Type &alg, const std::string &properties);
 
             virtual ~Algorithm();
 
@@ -45,7 +45,7 @@ namespace bayesNet {
 
             dai::InfAlg *getInstance();
 
-            AlgorithmType getType() const;
+            Algorithm::Type getType() const;
 
             dai::PropertySet getProperties() const;
 
@@ -54,7 +54,7 @@ namespace bayesNet {
             std::string getFilename() const;
 
         private:
-            AlgorithmType _algorithm;
+            Algorithm::Type _algorithm;
             dai::PropertySet _inferenceProperties;
             dai::InfAlg *_inferenceInstance;
             std::string _filename;

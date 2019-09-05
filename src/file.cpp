@@ -1,6 +1,8 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-03.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <fstream>
 #include <regex>
@@ -10,17 +12,20 @@
 #include <bayesnet/util.h>
 #include <bayesnet/exception.h>
 
+
 namespace bayesNet {
 
     namespace file {
 
         Node::Node(const std::string &name, size_t states, bool isSensor) : _name(name), _states(states), _isSensor(isSensor) {}
 
-        std::string const Node::getName() {
+        Node::~Node() {}
+
+        const std::string &Node::getName() const {
             return _name;
         }
 
-        size_t Node::getStates() {
+        size_t Node::nrStates() {
             return _states;
         }
 
@@ -33,6 +38,8 @@ namespace bayesNet {
         }
 
         InitializationVector::InitializationVector() {}
+
+        InitializationVector::~InitializationVector() {}
         
         void InitializationVector::addNode(const std::string &name, size_t states, bool isSensor) {
             Node *node = new Node(name, states, isSensor);
@@ -101,8 +108,10 @@ namespace bayesNet {
 
             // parsing file
             if (file.is_open()) {
+                // new InitializationVector instance
                 InitializationVector *iv = new InitializationVector();
 
+                // section flags
                 bool beginFile = false;
                 bool sectionNodes = false;
                 bool sectionSensors = false;
@@ -111,9 +120,12 @@ namespace bayesNet {
                 bool sectionFuzzySets = false;
                 bool sectionSensorFuzzySetBegin = false;
 
+                // regex matcher
                 std::smatch match;
+                // last parsed sensor name info
                 std::string lastSensorName;
 
+                // parse file til end
                 while (getline(file, line)) {
                     // check for begin of file
                     if (!beginFile && std::regex_match(line, beginRegEx)) {

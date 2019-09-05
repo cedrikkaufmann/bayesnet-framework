@@ -1,79 +1,155 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-03.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
+
+/// @file
+/// @brief Defines InitializationVector class and other parsing tools to load bayesian networks and algorithms from file.
+/// @author Cedrik Kaufmann
+/// @version 1.1
+
 
 #ifndef BAYESNET_FRAMEWORK_FILE_H
 #define BAYESNET_FRAMEWORK_FILE_H
+
 
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <iostream>
 
+
 namespace bayesNet {
 
     namespace file {
 
+        /// Represents a parsed bayesian node, that can be used in InitializationVector
+        /** This node representation is an intermediate node representation, which then is used
+         *  to initialize a bayesian network.
+         */
         class Node {
         public:
+        /// @name Constrcutors and Destructors
+        //@
+            /// Constructs a node from @a name @a states and @a isSensor
             explicit Node(const std::string &name, size_t states = 4, bool isSensor = false);
 
-            std::string const getName();
+            /// Destructor
+            virtual ~Node();
+        //@}
 
-            size_t getStates();
+            /// Returns the name of the node
+            /// @return name
+            const std::string &getName() const;
 
+            /// Returns the states of the node
+            /// @return states;
+            size_t nrStates();
+
+            /// Returns if node is binary or not
+            /// @return binary boolean
             bool isBinary();
 
+            /// Returns if node is sensor or not
+            /// @return sensor boolean
             bool isSensor();
 
         private:
+            /// Stores the node name
             std::string _name;
+
+            /// Stores the number of states
             size_t _states;
+
+            /// Stores the sensor flag
             bool _isSensor;
         };
 
+        /// Represents a all parsed network info, that can be used to intialize a bayesian network
+        /** This InitializationVector representation is an intermediate network representation,
+         *  which then is used to initialize a bayesian network.
+         */
         class InitializationVector {
         public:
+        /// @name Constructors and Destructors
+        //@{
+            /// Constructor
             InitializationVector();
 
+            /// Destructor
+            virtual ~InitializationVector();
+        //@}
+
+            /// Adds a new node to the InitializationVector using @a name, @a states and @a isSensor info
             void addNode(const std::string &name, size_t states = 4, bool isSensor = false);
 
+            /// Returns all nodes
+            /// @return nodes
             std::vector<Node *> &getNodes();
 
+            /// Sets the connections betweeen nodes corresponding to a parent @a a and its children @a b
             void setConnections(const std::string &a, std::vector<std::string> b);
 
+            /// Returns all connections
+            /// @return map of node connections
             std::unordered_map<std::string, std::vector<std::string> > &getConnections();
 
+            /// Sets the @a cpt for a node @a name
             void setCPT(const std::string &name, std::vector<double> cpt);
 
+            /// Sets a @a value in a cpt for @a name and corresponding @a index 
             void setCPT(const std::string &name, size_t index, double value);
 
+            /// Returns all CPTs
+            /// @return map of all CPTs
             std::unordered_map<std::string, std::vector<double> > &getCPTs();
 
+            /// Sets the fuzzy set for sensor with @a sensorName with corresponding membership functions @a mf
             void setFuzzySet(const std::string &sensorName, std::vector<std::string> mf);
 
+            /// Adds a membership function @a mf for sensor @a sensorName
             void addFuzzySetMembershipFunction(const std::string &sensorName, std::string mf);
 
+            /// Returns all fuzzy sets
+            /// @return map of fuzzy sets
             std::unordered_map<std::string, std::vector<std::string> > &getFuzzySets();
 
+            /// Sets the used inference algorithm @a algo
             void setInferenceAlgorithm(const std::string &algo);
 
+            /// Returns the used inference algorithm
+            /// @return inference algorithm string representation
             std::string const &getInferenceAlgorithm() const;
 
         private:
+            /// Stores nodes
             std::vector<Node *> _nodes;
+
+            /// Stores connections between nodes
             std::unordered_map<std::string, std::vector<std::string> > _connections;
+
+            /// Stores CPTs for nodes
             std::unordered_map<std::string, std::vector<double> > _cpt;
+
+            /// Stores fuzzy set of each node
             std::unordered_map<std::string, std::vector<std::string> > _fuzzySets;
+
+            /// Stores inference algorithm
             std::string _inferenceAlgorithm;
         };
 
+        /// Parses an InitializationVector based on the given network file with @a filename
+        /// @returns InitializationVector of parsed network
         InitializationVector *parse(const std::string &filename);
 
+        /// Saves an InitializationVector @a iv to file @a filename
         void save(const std::string &filename, InitializationVector *iv);
 
+        /// stream operator used to write string representation of @a iv to iostream @a os
         std::ostream &operator<<(std::ostream &os, InitializationVector &iv);
     }
 }
+
 
 #endif //BAYESNET_FRAMEWORK_FILE_H

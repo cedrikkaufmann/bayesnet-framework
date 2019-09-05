@@ -1,11 +1,15 @@
-//
-// Created by Cedrik Kaufmann on 2019-06-06.
-//
+/*  This file is part of libBayesNet
+ *
+ *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
+ */
+
 
 #include <exception>
 
+
 #include <bayesnet/network.h>
 #include <bayesnet/exception.h>
+
 
 namespace bayesNet {
 
@@ -31,8 +35,6 @@ namespace bayesNet {
         if (search != _registry.end()) {
             BAYESNET_THROW(NODE_ALREADY_EXISTS);
         }
-
-        _nodeNames.push_back(name);
 
         size_t nodeValue = _nodeCounter++;
         _registry[name] = nodeValue;
@@ -273,8 +275,6 @@ namespace bayesNet {
         if (search != _registry.end()) {
             BAYESNET_THROW(NODE_ALREADY_EXISTS);
         }
-
-        _nodeNames.push_back(name);
 
         size_t nodeValue = _nodeCounter++;
         _registry[name] = nodeValue;

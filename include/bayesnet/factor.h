@@ -44,7 +44,7 @@ namespace bayesNet {
         virtual ~Factor();
     //@}
 
-        /// Sets evidence with /a state on the factor
+        /// Sets evidence with @a state on the factor
         void setEvidence(size_t state);
 
         /// Clears all evidence and restores the old factor
@@ -67,5 +67,6 @@ namespace bayesNet {
         void restore();
     };
 }
+
 
 #endif //BAYESNET_FRAMEWORK_FACTOR_H

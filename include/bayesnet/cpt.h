@@ -18,6 +18,7 @@
 
 #include <bayesnet/factor.h>
 
+
 namespace bayesNet {
 
     /// Represents a conditional probability table
@@ -39,25 +40,31 @@ namespace bayesNet {
         explicit CPT(size_t jointSize);
 
         /// Constructs a CPT from vector @a probabilities
+        /// @param probabilities - joint probability vector
         explicit CPT(std::vector<double> probabilities);
 
         /// Constructs a CPT from factor @a factor
+        /// @param factor - probability factor
         explicit CPT(const Factor &factor);
     //@}
     
         /// Returns the joint size of the CPT
+        /// @return joint size of conditional probabilty table
         size_t size() const;
 
         /// Sets the probability of @a index with @a value
         void set(size_t index, double value);
 
         /// Returns the probability of entry @a index
+        /// @return probability for index
         double get(size_t index) const;
 
         /// Returns the whole CPT as vector
+        /// @return joint probability vector
         std::vector<double> &getProbabilities();
 
         /// Returns the whole CPT as vector
+        /// @return joint probability vector
         std::vector<double> getProbabilities() const;
 
         /// Access operator
@@ -68,5 +75,6 @@ namespace bayesNet {
         std::vector<double> _probabilities;
     };
 }
+
 
 #endif //BAYESNET_FRAMEWORK_CPT_H
