@@ -302,6 +302,10 @@ namespace bayesNet {
             //// Represents a triangular membership function. 
             class Triangle : public MembershipFunction {
             public:
+                /// Constructs triangular curve
+                /// @param begin - begin increasing slope
+                /// @param max - maximum position
+                /// @param end - end decreasing slope
                 Triangle(double begin, double max, double end);
 
                 /// Returns strength value based on value @a x
@@ -336,6 +340,11 @@ namespace bayesNet {
             //// Represents a trapezoidal membership function. 
             class Trapezoid : public MembershipFunction {
             public:
+                /// Constructs a trapeziodal curve
+                /// @param x1 - increasing begin
+                /// @param x2 - increasing end
+                /// @param x3 - decreasing begin
+                /// @param x4 - decreasing end 
                 Trapezoid(double x1, double x2, double x3, double x4);
 
                 /// Returns strength value based on value @a x
@@ -373,15 +382,19 @@ namespace bayesNet {
             //// Represents a s-shaped membership function. 
             class SShape : public MembershipFunction {
             public:
+                /// Constructs s-shaped curve with minimum at @a a and maximum at @a b
                 SShape(double a, double b);
 
                 /// Returns strength value based on value @a x
                 /// @return strength value
                 virtual double fx(double x) const;
 
-                
+                /// Returns minimum position
+                /// @return minimum position
                 double getMinPos() const;
 
+                /// Returns maximum position
+                /// @return maximum position
                 double getMaxPos() const;
 
                 /// Returns the position of the maximum of the function
@@ -393,21 +406,29 @@ namespace bayesNet {
                 virtual std::string toString() const;
 
             private:
+                /// Stores minimum position
                 double _a;
+
+                /// Stores maximum position
                 double _b;
             };
 
             //// Represents a z-shaped membership function. 
             class ZShape : public MembershipFunction {
             public:
+                /// Constructs z-shaped curve with maximum at @a a and minimum at @a b
                 ZShape(double a, double b);
 
                 /// Returns strength value based on value @a x
                 /// @return strength value
                 virtual double fx(double x) const;
 
+                /// Returns maximum position
+                /// @return maximum position
                 double getMaxPos() const;
 
+                /// Returns minimum position
+                /// @return minimum position
                 double getMinPos() const;
 
                 /// Returns the position of the maximum of the function
@@ -419,12 +440,14 @@ namespace bayesNet {
                 virtual std::string toString() const;
 
             private:
+                /// Stores s-shaped curve
                 SShape _sShape;
             };
 
             //// Represents a pi-shaped membership function. 
             class PiShape : public MembershipFunction {
             public:
+                /// Constructs pi shaped curve based on a s-shaped with @a a and @b b and a z-shaped one with @a c and @a d
                 PiShape(double a, double b, double c, double d);
 
                 /// Returns strength value based on value @a x
@@ -440,13 +463,17 @@ namespace bayesNet {
                 virtual std::string toString() const;
 
             private:
+                /// Stores s-shaped curve
                 SShape _sShape;
+
+                /// Stores z-shaped curve
                 ZShape _zShape;
             };
 
             //// Represents a sigmoidal membership function. 
             class Sigmoid : public MembershipFunction {
             public:
+                /// Constructs a sigmoidal curve corresponding to @a a and @a c
                 Sigmoid(double a, double c);
 
                 /// Returns strength value based on value @a x
@@ -462,13 +489,17 @@ namespace bayesNet {
                 virtual std::string toString() const;
 
             private:
+                /// Stores start slope param
                 double _a;
+
+                /// Store end slope param
                 double _c;
             };
 
             //// Represents a bell curve membership function. 
             class Bell : public MembershipFunction {
             public:
+                /// Constructs a bell curve with start @a a, maximum @a b and end @a c
                 Bell(double a, double b, double c);
 
                 /// Returns strength value based on value @a x
@@ -484,22 +515,32 @@ namespace bayesNet {
                 virtual std::string toString() const;
 
             private:
+                /// Stores bell start
                 double _a;
+
+                /// Stores bell maximum
                 double _b;
+
+                /// Stores bell end
                 double _c;
             };
 
             //// Represents a gaussian membership function.
             class Gaussian : public MembershipFunction {
             public:
+                /// Constructs a gaussian curve with @a mean and @a deviation
                 Gaussian(double mean, double deviation);
 
                 /// Returns strength value based on value @a x
                 /// @return strength value
                 virtual double fx(double x) const;
 
+                /// Returns mean
+                /// @return mean
                 double getMean() const;
 
+                /// Returns deviation
+                /// @return deviation
                 double getDeviation() const;
 
                 /// Returns the position of the maximum of the function
@@ -511,13 +552,17 @@ namespace bayesNet {
                 virtual std::string toString() const;
 
             private:
+                /// Stores mean
                 double _mean;
+
+                /// Stores deviation
                 double _deviation;
             };
 
             //// Represents a membership function resulting from two combined gaussians.
             class Gaussian2 : public MembershipFunction {
             public:
+                /// Constructs a gaussian2 curve corresponding to a left gaussian using @a meanLeft @a deviationLeft and a right gaussian using @a meanRight and @a deviationRight
                 Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
 
                 /// Returns strength value based on value @a x
@@ -533,7 +578,10 @@ namespace bayesNet {
                 virtual std::string toString() const;
 
             private:
+                /// Stores left gaussian curve
                 Gaussian _left;
+
+                /// Stores right gaussian curve
                 Gaussian _right;
             };
         }
