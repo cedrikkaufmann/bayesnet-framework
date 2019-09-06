@@ -272,13 +272,13 @@ namespace bayesNet {
                 return ss.str();
             }
 
-            Sigmoidal::Sigmoidal(double a, double c) : _a(a), _c(c) {}
+            Sigmoid::Sigmoid(double a, double c) : _a(a), _c(c) {}
 
-            double Sigmoidal::fx(double x) const {
+            double Sigmoid::fx(double x) const {
                 return 1 / (1 + std::exp(-1 * _a * (x - _c)));
             }
 
-            double Sigmoidal::findMaximum() const {
+            double Sigmoid::findMaximum() const {
                 double pos = _c;
                 double step = 0.1;
 
@@ -297,19 +297,19 @@ namespace bayesNet {
                 return pos;
             }
 
-            std::string Sigmoidal::toString() const {
+            std::string Sigmoid::toString() const {
                 std::stringstream ss;
-                ss << "\"sigmoidal\": " << "[" << _a << ", " << _c << "]";
+                ss << "\"sigmoid\": " << "[" << _a << ", " << _c << "]";
                 return ss.str();
             }
 
-            MembershipFunction *fromString(std::string curve) {
+            MembershipFunction *fromString(std::string s) {
                 // regex for curve string processing and matching
                 std::regex curveRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\]$");
                 std::smatch match;
 
                 // match string against regex
-                if (std::regex_match(curve, match, curveRegEx)) {
+                if (std::regex_match(s, match, curveRegEx)) {
                     std::vector<std::string> valuesStr = utils::split(match.str(2), ',');
                     std::vector<double> values;
 
@@ -351,8 +351,8 @@ namespace bayesNet {
                         goto factoryReturn;
                     }
 
-                    if (curveName == "sigmoidal") {
-                        mf = new Sigmoidal(values[0], values[1]);
+                    if (curveName == "sigmoid") {
+                        mf = new Sigmoid(values[0], values[1]);
                         goto factoryReturn;
                     }
 
@@ -398,7 +398,7 @@ namespace bayesNet {
             return _mf[state];
         }
 
-        std::vector<double> Set::getBeliefs(double x) const {
+        std::vector<double> Set::getStrength(double x) const {
             size_t states = _mf.size();
             std::vector<double> beliefs(states);
 
@@ -413,7 +413,7 @@ namespace bayesNet {
             return beliefs;
         }
 
-        double Set::getBelief(double x, size_t state) const {
+        double Set::getStrength(double x, size_t state) const {
             double belief = _mf[state]->fx(x);
 
             if (belief < _nullBeliefTolerance) {
@@ -545,7 +545,7 @@ namespace bayesNet {
                 double tNorm = 1;
 
                 for (size_t j = 0; j < states.size(); ++j) {
-                    tNorm *= _fuzzySet[j]->getBelief(max[j], rules[i]->getParentStates()[j]->getState());
+                    tNorm *= _fuzzySet[j]->getStrength(max[j], rules[i]->getParentStates()[j]->getState());
                 }
 
                 conclusions[i] = tNorm;
@@ -593,7 +593,7 @@ namespace bayesNet {
             return _state;
         }
 
-        namespace rules {
+        namespace states {
 
             RuleState *get(const state::State &state) {
                 switch (state) {

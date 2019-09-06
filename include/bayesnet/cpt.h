@@ -22,9 +22,8 @@
 namespace bayesNet {
 
     /// Represents a conditional probability table
-    /**
-     * CPT is used to represent a nodes probability, which then is used to build a factor
-     * based on the a nodes conditional variables.
+    /** CPT is used to represent a nodes probability, which then is used to build a factor
+     *  based on the a nodes conditional variables.
      */
     class CPT {
     public:

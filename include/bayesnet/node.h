@@ -23,14 +23,13 @@
 namespace bayesNet {
 
     /// Represents a bayes node in a bayesian network
-    /**
-     * The Node is used to represent a bayes node in a network. The network then is representated as an 
-     * acylcic graph using these nodes. Therefore each nodes holds references to its children. 
-     * Furthermore it holds its own CPT and the corresponding factor representation. 
-     * The factor is used to built a factorgraph using libDAI to apply the inference algorithm,
-     * provided by libDAI. 
-     * So the Node is a facade/proxy representing of a factor in a factorgraph, which is based on the libDAI,
-     * to provide a more expressive interface to the inference engine from libDAI.
+    /** The Node is used to represent a bayes node in a network. The network then is representated as an 
+     *  acylcic graph using these nodes. Therefore each nodes holds references to its children. 
+     *  Furthermore it holds its own CPT and the corresponding factor representation. 
+     *  The factor is used to built a factorgraph using libDAI to apply the inference algorithm,
+     *  provided by libDAI. 
+     *  So the Node is a facade/proxy representing of a factor in a factorgraph, which is based on the libDAI,
+     *  to provide a more expressive interface to the inference engine from libDAI.
      */
     class Node {
     public:
@@ -145,11 +144,10 @@ namespace bayesNet {
     };
 
     /// Represents a bayes node in a bayesian network, which can handle continous variable observations
-    /**
-     * The inference engine can apply the inference algorithm on discrete variables only, 
-     * therefore the SensorNode implementation is using fuzzy logic or more precisely the Node's
-     * fuzzy set and its memberhsip functions to map a continous variable (e.g. sensor reading)
-     * to a discrete CPT rather than the need to calculate inference on a set of continous functions.
+    /** The inference engine can apply the inference algorithm on discrete variables only, 
+     *  therefore the SensorNode implementation is using fuzzy logic or more precisely the Node's
+     *  fuzzy set and its memberhsip functions to map a continous variable (e.g. sensor reading)
+     *  to a discrete CPT rather than the need to calculate inference on a set of continous functions.
      */
     class SensorNode : public Node {
     public:

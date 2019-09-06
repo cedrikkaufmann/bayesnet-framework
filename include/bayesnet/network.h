@@ -33,17 +33,16 @@
 namespace bayesNet {
 
     /// Represents a bayesian network
-    /**
-     * The Network class is used to create new nodes, connect the nodes and apply the corresponding inference algorithm on the network.
-     * Threrefore the class acts as Facade for the libDAI to provide an expressive easy to use interface. Further it is used as Factory
-     * to for other classes and interfaces provided by the libBayesNet (this library). So there is no need to deal directly with other
-     * components of this framework than this factory class. The network class provides an interface for all functionality the libBayesNet
-     * provides. 
-     * After adding nodes, connecting them and filling them with needed information in form of CPTs, fuzzy sets, fuzzy rules, ... .
-     * The network is ready to be initialized. At this point the Network class processing the Nodes and its Factors and built a 
-     * factorgraph using the interfaces provided by libDAI. After building the factorgraph the inference is applied on the befor built
-     * factorgraph using a builtin inference algorithm provided by libDAI. The results then are read from the factorgraph and can be
-     * accessed trough this Network class.
+    /** The Network class is used to create new nodes, connect the nodes and apply the corresponding inference algorithm on the network.
+     *  Threrefore the class acts as Facade for the libDAI to provide an expressive easy to use interface. Further it is used as Factory
+     *  to for other classes and interfaces provided by the libBayesNet (this library). So there is no need to deal directly with other
+     *  components of this framework than this factory class. The network class provides an interface for all functionality the libBayesNet
+     *  provides. 
+     *  After adding nodes, connecting them and filling them with needed information in form of CPTs, fuzzy sets, fuzzy rules, ... .
+     *  The network is ready to be initialized. At this point the Network class processing the Nodes and its Factors and built a 
+     *  factorgraph using the interfaces provided by libDAI. After building the factorgraph the inference is applied on the befor built
+     *  factorgraph using a builtin inference algorithm provided by libDAI. The results then are read from the factorgraph and can be
+     *  accessed trough this Network class.
      */
     class Network {
     public:

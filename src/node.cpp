@@ -120,14 +120,14 @@ namespace bayesNet {
     SensorNode::SensorNode(const std::string &name, size_t label, size_t states) : Node(name, label, states) {}
 
     void SensorNode::observe(double x) {
-        // get beliefs from fuzzy set
-        std::vector<double> beliefs = getFuzzySet().getBeliefs(x);
+        // get state strenth from fuzzy set
+        std::vector<double> strength = getFuzzySet().getStrength(x);
 
         // normalize
-        utils::vectorNormalize(beliefs);
+        utils::vectorNormalize(strength);
 
         // set cpt for node
-        CPT cpt(beliefs);
+        CPT cpt(strength);
         setCPT(cpt);
     }
 

@@ -45,9 +45,8 @@ namespace bayesNet {
         bool isWhitespaceOrQuotationMark(char c);
 
         /// Digitwise counter class
-        /**
-         * The class increments a number by each digit seperatly with overflow carry if maximum state is reached.
-         * Least significant digit is at zero position of vector.
+        /** The class increments a number by each digit seperatly with overflow carry if maximum state is reached.
+         *  Least significant digit is at zero position of vector.
          */
         class Counter {
         public:

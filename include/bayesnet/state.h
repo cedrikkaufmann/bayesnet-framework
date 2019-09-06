@@ -38,9 +38,8 @@ namespace bayesNet {
         };
 
         /// Represents a bayesian belief
-        /**
-         * BayesBelief is used to represent a nodes belief, which was calculated in a bayesian network
-         * using bayesian inference.
+        /** BayesBelief is used to represent a nodes belief, which was calculated in a bayesian network
+         *  using bayesian inference.
          */
         class BayesBelief {
         public:
