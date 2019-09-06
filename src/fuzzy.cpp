@@ -371,13 +371,13 @@ namespace bayesNet {
                         goto factoryReturn;
                     }
 
-                    BAYESNET_THROWE(INVALID_CURVE_STRING, curve);
+                    BAYESNET_THROWE(INVALID_CURVE_STRING, s);
 
                     factoryReturn:
                         return mf;  
                 }
 
-                BAYESNET_THROWE(INVALID_CURVE_STRING, curve);
+                BAYESNET_THROWE(INVALID_CURVE_STRING, s);
             }
         }
 
