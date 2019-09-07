@@ -64,7 +64,9 @@ namespace bayesNet {
         }
 
         Algorithm::~Algorithm() {
-
+            if (_inferenceInstance != NULL) {
+                delete _inferenceInstance;
+            }
         }
 
         void Algorithm::generateInferenceInstance(dai::FactorGraph &fg) {
@@ -124,7 +126,7 @@ namespace bayesNet {
             return _inferenceProperties;
         }
 
-        std::string Algorithm::getFilename() const {
+        const std::string &Algorithm::getFilename() const {
             return _filename;
         }
 
