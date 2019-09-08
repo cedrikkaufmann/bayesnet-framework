@@ -1,13 +1,5 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 /// @file
 /// @brief Defines BayesBelief class which represent a belief calculated in a bayesian network and State, StateBinary which defines belief states for better readability.
-/// @author Cedrik Kaufmann
-/// @version 1.1
 
 
 #ifndef BAYESNET_FRAMEWORK_STATE_H
@@ -43,31 +35,25 @@ namespace bayesNet {
          */
         class BayesBelief {
         public:
-        /// @name Constructors and desctructors
-        //@{
             /// Constructs a bayesian belief 
             explicit BayesBelief(bool binary = false);
 
             /// Destructor
             virtual ~BayesBelief();
-        //@}
 
             /// Access operator
             double &operator[](size_t index);
 
             /// Returns if belief states are binary or not
-            /// @return boolean if belief is binary
             bool isBinary() const;
 
             /// Sets the @a belief for @a state
             void set(size_t state, double belief);
 
             /// Returns the belief for @a state
-            /// @return belief
             double get(size_t state) const;
 
             /// Returns string representation of the belief
-            /// @return string representation
             std::string toString() const;
 
         private:

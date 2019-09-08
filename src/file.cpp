@@ -86,7 +86,7 @@ namespace bayesNet {
             _inferenceAlgorithm = algo;
         }
 
-        std::string const &InitializationVector::getInferenceAlgorithm() const {
+        const std::string &InitializationVector::getInferenceAlgorithm() const {
             return _inferenceAlgorithm;
         }
 

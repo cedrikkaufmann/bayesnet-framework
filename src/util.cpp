@@ -51,16 +51,6 @@ namespace bayesNet {
             return sum;
         }
 
-        size_t vectorProduct(const std::vector<size_t> &v) {
-            size_t prod = 1;
-
-            for (size_t i = 0; i < v.size(); ++i) {
-                prod *= v[i];
-            }
-
-            return prod;
-        }
-
         void vectorNormalize(std::vector<double> &v) {
             double sum = vectorSum(v);
 
@@ -118,7 +108,13 @@ namespace bayesNet {
         }
 
         size_t Counter::getMaximumIncrement() const {
-            return vectorProduct(_states);
+            size_t maxIncrement = 1;
+
+            for (size_t i = 0; i < _states.size(); ++i) {
+                maxIncrement *= _states[i];
+            }
+
+            return maxIncrement;
         }
     }
 }

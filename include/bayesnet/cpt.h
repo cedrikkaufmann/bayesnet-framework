@@ -1,13 +1,5 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 /// @file
 /// @brief Defines CPT class which represent a conditional probability table of a node in a bayesian network.
-/// @author Cedrik Kaufmann
-/// @version 1.0
 
 
 #ifndef BAYESNET_FRAMEWORK_CPT_H
@@ -27,8 +19,6 @@ namespace bayesNet {
      */
     class CPT {
     public:
-    /// @name Constructors and desctructors
-    //@{
         /// Constructor
         CPT();
 
@@ -42,28 +32,22 @@ namespace bayesNet {
         /// @param probabilities - joint probability vector
         explicit CPT(std::vector<double> probabilities);
 
-        /// Constructs a CPT from factor @a factor
-        /// @param factor - probability factor
+        /// Constructs a CPT from probability @a factor
         explicit CPT(const Factor &factor);
-    //@}
     
         /// Returns the joint size of the CPT
-        /// @return joint size of conditional probabilty table
         size_t size() const;
 
         /// Sets the probability of @a index with @a value
         void set(size_t index, double value);
 
         /// Returns the probability of entry @a index
-        /// @return probability for index
         double get(size_t index) const;
 
         /// Returns the whole CPT as vector
-        /// @return joint probability vector
         std::vector<double> &getProbabilities();
 
         /// Returns the whole CPT as vector
-        /// @return joint probability vector
         std::vector<double> getProbabilities() const;
 
         /// Access operator

@@ -1,13 +1,5 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 /// @file
 /// @brief Defines InitializationVector class and other parsing tools to load bayesian networks and algorithms from file.
-/// @author Cedrik Kaufmann
-/// @version 1.1
 
 
 #ifndef BAYESNET_FRAMEWORK_FILE_H
@@ -72,27 +64,22 @@ namespace bayesNet {
          */
         class InitializationVector {
         public:
-        /// @name Constructors and Destructors
-        //@{
             /// Constructor
             InitializationVector();
 
             /// Destructor
             virtual ~InitializationVector();
-        //@}
 
             /// Adds a new node to the InitializationVector using @a name, @a states and @a isSensor info
             void addNode(const std::string &name, size_t states = 4, bool isSensor = false);
 
             /// Returns all nodes
-            /// @return nodes
             std::vector<Node *> &getNodes();
 
             /// Sets the connections betweeen nodes corresponding to a parent @a a and its children @a b
             void setConnections(const std::string &a, std::vector<std::string> b);
 
-            /// Returns all connections
-            /// @return map of node connections
+            /// Returns map of connections using node's name as key
             std::unordered_map<std::string, std::vector<std::string> > &getConnections();
 
             /// Sets the @a cpt for a node @a name
@@ -101,8 +88,7 @@ namespace bayesNet {
             /// Sets a @a value in a cpt for @a name and corresponding @a index 
             void setCPT(const std::string &name, size_t index, double value);
 
-            /// Returns all CPTs
-            /// @return map of all CPTs
+            /// Returns map of CPTs using node's name as key
             std::unordered_map<std::string, std::vector<double> > &getCPTs();
 
             /// Sets the fuzzy set for sensor with @a sensorName with corresponding membership functions @a mf
@@ -111,16 +97,14 @@ namespace bayesNet {
             /// Adds a membership function @a mf for sensor @a sensorName
             void addFuzzySetMembershipFunction(const std::string &sensorName, std::string mf);
 
-            /// Returns all fuzzy sets
-            /// @return map of fuzzy sets
+            /// Returns all fuzzy sets using node's name as key
             std::unordered_map<std::string, std::vector<std::string> > &getFuzzySets();
 
             /// Sets the used inference algorithm @a algo
             void setInferenceAlgorithm(const std::string &algo);
 
-            /// Returns the used inference algorithm
-            /// @return inference algorithm string representation
-            std::string const &getInferenceAlgorithm() const;
+            /// Returns the string representation of the used inference algorithm
+            const std::string &getInferenceAlgorithm() const;
 
         private:
             /// Stores nodes
@@ -140,13 +124,12 @@ namespace bayesNet {
         };
 
         /// Parses an InitializationVector based on the given network file with @a filename
-        /// @returns InitializationVector of parsed network
         InitializationVector *parse(const std::string &filename);
 
         /// Saves an InitializationVector @a iv to file @a filename
         void save(const std::string &filename, InitializationVector *iv);
 
-        /// stream operator used to write string representation of @a iv to iostream @a os
+        /// Stream operator used to write string representation of @a iv to iostream @a os
         std::ostream &operator<<(std::ostream &os, InitializationVector &iv);
     }
 }

@@ -52,7 +52,7 @@ namespace bayesNet {
                 return _fxMax;
             }
 
-            std::string Linear::toString() const {
+            const std::string Linear::toString() const {
                 std::stringstream ss;
                 ss << "\"linear\": " << "[" << _fxMin << ", " << _fxMax << "]";
                 return ss.str();
@@ -84,7 +84,7 @@ namespace bayesNet {
                 return _max;
             }
 
-            std::string Triangle::toString() const {
+            const std::string Triangle::toString() const {
                 std::stringstream ss;
                 ss << "\"triangle\": " << "[" << _begin << ", " << _max << ", " << _end << "]";
                 return ss.str();
@@ -114,7 +114,7 @@ namespace bayesNet {
                 return (_decreasingBegin - _increasingEnd) / 2;
             }
 
-            std::string Trapezoid::toString() const {
+            const std::string Trapezoid::toString() const {
                 std::stringstream ss;
                 ss << "\"trapezoid\": " << "[" << _increasingBegin << ", " << _increasingEnd << ", " << _decreasingBegin << ", " << _decreasingEnd << "]";
                 return ss.str();
@@ -150,7 +150,7 @@ namespace bayesNet {
                 return _b;
             }
 
-            std::string SShape::toString() const{
+            const std::string SShape::toString() const{
                 std::stringstream ss;
                 ss << "\"sshape\": " << "[" << _a << ", " << _b << "]";
                 return ss.str();
@@ -174,7 +174,7 @@ namespace bayesNet {
                 return _sShape.getMinPos();
             }
 
-            std::string ZShape::toString() const {
+            const std::string ZShape::toString() const {
                 std::stringstream ss;
                 ss << "\"zshape\": " << "[" << getMaxPos() << ", " << getMinPos() << "]";
                 return ss.str();
@@ -190,7 +190,7 @@ namespace bayesNet {
                 return _c;
             }
 
-            std::string Bell::toString() const {
+            const std::string Bell::toString() const {
                 std::stringstream ss;
                 ss << "\"linear\": " << "[" << _a << ", " << _b << ", " << _c << "]";
                 return ss.str();
@@ -214,7 +214,7 @@ namespace bayesNet {
                 return _mean;
             }
 
-            std::string Gaussian::toString() const {
+            const std::string Gaussian::toString() const {
                 std::stringstream ss;
                 ss << "\"gaussian\": " << "[" << _mean << ", " << _deviation << "]";
                 return ss.str();
@@ -246,7 +246,7 @@ namespace bayesNet {
                 return (_left.getMean() + _right.getMean()) / 2;
             }
 
-            std::string Gaussian2::toString() const{
+            const std::string Gaussian2::toString() const{
                 std::stringstream ss;
                 ss << "\"gaussian2\": " << "[" << _left.getMean() << ", " << _left.getDeviation() << ", " << _right.getMean() << ", " << _right.getDeviation() << "]";
                 return ss.str();
@@ -266,7 +266,7 @@ namespace bayesNet {
                 return (_sShape.getMaxPos() + _zShape.getMaxPos()) / 2;
             }
 
-            std::string PiShape::toString() const {
+            const std::string PiShape::toString() const {
                 std::stringstream ss;
                 ss << "\"pishape\": " << "[" << _sShape.getMinPos() << ", " << _sShape.getMaxPos() << ", " << _zShape.getMaxPos() << ", " << _zShape.getMinPos() << "]";
                 return ss.str();
@@ -297,7 +297,7 @@ namespace bayesNet {
                 return pos;
             }
 
-            std::string Sigmoid::toString() const {
+            const std::string Sigmoid::toString() const {
                 std::stringstream ss;
                 ss << "\"sigmoid\": " << "[" << _a << ", " << _c << "]";
                 return ss.str();

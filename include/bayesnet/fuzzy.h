@@ -1,13 +1,5 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 /// @file
-/// @brief Defines fuzzy logic toolbox containing membership functions, fuzzy sets and fuzzy rules. This is used for fuzzy inference and continuous/discrete variable mapping.
-/// @author Cedrik Kaufmann
-/// @version 1.0
+/// @brief Defines fuzzy logic toolbox containing membership functions, fuzzy sets and fuzzy rules.
 
 
 #ifndef BAYESNET_FRAMEWORK_FUZZY_H
@@ -42,26 +34,20 @@ namespace bayesNet {
          */
         class MembershipFunction {
         public:
-        /// @name Constructors and Destructors
-        //@{
             /// Constructor
             MembershipFunction();
 
             /// Destructor
             virtual ~MembershipFunction();
-        //@}
 
             /// Returns strength value based on value @a x
-            /// @return strength value
             virtual double fx(double x) const = 0;
 
             /// Returns the position of the maximum of the function
-            /// @return maximum position
             virtual double findMaximum() const = 0;
 
             /// Returns string representation of membership function
-            /// @return string representation
-            virtual std::string toString() const = 0;
+            virtual const std::string toString() const = 0;
         };
 
         /// Stream operator to write string reperesentation of membership function @a mf to iostream @a os 
@@ -74,36 +60,28 @@ namespace bayesNet {
          */
         class Set {
         public:
-        /// @name Constructors and Destructors
-        //@{
             /// Constructs a fuzzy set using @a states and tolerance value @a tol
             explicit Set(size_t states, double tol = 0);
 
             /// Destructor
             virtual ~Set();
-        //@}
 
             /// Sets a membership function @a mf for @a state
             void setMembershipFunction(size_t state, MembershipFunction *mf);
 
             /// Returns a membership function for @a state
-            /// @return membership function
             MembershipFunction *getMembershipFunction(size_t state);
 
             /// Returns maximum position for membership function for @a state 
-            /// @return maximum position
             double findMaximum(size_t state) const;
 
             /// Returns the strength vector for continuous value @a x
-            /// @return vector of strength
             std::vector<double> getStrength(double x) const;
 
             /// Returns the strength for continuous value @a x and memebership function for @a state
-            /// @return strength
             double getStrength(double x, size_t state) const;
 
             /// Returns the number of states
-            /// @return number of states
             size_t nrStates() const;
 
         private:
@@ -119,21 +97,16 @@ namespace bayesNet {
          */
         class RuleState {
         public:
-        /// @name Constructors and Destructors
-        //@{
             /// Constructs a new rule state corresponding to @a state and @a binary
             explicit RuleState(size_t state, bool binary = false);
 
             /// Destructor
             virtual ~RuleState();
-        //@}
 
             /// Returns if rule state is binary or not
-            /// @return binary flag
             bool isBinary() const;
 
             /// Returns the actual state
-            /// @return state
             size_t getState() const;
 
         private:
@@ -147,11 +120,9 @@ namespace bayesNet {
         namespace states {
 
             /// Returns a pointer to a fuzzy rule with corresponding @a state
-            /// @return fuzzy rule state
             RuleState *get(const state::State &state);
 
             /// Returns a pointer to a binary fuzzy rule with corresponding @a state
-            /// @return binary fuzzy rule state
             RuleState *get(const state::StateBinary &state);
         }
 
@@ -161,25 +132,19 @@ namespace bayesNet {
          */
         class Rule {
         public:
-        /// @name Constructors and Destructors
-        //@{
             /// Constructs a fuzzy rule corresponding to the conditionals @a parentStates and @a state
             explicit Rule(const std::vector<RuleState *> &parentStates, RuleState *state);
 
             /// Destructor
             virtual ~Rule();
-        //@}
 
             /// Returns the conditional rule states
-            /// @return vector rule states
             std::vector<RuleState *> &getParentStates();
 
             /// Returns the resulting rule state
-            /// @return rule state
             RuleState &getChildState();
 
             /// Returns the number of joint states
-            /// @return number states
             size_t nrJointStates() const;
 
         private:
@@ -196,8 +161,6 @@ namespace bayesNet {
          */
         class RuleSet {
         public:
-        /// @name Constructors and Destructors
-        //@{
             /// Constructor
             RuleSet();
 
@@ -206,7 +169,6 @@ namespace bayesNet {
 
             /// Destructor
             virtual ~RuleSet();
-        //@}
 
             /// Adds a new @a rule to the set
             void addRule(Rule *rule);
@@ -215,11 +177,9 @@ namespace bayesNet {
             void setRules(const std::vector<Rule *> &rules);
 
             /// Returns all fuzzy rules
-            /// @return vector of rules
             std::vector<Rule *> &getRules();
 
             /// Returns the number of joint states
-            /// @return number of states
             size_t nrJointStates() const;
 
         private:
@@ -233,17 +193,13 @@ namespace bayesNet {
          */
         class Controller {
         public:
-        /// @name Constructors and Destructors
-        //@{
             /// Constructs a controller using a fuzzy @a set, fuzzy @a rules and the null belief @a tolerance
             Controller(const std::vector<Set *> &set, RuleSet *rules, double tolerance = 0);
 
             /// Destructor
             virtual ~Controller();
-        //@}
 
             /// Returns a CPT inferred applying fuzzy inference on the corresponding fuzzy sets/-rules
-            /// @return CPT
             CPT inferCPT();
 
         private:
@@ -257,14 +213,12 @@ namespace bayesNet {
             double _nullBeliefTolerance;
 
             /// Returns a inferred partial set of probabilities based on @a states
-            /// @return vector of probabilities
             std::vector<double> infer(const std::vector<size_t> &states);
         };
 
         namespace membershipFunctions {
 
             /// Returns a memebership function based on string @a s
-            /// @return membership function
             MembershipFunction *fromString(std::string s);
 
             //// Represents a linear membership function. 
@@ -274,16 +228,13 @@ namespace bayesNet {
                 Linear(double fxMin, double fxMax);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores slope
@@ -309,16 +260,13 @@ namespace bayesNet {
                 Triangle(double begin, double max, double end);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores begin of increasing slope
@@ -348,16 +296,13 @@ namespace bayesNet {
                 Trapezoid(double x1, double x2, double x3, double x4);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores begin of increasing slope
@@ -386,24 +331,19 @@ namespace bayesNet {
                 SShape(double a, double b);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns minimum position
-                /// @return minimum position
                 double getMinPos() const;
 
                 /// Returns maximum position
-                /// @return maximum position
                 double getMaxPos() const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores minimum position
@@ -420,24 +360,19 @@ namespace bayesNet {
                 ZShape(double a, double b);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns maximum position
-                /// @return maximum position
                 double getMaxPos() const;
 
                 /// Returns minimum position
-                /// @return minimum position
                 double getMinPos() const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores s-shaped curve
@@ -451,16 +386,13 @@ namespace bayesNet {
                 PiShape(double a, double b, double c, double d);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores s-shaped curve
@@ -477,16 +409,13 @@ namespace bayesNet {
                 Sigmoid(double a, double c);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores start slope param
@@ -503,16 +432,13 @@ namespace bayesNet {
                 Bell(double a, double b, double c);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores bell start
@@ -532,24 +458,19 @@ namespace bayesNet {
                 Gaussian(double mean, double deviation);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns mean
-                /// @return mean
                 double getMean() const;
 
                 /// Returns deviation
-                /// @return deviation
                 double getDeviation() const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores mean
@@ -566,16 +487,13 @@ namespace bayesNet {
                 Gaussian2(double meanLeft, double deviationLeft, double meanRight, double deviationRight);
 
                 /// Returns strength value based on value @a x
-                /// @return strength value
                 virtual double fx(double x) const;
 
                 /// Returns the position of the maximum of the function
-                /// @return maximum position
                 virtual double findMaximum() const;
 
                 /// Returns string representation of membership function
-                /// @return string representation
-                virtual std::string toString() const;
+                virtual const std::string toString() const;
 
             private:
                 /// Stores left gaussian curve

@@ -1,13 +1,5 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 /// @file
 /// @brief Defines Node class which is used represent a bayesian networks based on an acyclic graph.
-/// @author Cedrik Kaufmann
-/// @version 1.1
 
 
 #ifndef BAYESNET_FRAMEWORK_NODE_H
@@ -33,41 +25,31 @@ namespace bayesNet {
      */
     class Node {
     public:
-    /// @name Constrcutors and Destructors
-    //@{
         /// Constructs a Node by its @a name, @a label and numbe of @a states  
         explicit Node(const std::string &name, size_t label, size_t states);
         
         /// Destructor
         virtual ~Node();
-    //@}
 
         /// Returns the name of the Node
-        /// @return name
         const std::string &getName() const;
 
         /// Returns the discrete representation used by libDAI to build factorgraph
-        /// @return discrete var
         dai::Var &getDiscrete();
 
         /// Returns the discrete var representation used by libDAI to build factorgraph
-        /// @return discrete var
         dai::Var getDiscrete() const;
 
         /// Returns the conditional discrete var representation used by libDAI to build factorgraph
-        /// @return conditional discrete var
         dai::VarSet &getConditionalDiscrete();
 
         /// Returns the conditional discrete var representation used by libDAI to build factorgraph
-        /// @return conditional discrete var
         dai::VarSet getConditionalDiscrete() const;
 
         /// Returns the factor representation used by libDAI to build factorgraph
-        /// @return factor
         Factor &getFactor();
 
         /// Returns the children of a Node
-        /// @return vector of Nodes
         std::vector<Node *> &getChildren();
 
         /// Adds a new Node as child
@@ -89,15 +71,12 @@ namespace bayesNet {
         void addFuzzyRule(fuzzyLogic::Rule *rule);
 
         /// Returns fuzzy set
-        /// @return fuzzy set
         fuzzyLogic::Set &getFuzzySet();
 
         /// Returns all fuzzy rules
-        /// @return fuzzy rules
         fuzzyLogic::RuleSet &getFuzzyRules();
 
         /// Returns the Node's CPT
-        /// @return CPT
         CPT &getCPT();
 
         /// Sets the @a cpt
@@ -107,11 +86,9 @@ namespace bayesNet {
         void setFactorGraphIndex(size_t index);
 
         /// Returns the Node's factorgraph index
-        /// @return index in factorgraph
         size_t getFactorGraphIndex() const;
 
         /// Returns boolean if Node is binary or not
-        /// @return binary boolean
         bool isBinary();
 
     private:
@@ -151,14 +128,11 @@ namespace bayesNet {
      */
     class SensorNode : public Node {
     public:
-    /// @name Constructors and Destructors
-    //@{
         /// Constructs a SensorNode using @a name, @a label and corresponding @a states 
         explicit SensorNode(const std::string &name, size_t label, size_t states);
 
         /// Destructor
         virtual ~SensorNode();
-    //@}
 
         /// Maps a continous observation @a x to a discrete CPT representation and builds updates the Node's CPT, Factor 
         void observe(double x);

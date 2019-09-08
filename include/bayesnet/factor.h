@@ -1,13 +1,5 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 /// @file
 /// @brief Defines Factor class which represent factors in probability distributions.
-/// @author Cedrik Kaufmann
-/// @version 1.0
 
 
 #ifndef BAYESNET_FRAMEWORK_FACTOR_H
@@ -32,8 +24,6 @@ namespace bayesNet {
      */
     class Factor : public dai::Factor {
     public:
-    /// @name Constructors and desctructors
-    //@{
         /// Constructs factor with number of /a states
         explicit Factor(size_t states = 4);
 
@@ -42,7 +32,6 @@ namespace bayesNet {
 
         /// Destructor
         virtual ~Factor();
-    //@}
 
         /// Sets evidence with @a state on the factor
         void setEvidence(size_t state);

@@ -1,6 +1,6 @@
-//
-// Created by Cedrik Kaufmann on 2019-06-12.
-//
+/// @file
+/// @brief Defines inference algorithm facade.
+
 
 #ifndef BAYESNET_FRAMEWORK_INFERENCE_H
 #define BAYESNET_FRAMEWORK_INFERENCE_H
@@ -41,8 +41,6 @@ namespace bayesNet {
                 JUNCTION_TREE
             };
 
-        /// @name Constructor and Destructors
-        //@{
             /// Constructor
             Algorithm();
 
@@ -54,7 +52,6 @@ namespace bayesNet {
 
             /// Destructor
             virtual ~Algorithm();
-        //@}
 
             /// Generates a bayesian inference instance for the provided factor graph @a fg
             void generateInferenceInstance(dai::FactorGraph &fg);
@@ -66,23 +63,18 @@ namespace bayesNet {
             void save(const std::string &filename);
 
             /// Returns the generated inference instance
-            /// @return inference instance
             dai::InfAlg *getInstance();
 
             /// Returns the algorithm type
-            /// @return algorithm type
             Algorithm::Type getType() const;
 
             /// Returns the algorithm properties
-            /// @return algorithm properties
             dai::PropertySet getProperties() const;
 
             /// Returns the algorithm properties
-            /// @return algorithm properties
             dai::PropertySet &getProperties();
 
             /// Returns the filename the algorithm will be saved to
-            /// @return filename
             const std::string &getFilename() const;
 
         private:

@@ -1,13 +1,5 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 /// @file
 /// @brief Defines Network class used to construct a bayesian network and apply bayesian inference.
-/// @author Cedrik Kaufmann
-/// @version 1.2
 
 
 #ifndef BAYESNET_FRAMEWORK_NETWORK_H
@@ -46,8 +38,6 @@ namespace bayesNet {
      */
     class Network {
     public:
-    /// @name Constructors and Destructors
-    //@{
         /// Constructor
         Network();
 
@@ -56,7 +46,6 @@ namespace bayesNet {
 
         /// Destructor
         virtual ~Network();
-    //@}
 
         /// Adds a new node to the network with @a name and @a binary info
         void newNode(const std::string &name, bool binary = false);
@@ -95,15 +84,12 @@ namespace bayesNet {
         void doInference();
 
         /// Returns a Node @a name
-        /// @return Node
         Node *getNode(const std::string &name);
 
         /// Returns all parents of a node @a name
-        /// @return vector of Nodes
         std::vector<Node *> getParents(const std::string &name);
 
         /// Returns bayes belief for node @a name 
-        /// @return bayes belief
         state::BayesBelief getBelief(const std::string &name);
 
         /// Saves the network to file @a filename
@@ -138,7 +124,6 @@ namespace bayesNet {
         void refreshFactorGraph(Node *node);
 
         /// Returns parents of a @a node
-        /// Returns vector of parent nodes
         std::vector<Node *> getParents(Node *node);
     };
 }
