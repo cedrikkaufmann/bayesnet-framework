@@ -17,5 +17,5 @@
     "scanningTest": [0.99, 0.1, 0.01, 0.9],
     "pregnant": [0.13, 0.87]
   },
-  "inference": "../../algorithms/junction_tree_default.algorithm"
+  "inference": "../../algorithms/default_cbp.algorithm"
 }

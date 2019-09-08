@@ -1,2 +1,0 @@
-BP
-[inference=SUMPROD,logdomain=0,maxiter=1000,tol=1e-09,updates=PARALL,verbose=1]

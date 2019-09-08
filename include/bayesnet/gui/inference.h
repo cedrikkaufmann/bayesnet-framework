@@ -1,6 +1,6 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-14.
-//
+/// @file
+/// @brief Defines gui elements to manage inference algorithms.
+
 
 #ifndef BAYESNET_FRAMEWORK_GUI_INFERENCE_H
 #define BAYESNET_FRAMEWORK_GUI_INFERENCE_H
@@ -91,6 +91,51 @@ namespace bayesNet {
             QCheckBox *_valueLogDomain;
             QLineEdit *_valueMaxTime;
             QLineEdit *_valueDamping;
+
+            virtual void createLabels();
+
+            virtual void createInputs();
+
+            virtual void initFormLayout();
+
+            virtual void populateData();
+        };
+
+        class ConditionedBeliefPropagationView : public AlgorithmForm {
+        public:
+            explicit ConditionedBeliefPropagationView(inference::Algorithm *algorithm, QWidget *parent = NULL);
+
+            virtual void saveAlgorithm();
+
+        protected:
+            QLabel *_labelMaxIter;
+            QLabel *_labelTol;
+            QLabel *_labelRecTol;
+            QLabel *_labelClamping;
+            QLabel *_labelMinMaxAdj;
+            QLabel *_labelRecursion;
+            QLabel *_labelChoose;
+            QLabel *_labelCostFn;
+            QLabel *_labelCostFnUpdates;
+            QLabel *_labelCostFnVerbose;
+            QLabel *_labelCostFnMaxIter;
+            QLabel *_labelCostFnTol;
+            QLabel *_labelCostFnDamping;
+            QLabel *_labelMaxLevels;
+            QSpinBox *_valueMaxIter;
+            QLineEdit *_valueTol;
+            QLineEdit *_valueRecTol;
+            QComboBox *_valueClamping;
+            QLineEdit *_valueMinMaxAdj;
+            QComboBox *_valueRecursion;
+            QComboBox *_valueChoose;
+            QComboBox *_valueCostFn;
+            QCheckBox *_valueCostFnVerbose;
+            QComboBox *_valueCostFnUpdates;
+            QSpinBox *_valueCostFnMaxIter;
+            QLineEdit *_valueCostFnTol;
+            QLineEdit *_valueCostFnDamping;
+            QSpinBox *_valueMaxLevels;
 
             virtual void createLabels();
 

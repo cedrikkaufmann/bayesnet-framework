@@ -1,0 +1,2 @@
+FBP
+[inference=SUMPROD,logdomain=0,maxiter=1000,tol=1e-9,updates=SEQRND,verbose=1]

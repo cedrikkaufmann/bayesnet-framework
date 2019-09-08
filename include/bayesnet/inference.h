@@ -20,7 +20,7 @@
 /// Macro that defines default fractional loopy belief propagation tree inference algorithm property string
 #define DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
 /// Macro that defines default conditioned loopy belief propagation inference algorithm property string
-#define DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,logdomain=0,rec_tol=1e-9,min_max_adj=10,choose=CHOOSE_BBP,recursion=REC_LOGZ,clamp=CLAMP_VAR,bbp_cfn=CFN_GIBBS_B,bbp_props=[maxiter=1000,tol=1e-9,updates=SEQ_BP_REV,damping=0.1]]"
+#define DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES "[bbp_cfn=CFN_GIBBS_B,bbp_props=[damping=0,maxiter=1000,tol=1e-09,updates=SEQ_FIX,verbose=1],choose=CHOOSE_BBP,clamp=CLAMP_VAR,max_levels=100,maxiter=1000,min_max_adj=1,rec_tol=1e-09,recursion=REC_LOGZ,tol=1e-09,updates=SEQRND,verbose=1]"
 
 
 namespace bayesNet {
