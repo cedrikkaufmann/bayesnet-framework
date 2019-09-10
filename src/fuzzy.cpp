@@ -1,9 +1,3 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 #include <math.h>
 #include <limits>
 #include <sstream>
@@ -304,6 +298,9 @@ namespace bayesNet {
             }
 
             MembershipFunction *fromString(std::string s) {
+                // make sure that string to double conversion through std::stod works correctly
+                setlocale(LC_ALL, "C/de_DE.UTF-8/en_US.UTF-8/C/C/C/C");
+
                 // regex for curve string processing and matching
                 std::regex curveRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\]$");
                 std::smatch match;

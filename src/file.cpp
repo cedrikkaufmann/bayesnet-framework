@@ -1,9 +1,3 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 #include <fstream>
 #include <regex>
 #include <algorithm>
@@ -90,7 +84,10 @@ namespace bayesNet {
             return _inferenceAlgorithm;
         }
 
-        InitializationVector *parse(const std::string &filename) {
+        InitializationVector *InitializationVector::parse(const std::string &filename) {
+            // make sure that string to double conversion through std::stod works correctly
+            setlocale(LC_ALL, "C/de_DE.UTF-8/en_US.UTF-8/C/C/C/C");
+
             // regular expressions to parse file
             std::regex beginRegEx("^\\s*\\{\\s*$");
             std::regex endRegEx("^\\s*}\\s*,?\\s*$");
@@ -137,7 +134,6 @@ namespace bayesNet {
                     if (std::regex_match(line, match, endRegEx)) {
                         if (sectionSensorFuzzySetBegin) {
                             sectionSensorFuzzySetBegin = false;
-                            std::cout << "Fuzzy sets sensor end detected";
                             continue;
                         }
 
@@ -206,7 +202,6 @@ namespace bayesNet {
                         iv->setCPT(match.str(1), std::vector<double>(splitCPT.size()));
 
                         for (size_t i = 0; i < splitCPT.size(); ++i) {
-
                             iv->setCPT(match.str(1), i, std::stod(splitCPT[i]));
                         }
 
@@ -222,7 +217,6 @@ namespace bayesNet {
 
                     // check for fuzzy sets 
                     if (sectionFuzzySets && std::regex_match(line, match, fuzzySetsRegEx)) {
-                        std::cout << "Sensor fuzzy set detected!"<< std::endl;
                         sectionSensorFuzzySetBegin = true;
                         lastSensorName = match.str(1);
 
@@ -265,14 +259,14 @@ namespace bayesNet {
             }
         }
 
-        void save(const std::string &filename, InitializationVector *iv) {
+        void InitializationVector::save(const std::string &filename) {
             // open file
             std::ofstream file(filename);
 
             // check if file is open
             if (file.is_open()) {
                 // write data
-                file << *iv;
+                file << *this;
                 // close file descriptor
                 file.close();
             } else {
