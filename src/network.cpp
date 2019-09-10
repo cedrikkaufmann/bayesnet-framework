@@ -1,12 +1,3 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
-#include <exception>
-
-
 #include <bayesnet/network.h>
 #include <bayesnet/exception.h>
 
@@ -16,7 +7,7 @@ namespace bayesNet {
     Network::Network() : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {}
 
     Network::Network(const std::string &file) : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {
-        load(file::parse(file));
+        load(file::InitializationVector::parse(file));
     }
 
     Network::~Network() {}
@@ -273,7 +264,7 @@ namespace bayesNet {
             }
         }
 
-        file::save(filename, iv);
+        iv->save(filename);
     }
 
     void Network::save(const std::string &networkFilename, const std::string &algorithmFilename) {

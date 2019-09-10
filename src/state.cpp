@@ -1,9 +1,3 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 #include <sstream>
 
 #include <bayesnet/state.h>
@@ -26,6 +20,10 @@ namespace bayesNet {
 
         bool BayesBelief::isBinary() const {
             return _binary;
+        }
+
+        size_t BayesBelief::nrStates() const {
+            return _beliefs.size();
         }
 
         void BayesBelief::set(size_t state, double belief) {

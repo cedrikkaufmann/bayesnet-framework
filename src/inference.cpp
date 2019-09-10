@@ -1,9 +1,3 @@
-/*  This file is part of libBayesNet
- *
- *  Copyright (c) 2019, The libBayesNet authors. All rights reserved.
- */
-
-
 #include <fstream>
 
 #include <bayesnet/inference.h>

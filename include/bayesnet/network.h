@@ -92,6 +92,9 @@ namespace bayesNet {
         /// Returns bayes belief for node @a name 
         state::BayesBelief getBelief(const std::string &name);
 
+        /// Initializes a network from InitializationVector @a iv
+        void load(file::InitializationVector *iv);
+
         /// Saves the network to file @a filename
         void save(const std::string &filename);
 
@@ -116,9 +119,6 @@ namespace bayesNet {
 
         /// Stores network initialized flag
         bool _init;
-
-        /// Initializes a network from InitializationVector @a iv
-        void load(file::InitializationVector *iv);
 
         /// Refreshes the factorgraph based on changed @a node 
         void refreshFactorGraph(Node *node);

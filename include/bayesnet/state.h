@@ -47,6 +47,9 @@ namespace bayesNet {
             /// Returns if belief states are binary or not
             bool isBinary() const;
 
+            /// Returns the number of states
+            size_t nrStates() const;
+
             /// Sets the @a belief for @a state
             void set(size_t state, double belief);
 

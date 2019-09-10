@@ -15,7 +15,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Bayesnet Library
 add_library(
@@ -148,8 +147,16 @@ if (Qt5_FOUND)
     # GUI Library
     add_library(
             bayesnet_gui_lib STATIC
-            include/bayesnet/gui/inference.h
-            src/gui/inference.cpp
+            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
+            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
+            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
+            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
+            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
+            ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
+            ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
+            ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
+            ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
+            ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
     )
 
     target_include_directories(
@@ -184,23 +191,17 @@ if (Qt5_FOUND)
     # Inference algorithm tool
     add_executable(inference_algorithm_tool tools/inference_algorithm_tool.cpp)
 
-    target_include_directories(
-            inference_algorithm_tool PUBLIC
-            ${Qt5Core_INCLUDE_DIRS}
-            ${Qt5GUI_INCLUDE_DIRS}
-            ${Qt5Widgets_INCLUDE_DIRS}
-    )
-
-    target_link_directories(
-            inference_algorithm_tool PUBLIC
-            ${Qt5Core_LINK_DIRS}
-            ${Qt5GUI_LINK_DIRS}
-            ${Qt5Widgets_LINK_DIRS}
-    )
-
     target_link_libraries(inference_algorithm_tool bayesnet_gui_lib)
 
     add_dependencies(inference_algorithm_tool bayesnet_gui_lib)
+
+    # BayesNet Editor
+
+    add_executable(bayesnet_editor tools/bayesnet_editor.cpp)
+
+    target_link_libraries(bayesnet_editor bayesnet_gui_lib)
+
+    add_dependencies(bayesnet_editor bayesnet_gui_lib)
 
 endif ()
 

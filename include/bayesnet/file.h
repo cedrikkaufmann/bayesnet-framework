@@ -22,29 +22,22 @@ namespace bayesNet {
          */
         class Node {
         public:
-        /// @name Constrcutors and Destructors
-        //@
             /// Constructs a node from @a name @a states and @a isSensor
             explicit Node(const std::string &name, size_t states = 4, bool isSensor = false);
 
             /// Destructor
             virtual ~Node();
-        //@}
 
             /// Returns the name of the node
-            /// @return name
             const std::string &getName() const;
 
             /// Returns the states of the node
-            /// @return states;
             size_t nrStates();
 
             /// Returns if node is binary or not
-            /// @return binary boolean
             bool isBinary();
 
             /// Returns if node is sensor or not
-            /// @return sensor boolean
             bool isSensor();
 
         private:
@@ -106,6 +99,11 @@ namespace bayesNet {
             /// Returns the string representation of the used inference algorithm
             const std::string &getInferenceAlgorithm() const;
 
+            void save(const std::string &filename);
+
+            /// Parses an InitializationVector based on the given network file with @a filename
+            static InitializationVector *parse(const std::string &filename);
+
         private:
             /// Stores nodes
             std::vector<Node *> _nodes;
@@ -122,12 +120,6 @@ namespace bayesNet {
             /// Stores inference algorithm
             std::string _inferenceAlgorithm;
         };
-
-        /// Parses an InitializationVector based on the given network file with @a filename
-        InitializationVector *parse(const std::string &filename);
-
-        /// Saves an InitializationVector @a iv to file @a filename
-        void save(const std::string &filename, InitializationVector *iv);
 
         /// Stream operator used to write string representation of @a iv to iostream @a os
         std::ostream &operator<<(std::ostream &os, InitializationVector &iv);

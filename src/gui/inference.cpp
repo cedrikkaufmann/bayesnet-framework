@@ -1,7 +1,3 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-14.
-//
-
 #include <sstream>
 #include <cstdio>
 

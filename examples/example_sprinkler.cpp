@@ -59,7 +59,7 @@ int main() {
     net.setCPT("rainy", rainy);
     net.setCPT("wetGrass", wetGrass);
 
-    bayesNet::inference::Algorithm *algo = new bayesNet::inference::Algorithm("../../algorithms/junction_tree_default.algorithm");
+    bayesNet::inference::Algorithm *algo = new bayesNet::inference::Algorithm("../../algorithms/default_jtree.algorithm");
 
     net.init(algo);
 

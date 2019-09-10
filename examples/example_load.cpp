@@ -8,7 +8,7 @@
 using namespace std;
 
 int main() {
-    bayesNet::file::InitializationVector *iv = bayesNet::file::parse("test.bayesnet");
+    bayesNet::file::InitializationVector *iv = bayesNet::file::InitializationVector::parse("test.bayesnet");
     
     // add connections for nodes to network
     std::unordered_map<std::string, std::vector<std::string> > &fuzzySets = iv->getFuzzySets();
