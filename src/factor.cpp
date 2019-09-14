@@ -4,10 +4,10 @@
 
 namespace bayesNet {
 
-    Factor::Factor(size_t states) : dai::Factor(), _backupFactor(states, 0), _states(states), _isEvidence(false) {}
+    Factor::Factor(size_t states) : dai::Factor(), _backupFactor(states, 0), _states(states), _isEvidence(false), _evidenceState(0) {}
 
     Factor::Factor(dai::VarSet &vars, size_t states) : dai::Factor(vars), _backupFactor(vars.nrStates().get_ui()),
-                                                       _states(states), _isEvidence(false) {}
+                                                       _states(states), _isEvidence(false), _evidenceState(0) {}
 
     Factor::~Factor() {}
 
@@ -39,6 +39,7 @@ namespace bayesNet {
 
         // set evidence flag
         _isEvidence = true;
+        _evidenceState = state;
     }
 
     void Factor::clearEvidence() {
@@ -58,6 +59,18 @@ namespace bayesNet {
         for (size_t i = 0; i < nrStates(); ++i) {
             set(i, _backupFactor[i]);
         }
+    }
+
+    size_t Factor::evidenceState() const {
+        if (!_isEvidence) {
+            BAYESNET_THROW(NO_EVIDENCE_ON_FACTOR);
+        }
+
+        return _evidenceState;
+    }
+
+    bool Factor::isEvidence() const {
+        return _isEvidence;
     }
 
 

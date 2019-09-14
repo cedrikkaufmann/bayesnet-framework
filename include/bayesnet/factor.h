@@ -39,6 +39,12 @@ namespace bayesNet {
         /// Clears all evidence and restores the old factor
         void clearEvidence();
 
+        /// Returns flag if factor is currently evidence
+        bool isEvidence() const;
+
+        /// Returns the current evidence state
+        size_t evidenceState() const;
+
     private:
         /// Stores the original factor
         std::vector<double> _backupFactor;
@@ -48,6 +54,9 @@ namespace bayesNet {
 
         // Flag if factor is currently evidence
         bool _isEvidence;
+
+        /// Stores the current evidence state, -1 if no evidence
+        size_t _evidenceState;
 
         // Backups the factor
         void backup();

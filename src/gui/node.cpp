@@ -1,16 +1,23 @@
 #include <bayesnet/gui/node.h>
 #include <sstream>
+#include <string>
 
 
 namespace bayesNet {
 
     namespace gui {
 
-        Node::Node(const QString &name, bool binary) : _name(name), _belief(binary) {
+        Node::Node(const QString &name, bool sensor, bool binary) : _name(name), _isSensor(sensor), _belief(binary) {
             setZValue(2);
             setFlag(QGraphicsItem::ItemIsMovable, true);
             setFlag(QGraphicsItem::ItemIsSelectable, true);
             setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+
+            if (!sensor) {
+                _nodeColor = QColor(0x13, 0x85, 0xee);
+            } else {
+                _nodeColor = QColor(0x1d, 0xcf, 0x79);
+            }
 
             if (binary) {
                 _height = 100;
@@ -30,20 +37,18 @@ namespace bayesNet {
         }
 
         void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+            // enable anti-aliasing
             painter->setRenderHint(QPainter::Antialiasing);
             painter->setPen(Qt::NoPen);
 
+            // draw node shape
             QBrush nodeBrush;
             nodeBrush.setStyle(Qt::SolidPattern);
+            nodeBrush.setColor(_nodeColor);
 
-            // draw node shape
-            if (option->state & QStyle::State_Sunken) {
-                nodeBrush.setColor(QColor(0x13, 0x85, 0xee));
-                painter->setOpacity(0.9);
+            if (isSelected()) {
                 painter->setPen(QPen(QColor(0xe4, 0x00, 0x4f), 2));
             } else {
-                painter->setOpacity(1);
-                nodeBrush.setColor(QColor(0x13, 0x85, 0xee));
                 painter->setPen(QPen(Qt::black, 0));
             }
 
@@ -118,6 +123,117 @@ namespace bayesNet {
         void Node::updateBelief(const state::BayesBelief &belief) {
             _belief = belief;
             update();
+        }
+
+        const QString &Node::getName() const {
+            return _name;
+        }
+
+        NodeView::NodeView(bayesNet::Node *node, QWidget *parent) : _node(node), QWidget(parent) {
+            _layout = new QVBoxLayout();
+
+            createProperties();
+
+            _layout->addWidget(_propertiesBox);
+            setLayout(_layout);
+
+            _isSensor = (dynamic_cast<bayesNet::SensorNode *>(_node) != NULL);
+
+            if (!_isSensor) {
+                connect(_propertyValueEvidence, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEvidenceChanged()));
+            } else {
+                connect(_propertyValueObserve, SIGNAL(returnPressed()), this, SLOT(propertyObserveChanged()));
+            }
+        }
+
+        void NodeView::createProperties() {
+            _propertiesLayout = new QFormLayout();
+            _propertiesBox = new QGroupBox("Properties");
+            _propertiesBox->setLayout(_propertiesLayout);
+
+            _propertyLabelName = new QLabel("Name:");
+            _propertyValueName = new QLabel(QString(_node->getName().c_str()));
+
+            _propertyLabelType = new QLabel("Type:");
+            _propertyValueType = new QLabel();
+
+            bool isSensor = (dynamic_cast<bayesNet::SensorNode *>(_node) != NULL);
+
+            if (!isSensor) {
+                _propertyValueType->setText("Node");
+
+                _propertyLabelEvidence = new QLabel("Evidence:");
+                _propertyValueEvidence = new QComboBox();
+            } else {
+                _propertyValueType->setText("Sensor");
+
+                _propertyLabelObserve = new QLabel("Observe:");
+                _propertyValueObserve = new QLineEdit();
+            }
+
+            _propertyLabelStates = new QLabel("States:");
+            std::string states = std::to_string(_node->nrStates());
+            _propertyValueStates = new QLabel(QString(states.c_str()));
+
+
+            if (!isSensor && _node->isBinary()) {
+                _propertyValueStates->setText("2");
+
+                _propertyValueEvidence->addItem("None", QVariant(-1));
+                _propertyValueEvidence->addItem("FALSE", QVariant(0));
+                _propertyValueEvidence->addItem("TRUE", QVariant(1));
+            } else if(!isSensor) {
+                _propertyValueStates->setText("4");
+
+                _propertyValueEvidence->addItem("None", QVariant(-1));
+                _propertyValueEvidence->addItem("GOOD", QVariant(0));
+                _propertyValueEvidence->addItem("PROBABLY_GOOD", QVariant(1));
+                _propertyValueEvidence->addItem("PROBABLY_BAD", QVariant(2));
+                _propertyValueEvidence->addItem("BAD", QVariant(3));
+            }
+
+            int index = 0;
+
+            if (!isSensor && _node->isEvidence()) {
+                 index = static_cast<int>(_node->evidenceState() + 1);
+            }
+
+            if (!isSensor) {
+                _propertyValueEvidence->setCurrentIndex(index);
+            }
+
+            _propertiesLayout->addRow(_propertyLabelName, _propertyValueName);
+            _propertiesLayout->addRow(_propertyLabelType, _propertyValueType);
+            _propertiesLayout->addRow(_propertyLabelStates, _propertyValueStates);
+
+            if (!isSensor) {
+                _propertiesLayout->addRow(_propertyLabelEvidence, _propertyValueEvidence);
+            } else {
+                _propertiesLayout->addRow(_propertyLabelObserve, _propertyValueObserve);
+            }
+        }
+
+        void NodeView::propertyEvidenceChanged() {
+            bool ok;
+            int data = _propertyValueEvidence->currentData().toInt(&ok);
+
+            if (ok) {
+                if (data == -1) {
+                    emit clearEvidence(_node->getName());
+                } else {
+                    size_t state = static_cast<size_t>(data);
+                    emit setEvidence(_node->getName(), state);
+                }
+            }
+        }
+
+        void NodeView::propertyObserveChanged() {
+            bool ok;
+            double observeValue = _propertyValueObserve->text().toDouble(&ok);
+
+            if (ok) {
+                emit observe(_node->getName(), observeValue);
+            }
         }
     }
 }

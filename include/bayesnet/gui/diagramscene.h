@@ -29,7 +29,6 @@ namespace bayesNet {
 
         protected:
             virtual void drawBackground(QPainter *painter, const QRectF &rect);
-           //virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
         private:
 

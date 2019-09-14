@@ -51,26 +51,97 @@ namespace bayesNet {
             if (_startNode->collidesWithItem(_endNode))
                 return;
 
+            // enable anti-aliasing
+            painter->setRenderHint(QPainter::Antialiasing);
+
             QPen p = pen();
             p.setColor(_color);
             qreal arrowSize = 10;
             painter->setPen(p);
             painter->setBrush(_color);
 
-            qreal offsetX = _startNode->shape().boundingRect().center().x();
-            qreal offsetY = _startNode->shape().boundingRect().center().y();
-            qreal width = _startNode->shape().boundingRect().width();
-            qreal height = _startNode->shape().boundingRect().height();
+            qreal offsetXStart = _startNode->shape().boundingRect().center().x();
+            qreal offsetYStart = _startNode->shape().boundingRect().center().y();
+            qreal offsetXEnd = _endNode->shape().boundingRect().center().x();
+            qreal offsetYEnd = _endNode->shape().boundingRect().center().y();
+            qreal widthStart = _startNode->shape().boundingRect().width();
+            qreal heightStart = _startNode->shape().boundingRect().height();
+            qreal widthEnd = _endNode->shape().boundingRect().width();
+            qreal heightEnd = _endNode->shape().boundingRect().height();
 
-            QLineF centerLine(mapFromItem(_startNode, offsetX, offsetY), mapFromItem(_endNode, offsetX, offsetY));
+            // calculate connection line from center to center
+            QLineF centerLine(mapFromItem(_startNode, offsetXStart, offsetYStart), mapFromItem(_endNode, offsetXEnd, offsetYEnd));
             qreal slope = centerLine.dy() / centerLine.dx();
+            qreal invSlope = 1 / slope;
 
-            QPointF destPoint = centerLine.p2();
-            QPointF startPoint = centerLine.p1();
+            // calculate intersection point between line and start/end rectangle
+            QPointF destPoint;
+            QPointF startPoint;
 
-            // TODO get intersecting pointØ
+            qreal tmp1 = heightEnd / 2.0;
+            qreal tmp2 = slope * (widthEnd / 2.0);
+
+            if (-tmp1 <= tmp2 && tmp2 <= tmp1) {
+                if (centerLine.p1().x() > centerLine.p2().x()) {
+                    // dest rect right edge
+                    destPoint.setX(_endNode->pos().x() + widthEnd);
+                    destPoint.setY(centerLine.p2().y() + slope * offsetXEnd);
+                } else {
+                    // dest rect left edge
+                    destPoint.setX(_endNode->pos().x());
+                    destPoint.setY(centerLine.p2().y() - slope * offsetXEnd);
+                }
+            }
+
+            tmp1 = widthEnd / 2.0;
+            tmp2 = (heightEnd / 2.0) / slope;
+
+            if (-tmp1 <= tmp2 && tmp2 <= tmp1) {
+                if (centerLine.p1().y() < centerLine.p2().y()) {
+                    // dest rect top edge
+                    destPoint.setX(centerLine.p2().x() - invSlope * offsetYEnd);
+                    destPoint.setY(_endNode->pos().y());
+                } else {
+                    // dest rect bottom edge
+                    destPoint.setX(centerLine.p2().x() + invSlope * offsetYEnd);
+                    destPoint.setY(_endNode->pos().y() + heightEnd);
+                }
+            }
+
+            tmp1 = heightStart / 2.0;
+            tmp2 = slope * (widthStart / 2.0);
+
+            if (-tmp1 <= tmp2 && tmp2 <= tmp1) {
+                if (centerLine.p1().x() < centerLine.p2().x()) {
+                    // start rect right edge
+                    startPoint.setX(_startNode->pos().x() + widthStart);
+                    startPoint.setY(centerLine.p1().y() + slope * offsetXStart);
+                } else {
+                    // start rect left edge
+                    startPoint.setX(_startNode->pos().x());
+                    startPoint.setY(centerLine.p1().y() - slope * offsetXStart);
+                }
+            }
+
+            tmp1 = widthStart / 2.0;
+            tmp2 = (heightStart / 2.0) / slope;
+
+            if (-tmp1 <= tmp2 && tmp2 <= tmp1) {
+                if (centerLine.p1().y() > centerLine.p2().y()) {
+                    // start rect top edge
+                    startPoint.setX(centerLine.p1().x() - invSlope * offsetYStart);
+                    startPoint.setY(_startNode->pos().y());
+                } else {
+                    // start rect bottom edge
+                    startPoint.setX(centerLine.p1().x() + invSlope * offsetYStart);
+                    startPoint.setY(_startNode->pos().y() + heightStart);
+                }
+            }
+
+            // set new line with using intersection points
             setLine(QLineF(startPoint, destPoint));
 
+            // setup arrow for dest
             double angle = std::atan2(-line().dy(), line().dx());
 
             QPointF arrowP1 = destPoint + QPointF(sin(angle - M_PI / 3) * arrowSize,

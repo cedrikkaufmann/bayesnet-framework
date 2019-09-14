@@ -49,6 +49,9 @@ namespace bayesNet {
         /// Returns the factor representation used by libDAI to build factorgraph
         Factor &getFactor();
 
+        // Returns the number of states
+        size_t nrStates() const;
+
         /// Returns the children of a Node
         std::vector<Node *> &getChildren();
 
@@ -60,6 +63,12 @@ namespace bayesNet {
 
         /// Clears the evidence on this Node
         void clearEvidence();
+
+        /// Returns flag if node is currently evidence
+        bool isEvidence() const;
+
+        /// Returns the current evidence state
+        size_t evidenceState() const;
 
         /// Sets a membership function @a mf for @a state
         void setMembershipFunction(size_t state, fuzzyLogic::MembershipFunction *mf);
@@ -89,7 +98,7 @@ namespace bayesNet {
         size_t getFactorGraphIndex() const;
 
         /// Returns boolean if Node is binary or not
-        bool isBinary();
+        bool isBinary() const;
 
     private:
         /// Stores the name
@@ -120,11 +129,11 @@ namespace bayesNet {
         std::vector<Node *> _children;
     };
 
-    /// Represents a bayes node in a bayesian network, which can handle continous variable observations
+    /// Represents a bayes node in a bayesian network, which can handle continuous variable observations
     /** The inference engine can apply the inference algorithm on discrete variables only, 
      *  therefore the SensorNode implementation is using fuzzy logic or more precisely the Node's
-     *  fuzzy set and its memberhsip functions to map a continous variable (e.g. sensor reading)
-     *  to a discrete CPT rather than the need to calculate inference on a set of continous functions.
+     *  fuzzy set and its membership functions to map a continuous variable (e.g. sensor reading)
+     *  to a discrete CPT rather than the need to calculate inference on a set of continuous functions.
      */
     class SensorNode : public Node {
     public:

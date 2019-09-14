@@ -32,18 +32,26 @@ namespace bayesNet {
 
             Editor(const std::string &file);
 
-            void newNode(const QString &name, QPointF pos, bool binary = false);
+            void newNode(const QString &name, QPointF pos, bool sensor = false, bool binary = false);
 
             void newConnection(const QString &start, const QString &end);
 
+        public slots:
             void updateBayesNet();
+            void setEvidence(const std::string &name, size_t state);
+            void clearEvidence(const std::string &name);
+
+        private slots:
+            void updateNodeView();
+            void observe(const std::string &name, double x);
 
         private:
-            DiagramScene *_scene;
-            QGraphicsView *_view;
+            DiagramScene *_scene{};
+            QGraphicsView *_view{};
             std::unordered_map<std::string, Node *> _nodes;
             std::vector<Connection *> _connections;
             Network _network;
+            NodeView *_nodeView{};
 
             void load(file::InitializationVector *iv);
 

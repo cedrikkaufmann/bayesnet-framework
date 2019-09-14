@@ -5,7 +5,6 @@
 #include <QAction>
 #include <QTransform>
 #include <QActionEvent>
-#include <iostream>
 
 
 namespace bayesNet {

@@ -68,6 +68,7 @@ namespace bayesNet {
             INVALID_ALGORITHM_FILE,
             INVALID_CPT,
             INVALID_CURVE_STRING,
+            NO_EVIDENCE_ON_FACTOR,
             NUM_ERRORS
         };
 

@@ -1,6 +1,7 @@
 #include <bayesnet/node.h>
 #include <bayesnet/state.h>
 #include <bayesnet/util.h>
+#include <bayesnet/exception.h>
 
 
 namespace bayesNet {
@@ -65,6 +66,10 @@ namespace bayesNet {
         return _conditionalDiscrete;
     }
 
+    size_t Node::nrStates() const {
+        return _discrete.states();
+    }
+
     std::vector<Node *> &Node::getChildren() {
         return _children;
     }
@@ -101,8 +106,16 @@ namespace bayesNet {
         return _factorGraphIndex;
     }
 
-    bool Node::isBinary() {
+    bool Node::isBinary() const {
         return _discrete.states() == 2;
+    }
+
+    bool Node::isEvidence() const {
+        return _factor.isEvidence();
+    }
+
+    size_t Node::evidenceState() const {
+        return _factor.evidenceState();
     }
 
     std::ostream &operator<<(std::ostream &os, Node &node) {

@@ -90,7 +90,7 @@ namespace bayesNet {
 
             // regular expressions to parse file
             std::regex beginRegEx("^\\s*\\{\\s*$");
-            std::regex endRegEx("^\\s*}\\s*,?\\s*$");
+            std::regex endRegEx("^\\s*\\}\\s*,?\\s*$");
             std::regex sectionRegEx("^\\s*\"(nodes|sensors|connections|cpt|fuzzySets)\"\\s*:\\s*\\{\\s*$");
             std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
             std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9_]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9_]+)\"\\s*,?)*)\\],?$");
