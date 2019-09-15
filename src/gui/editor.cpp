@@ -10,28 +10,9 @@ namespace bayesNet {
     namespace gui {
 
         Editor::Editor() {
-            init();
-        }
+            createActions();
+            createToolbars();
 
-        Editor::Editor(const std::string &file) {
-            init();
-
-            // load data into editor
-            file::InitializationVector *iv = file::InitializationVector::parse(file);
-            load(iv);
-
-            // load data into bayesian network
-            _network.load(iv);
-        }
-
-        void Editor::populateBeliefs() {
-            for (std::unordered_map<std::string, Node *>::const_iterator it = _nodes.begin(); it != _nodes.end(); it++) {
-                state::BayesBelief belief = _network.getBelief((*it).first);
-                (*it).second->updateBelief(belief);
-            }
-        }
-
-        void Editor::init() {
             _network = Network();
             _scene = new DiagramScene(this);
             _scene->setSceneRect(QRectF(0,0, 5000, 5000));
@@ -48,6 +29,43 @@ namespace bayesNet {
             setCentralWidget(widget);
             setWindowTitle(tr("BayesNet Editor"));
             setUnifiedTitleAndToolBarOnMac(true);
+        }
+
+        Editor::Editor(const std::string &file) {
+            createActions();
+            createToolbars();
+
+
+            _network = Network();
+            _scene = new DiagramScene(this);
+            _scene->setSceneRect(QRectF(0,0, 5000, 5000));
+
+            QHBoxLayout *layout = new QHBoxLayout();
+            _view = new QGraphicsView(_scene);
+            layout->addWidget(_view);
+
+            QWidget *widget = new QWidget();
+            widget->setLayout(layout);
+
+            connect(_scene, SIGNAL(selectionChanged()), this, SLOT(updateNodeView()));
+
+            setCentralWidget(widget);
+            setWindowTitle(tr("BayesNet Editor"));
+            setUnifiedTitleAndToolBarOnMac(true);
+
+            // load data into editor
+            file::InitializationVector *iv = file::InitializationVector::parse(file);
+            load(iv);
+
+            // load data into bayesian network
+            _network.load(iv);
+        }
+
+        void Editor::populateBeliefs() {
+            for (std::unordered_map<std::string, Node *>::const_iterator it = _nodes.begin(); it != _nodes.end(); it++) {
+                state::BayesBelief belief = _network.getBelief((*it).first);
+                (*it).second->updateBelief(belief);
+            }
         }
 
         void Editor::newNode(const QString &name, QPointF pos, bool sensor, bool binary) {
@@ -128,17 +146,46 @@ namespace bayesNet {
 
         void Editor::setEvidence(const std::string &name, size_t state) {
             _network.setEvidence(name, state);
-            updateBayesNet();
         }
 
         void Editor::clearEvidence(const std::string &name) {
             _network.clearEvidence(name);
-            updateBayesNet();
         }
 
         void Editor::observe(const std::string &name, double x) {
             _network.observe(name, x);
-            updateBayesNet();
+        }
+
+        void Editor::createActions() {
+            _inferNetworkAction = new QAction(tr("Infer"), this);
+            _inferNetworkAction->setShortcut(tr("Ctrl+I"));
+            _inferNetworkAction->setStatusTip(tr("Apply inference algorithm on network"));
+            connect(_inferNetworkAction, SIGNAL(triggered()), this, SLOT(updateBayesNet()));
+
+            _zoomInAction = new QAction(tr("Zoom in"), this);
+            _zoomInAction->setStatusTip(tr("Zoom in"));
+            connect(_zoomInAction, SIGNAL(triggered()), this, SLOT(zoomIn()));
+
+            _zoomOutAction = new QAction(tr("Zoom out"), this);
+            _zoomOutAction->setStatusTip(tr("Zoom out"));
+            connect(_zoomOutAction, SIGNAL(triggered()), this, SLOT(zoomOut()));
+        }
+
+        void Editor::createToolbars() {
+            _networkAlgorithmToolbar = addToolBar(tr("Network"));
+            _networkAlgorithmToolbar->addAction(_inferNetworkAction);
+
+            _networkZoomToolbar = addToolBar(tr("Zoom"));
+            _networkZoomToolbar->addAction(_zoomInAction);
+            _networkZoomToolbar->addAction(_zoomOutAction);
+        }
+
+        void Editor::zoomIn() {
+            _view->scale(1.2, 1.2);
+        }
+
+        void Editor::zoomOut() {
+            _view->scale(0.8, 0.8);
         }
     }
 }

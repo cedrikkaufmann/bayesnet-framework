@@ -19,6 +19,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QAction>
+#include <QToolBar>
 
 
 namespace bayesNet {
@@ -40,24 +41,33 @@ namespace bayesNet {
             void updateBayesNet();
             void setEvidence(const std::string &name, size_t state);
             void clearEvidence(const std::string &name);
+            void zoomIn();
+            void zoomOut();
 
         private slots:
             void updateNodeView();
             void observe(const std::string &name, double x);
 
         private:
-            DiagramScene *_scene{};
-            QGraphicsView *_view{};
+            DiagramScene *_scene;
+            QGraphicsView *_view;
+            NodeView *_nodeView;
+            QToolBar *_networkAlgorithmToolbar;
+            QToolBar *_networkZoomToolbar;
+            QAction *_inferNetworkAction;
+            QAction *_zoomOutAction;
+            QAction *_zoomInAction;
             std::unordered_map<std::string, Node *> _nodes;
             std::vector<Connection *> _connections;
             Network _network;
-            NodeView *_nodeView{};
+
+            void createActions();
+
+            void createToolbars();
 
             void load(file::InitializationVector *iv);
 
             void populateBeliefs();
-
-            void init();
 
             QAction *_addAction();
         };
