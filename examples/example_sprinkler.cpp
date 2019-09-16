@@ -1,6 +1,5 @@
-//
-// Created by Cedrik Kaufmann on 2019-05-27.
-//
+/// @file
+/// @brief Example that demonstrates how to create a bayesian network
 
 #include <iostream>
 #include <bayesnet/state.h>
@@ -70,7 +69,6 @@ int main() {
     cout << "Sprinkler: " << net.getBelief("sprinkler") << endl;
     cout << "Rainy: " << net.getBelief("rainy") << endl;
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl << endl;
-
 
     net.setEvidence("sprinkler", bayesNet::state::TRUE);
     net.doInference();

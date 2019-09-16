@@ -1,6 +1,5 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-16.
-//
+/// @file
+/// @brief Example that demonstrates how to use the fuzzy logic to infer a CPT
 
 #include <iostream>
 #include <bayesnet/fuzzy.h>
@@ -28,10 +27,6 @@ int main() {
     // define states
     bayesNet::fuzzyLogic::RuleState *stateTrue = FUZZY_STATE(TRUE);
     bayesNet::fuzzyLogic::RuleState *stateFalse = FUZZY_STATE(FALSE);
-
-    std::cout << stateTrue << std::endl;
-    std::cout << stateFalse << std::endl;
-    std::cout << FUZZY_STATE(TRUE) << std::endl;
 
     // define rules
 
@@ -79,7 +74,6 @@ int main() {
     bayesNet::CPT wetGrassCPT = wetGrassCtrl->inferCPT();
 
     for (size_t i = 0; i < wetGrassCPT.size(); ++i) {
-
         std::cout << wetGrassCPT[i] << std::endl;
     }
 

@@ -69,6 +69,7 @@ namespace bayesNet {
             INVALID_CPT,
             INVALID_CURVE_STRING,
             NO_EVIDENCE_ON_FACTOR,
+            UNKNOWN_STATE_VALUE,
             NUM_ERRORS
         };
 

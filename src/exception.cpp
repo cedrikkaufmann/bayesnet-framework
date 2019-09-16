@@ -35,6 +35,7 @@ namespace bayesNet {
         "Invalid bayes algorithm file",
         "Invalid conditional probability table",
         "Invalid curve string",
-        "Currently no evidence on factor"
+        "Currently no evidence on factor",
+        "Unknown state value"
     };
 }

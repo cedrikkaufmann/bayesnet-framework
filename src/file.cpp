@@ -5,6 +5,7 @@
 #include <bayesnet/file.h>
 #include <bayesnet/util.h>
 #include <bayesnet/exception.h>
+#include <bayesnet/state.h>
 
 
 namespace bayesNet {
@@ -255,7 +256,7 @@ namespace bayesNet {
                 // return initialization vector
                 return iv;
             } else {
-                BAYESNET_THROW(FILE_NOT_FOUND);
+                BAYESNET_THROWE(FILE_NOT_FOUND, filename);
             }
         }
 
@@ -271,7 +272,7 @@ namespace bayesNet {
                 file.close();
             } else {
                 // error while opening file
-                BAYESNET_THROW(UNABLE_TO_WRITE_FILE);
+                BAYESNET_THROWE(UNABLE_TO_WRITE_FILE, filename);
             }
         }
 
@@ -451,6 +452,115 @@ namespace bayesNet {
             os << "}" << std::endl;
 
             return os;
+        }
+
+        FuzzyRule::FuzzyRule() {}
+
+        FuzzyRule::~FuzzyRule() {}
+
+        void FuzzyRule::addIfClause(const std::string &name, const std::string state) {
+            _ifClauses[name] = state::fromString(state);
+        }
+
+        void FuzzyRule::setThenClause(const std::string state) {
+            _thenClause = state::fromString(state);
+        }
+
+        size_t FuzzyRule::getThenClause() const {
+            return _thenClause;
+        }
+
+        std::unordered_map<std::string, size_t>& FuzzyRule::getIfClauses() {
+            return _ifClauses;
+        }
+
+        FuzzyRuleVector::FuzzyRuleVector(const std::string &name) : _name(name) {}
+
+        FuzzyRuleVector::~FuzzyRuleVector() {}
+
+        void FuzzyRuleVector::addRule(bayesNet::file::FuzzyRule *rule) {
+            _rules.push_back(rule);
+        }
+
+        std::vector<FuzzyRule *> &FuzzyRuleVector::getRules() {
+            return _rules;
+        }
+
+        const std::string FuzzyRuleVector::getName() const {
+            return _name;
+        }
+
+        std::vector<FuzzyRuleVector *> FuzzyRuleVector::parse(const std::string &filename) {
+            std::regex beginSection("^\\s*([a-zA-Z0-9_]+)\\s*(begin)\\s*$");
+            std::regex endSection("^\\s*(end)\\s*$");
+            std::regex entry("^\\s*(if)\\s*((\\s*[a-zA-Z0-9_]+=(true|false|good|probably_good|probably_bad|bad)\\s*&?)+)(then)\\s*(true|false|good|probably_good|probably_bad|bad)\\s*$");
+
+            // open file
+            std::ifstream file(filename);
+            std::string line;
+
+            // parsing file
+            if (file.is_open()) {
+                std::vector<FuzzyRuleVector *> rules;
+
+                // section flags
+                bool section = false;
+                size_t sectionIndex = 0;
+
+                // regex matcher
+                std::smatch match;
+
+                // parse file til end
+                while (getline(file, line)) {
+                    if (!section && std::regex_match(line, match, beginSection)) {
+                        section = true;
+                        sectionIndex++;
+
+                        FuzzyRuleVector *ruleVector = new FuzzyRuleVector(match.str(1));
+                        rules.push_back(ruleVector);
+
+                        continue;
+                    }
+
+                    if (section && std::regex_match(line, endSection)) {
+                        section = false;
+                        continue;
+                    }
+
+                    if (section && std::regex_match(line, match, entry)) {
+                        // get if clauses from regex matcher
+                        std::string ifClauses = match.str(2);
+
+                        // remove whitespace
+                        ifClauses.erase(
+                                std::remove(ifClauses.begin(), ifClauses.end(), ' '),
+                                ifClauses.end()
+                        );
+
+                        // split states by '&' to get each clause like cloudy=true
+                        std::vector<std::string> splitIfClauses = utils::split(ifClauses, '&');
+
+                        // iterate over if clauses and construct rule
+                        FuzzyRule *rule = new FuzzyRule();
+
+                        for (size_t i = 0; i < splitIfClauses.size(); ++i) {
+                            // split clause by '=' to get node name and state string
+                            std::vector<std::string> splitNodeState = utils::split(splitIfClauses[i], '=');
+                            rule->addIfClause(splitNodeState[0], splitNodeState[1]);
+                        }
+
+                        // get then clause from regex matcher and set
+                        rule->setThenClause(match.str(6));
+                        rules[sectionIndex - 1]->addRule(rule);
+
+                        continue;
+                    }
+                }
+
+                return rules;
+            } else {
+                BAYESNET_THROWE(FILE_NOT_FOUND, filename);
+            }
         }
     }
 }

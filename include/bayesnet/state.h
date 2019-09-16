@@ -29,6 +29,9 @@ namespace bayesNet {
             TRUE = 1
         };
 
+        /// Returns the state value for a given string @a state
+        size_t fromString(const std::string &state);
+
         /// Represents a bayesian belief
         /** BayesBelief is used to represent a nodes belief, which was calculated in a bayesian network
          *  using bayesian inference.

@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.13)
 project(BayesNet_Framework)
 
 
+set(BUILD_EXAMPLES TRUE)
+
+
 # settings and flags
 set(CMAKE_CXX_COMPILER /usr/local/opt/llvm/bin/clang++)
 set(CMAKE_CXX_STANDARD 98)
@@ -68,75 +71,73 @@ target_compile_options(
 )
 
 
-# Build examples
-
-# Sprinkler example
+# CPT inference tool
 add_executable(
-        sprinkler_example
-        examples/example_sprinkler.cpp
-
+        infer_cpt
+        tools/cpt_inference.cpp
 )
 
 target_link_libraries(
-        sprinkler_example
+        infer_cpt
         bayesnet_lib
 )
 
 add_dependencies(
-        sprinkler_example
+        infer_cpt
         bayesnet_lib
 )
 
 
-# Json example
-add_executable(
-        json_example
-        examples/example_json.cpp
-)
+if(BUILD_EXAMPLES)
+    # Sprinkler example
+    add_executable(
+            example_sprinkler
+            examples/example_sprinkler.cpp
+    )
 
-target_link_libraries(
-        json_example
-        bayesnet_lib
-)
+    target_link_libraries(
+            example_sprinkler
+            bayesnet_lib
+    )
 
-add_dependencies(
-        json_example
-        bayesnet_lib
-)
+    add_dependencies(
+            example_sprinkler
+            bayesnet_lib
+    )
 
-# Network save example
-add_executable(
-        save_example
-        examples/example_save_network.cpp
 
-)
+    # Json example
+    add_executable(
+            example_json
+            examples/example_json.cpp
+    )
 
-target_link_libraries(
-        save_example
-        bayesnet_lib
-)
+    target_link_libraries(
+            example_json
+            bayesnet_lib
+    )
 
-add_dependencies(
-        save_example
-        bayesnet_lib
-)
+    add_dependencies(
+            example_json
+            bayesnet_lib
+    )
 
-# Load example
-add_executable(
-        load_example
-        examples/example_load.cpp
+    # CPT inference example
+    add_executable(
+            example_cpt_inference
+            examples/example_cpt_inference.cpp
+    )
 
-)
+    target_link_libraries(
+            example_cpt_inference
+            bayesnet_lib
+    )
 
-target_link_libraries(
-        load_example
-        bayesnet_lib
-)
-
-add_dependencies(
-        load_example
-        bayesnet_lib
-)
+    add_dependencies(
+            example_cpt_inference
+            bayesnet_lib
+    )
+endif()
 
 # Look for Qt5 dependecies
 set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
@@ -204,20 +205,3 @@ if (Qt5_FOUND)
     add_dependencies(bayesnet_editor bayesnet_gui_lib)
 
 endif ()
-
-
-# Json example
-add_executable(
-        cpt_inference_example
-        examples/example_cpt_inference.cpp
-)
-
-target_link_libraries(
-        cpt_inference_example
-        bayesnet_lib
-)
-
-add_dependencies(
-        cpt_inference_example
-        bayesnet_lib
-)

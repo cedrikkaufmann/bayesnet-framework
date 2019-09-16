@@ -84,11 +84,11 @@ namespace bayesNet {
             if (-tmp1 <= tmp2 && tmp2 <= tmp1) {
                 if (centerLine.p1().x() > centerLine.p2().x()) {
                     // dest rect right edge
-                    destPoint.setX(_endNode->pos().x() + widthEnd);
+                    destPoint.setX(_endNode->pos().x() + widthEnd + 1);
                     destPoint.setY(centerLine.p2().y() + slope * offsetXEnd);
                 } else {
                     // dest rect left edge
-                    destPoint.setX(_endNode->pos().x());
+                    destPoint.setX(_endNode->pos().x() - 1);
                     destPoint.setY(centerLine.p2().y() - slope * offsetXEnd);
                 }
             }
@@ -100,11 +100,11 @@ namespace bayesNet {
                 if (centerLine.p1().y() < centerLine.p2().y()) {
                     // dest rect top edge
                     destPoint.setX(centerLine.p2().x() - invSlope * offsetYEnd);
-                    destPoint.setY(_endNode->pos().y());
+                    destPoint.setY(_endNode->pos().y() - 1);
                 } else {
                     // dest rect bottom edge
                     destPoint.setX(centerLine.p2().x() + invSlope * offsetYEnd);
-                    destPoint.setY(_endNode->pos().y() + heightEnd);
+                    destPoint.setY(_endNode->pos().y() + heightEnd + 1);
                 }
             }
 

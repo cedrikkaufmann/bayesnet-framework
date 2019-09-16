@@ -1,3 +1,5 @@
+#include <map>
+
 #include <bayesnet/network.h>
 #include <bayesnet/exception.h>
 
@@ -200,9 +202,6 @@ namespace bayesNet {
         // generate inference algorithm from string
         inference::Algorithm *algorithm = new inference::Algorithm(iv->getInferenceAlgorithm());
 
-        // free memory of iv
-        delete iv;
-
         // initialize network
         init(algorithm);
     }
@@ -327,6 +326,12 @@ namespace bayesNet {
         node->setMembershipFunction(state, mf);
     }
 
+    void Network::inferCPT() {
+        for (size_t i = 0; i < _availableFuzzySets.size(); ++i) {
+            inferCPT(_availableFuzzySets[i]);
+        }
+    }
+
     void Network::inferCPT(const std::string &name) {
         Node *node = getNode(name);
         std::vector<Node *> parents = getParents(node);
@@ -372,5 +377,73 @@ namespace bayesNet {
     std::vector<Node *> Network::getParents(const std::string &name) {
         Node *node = getNode(name);
         return getParents(node);
+    }
+
+    void Network::setFuzzyRules(const std::string &file) {
+        // prepare states
+        fuzzyLogic::RuleState *binaryStates[2]= {
+                FUZZY_STATE(FALSE),
+                FUZZY_STATE(TRUE)
+        };
+
+        fuzzyLogic::RuleState *states[4]= {
+                FUZZY_STATE(GOOD),
+                FUZZY_STATE(PROBABLY_GOOD),
+                FUZZY_STATE(PROBABLY_BAD),
+                FUZZY_STATE(BAD)
+        };
+
+        std::vector<bayesNet::file::FuzzyRuleVector *> v = bayesNet::file::FuzzyRuleVector::parse(file);
+
+        for (size_t i = 0; i < v.size(); ++i) {
+            // get node
+            Node *node = getNode(v[i]->getName());
+
+            // setup fuzzy rule set
+            std::vector<bayesNet::fuzzyLogic::Rule *> fuzzyRules;
+
+            // iterate over rules
+            std::vector<bayesNet::file::FuzzyRule *> rules = v[i]->getRules();
+
+            for (size_t j = 0; j < rules.size(); ++j) {
+                std::unordered_map<std::string, size_t> ifClauses = rules[j]->getIfClauses();
+                std::vector<fuzzyLogic::RuleState *> ruleStates;
+
+                // iterate over hash map and save elements using label in map to sort
+                std::map<size_t, fuzzyLogic::RuleState *> sortedClauses;
+
+                for (std::unordered_map<std::string, size_t>::const_iterator it = ifClauses.begin(); it != ifClauses.end(); it++) {
+                    Node *parent = getNode(it->first);
+
+                    if (parent->isBinary()) {
+                        sortedClauses[parent->getDiscrete().label()] = binaryStates[it->second];
+                    } else {
+                        sortedClauses[parent->getDiscrete().label()] = states[it->second];
+                    }
+                }
+
+                // iterate over sorted map and add rule states
+                for (std::map<size_t, fuzzyLogic::RuleState*>::const_iterator it = sortedClauses.begin(); it != sortedClauses.end(); it++) {
+                    ruleStates.push_back(it->second);
+                }
+
+                // create fuzzy rule from states
+                fuzzyLogic::RuleState *thenState;
+
+                if (node->isBinary()) {
+                    thenState = binaryStates[rules[j]->getThenClause()];
+                } else {
+                    thenState = states[rules[j]->getThenClause()];
+                }
+
+                fuzzyLogic::Rule *rule = new fuzzyLogic::Rule(ruleStates, thenState);
+                fuzzyRules.push_back(rule);
+            }
+
+            // set fuzzy set for node
+            fuzzyLogic::RuleSet set(fuzzyRules);
+            node->setFuzzyRules(set);
+            _availableFuzzySets.push_back(node->getName());
+        }
     }
 }

@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include <bayesnet/cpt.h>
 #include <bayesnet/exception.h>
 
@@ -12,35 +14,7 @@ namespace bayesNet {
 
     CPT::~CPT() {}
 
-    CPT::CPT(std::vector<double> probabilities) {
-        // try to calculate complementary probability if missing
-        size_t states = probabilities.size() / 2;
-
-        for (size_t i = 0; i < states; ++i) {
-
-            if (probabilities[i] + probabilities[i + states] < 1) {
-
-                if (probabilities[i] > 0 && probabilities[i + states] > 0) {
-                    // cannot calculate complement, thus throw exception
-                    BAYESNET_THROW(INVALID_CPT);
-                }
-
-                // calculate complementary probability
-                if (probabilities[i] > 0) {
-                    probabilities[i + states] = 1 - probabilities[i];
-                } else {
-                    probabilities[i] = 1 - probabilities[i + states];
-                }
-
-            } else if (probabilities[i] + probabilities[i + states] > 1) {
-                // probability and its complement are greater than 1, thus throw exception
-                BAYESNET_THROW(INVALID_CPT);
-            }
-        }
-
-        // set completed cpt
-        _probabilities = probabilities;
-    }
+    CPT::CPT(std::vector<double> probabilities) : _probabilities(probabilities) {}
 
     size_t CPT::size() const {
         return _probabilities.size();

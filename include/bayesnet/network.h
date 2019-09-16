@@ -77,6 +77,9 @@ namespace bayesNet {
         /// Parses fuzzy rules from @a file and apply them to the corresponding nodes
         void setFuzzyRules(const std::string &file);
 
+        /// Infer CPTs from fuzzy rules for all available nodes, which has got set fuzzy sets
+        void inferCPT();
+
         /// Infer CPT from fuzzy rules for node @a name
         void inferCPT(const std::string &name);
 
@@ -119,6 +122,8 @@ namespace bayesNet {
 
         /// Stores network initialized flag
         bool _init;
+
+        std::vector<std::string> _availableFuzzySets;
 
         /// Refreshes the factorgraph based on changed @a node 
         void refreshFactorGraph(Node *node);

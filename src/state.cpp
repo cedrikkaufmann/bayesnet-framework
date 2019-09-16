@@ -8,6 +8,34 @@ namespace bayesNet {
 
     namespace state {
 
+        size_t fromString(const std::string &state) {
+            if (state == "false" || state == "False" || state == "FALSE") {
+                return 0;
+            }
+
+            if (state == "true" || state == "True" || state == "TRUE") {
+                return 1;
+            }
+
+            if (state == "good" || state == "Good" || state == "GOOD") {
+                return 0;
+            }
+
+            if (state == "probably_good" || state == "Probably_Good" || state == "PROBABLY_GOOD") {
+                return 1;
+            }
+
+            if (state == "probably_bad" || state == "Probably_Bad" || state == "PROBABLY_BAD") {
+                return 2;
+            }
+
+            if (state == "bad" || state == "Bad" || state == "BAD") {
+                return 3;
+            }
+
+            BAYESNET_THROWE(UNKNOWN_STATE_VALUE, state);
+        }
+
         BayesBelief::BayesBelief(bool binary) : _binary(binary) {
             if (binary) {
                 _beliefs = std::vector<double>(2, 0);

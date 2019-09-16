@@ -2,21 +2,28 @@
 // Created by Cedrik Kaufmann on 09.09.19.
 //
 
+#include <string>
+
 #include <bayesnet/gui/editor.h>
 
-#include <iostream>
 #include <QApplication>
+
 
 int main(int argc, char **argv) {
     // prepare qt application
     QApplication app(argc, argv);
 
     // create editor instance
-    bayesNet::gui::Editor editor("./../../networks/sprinkler.bayesnet");
-    editor.showMaximized();
+    bayesNet::gui::Editor *editor;
 
-    // infer and update editor beliefs
-    editor.updateBayesNet();
+    if (argc > 1) {
+        std::string file = std::string(argv[1]);
+        editor = new bayesNet::gui::Editor(file);
+    } else {
+        editor = new bayesNet::gui::Editor();
+    }
 
-    return app.exec();
+    editor->showMaximized();
+
+    return QApplication::exec();
 }

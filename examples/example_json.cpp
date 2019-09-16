@@ -1,11 +1,12 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-04.
-//
+/// @file
+/// @brief Example that demonstrates how to load a network from file
+
 
 #include <bayesnet/network.h>
 #include <bayesnet/state.h>
 
 #include <iostream>
+
 
 using namespace std;
 

@@ -69,7 +69,7 @@ namespace bayesNet {
             /// Returns all nodes
             std::vector<Node *> &getNodes();
 
-            /// Sets the connections betweeen nodes corresponding to a parent @a a and its children @a b
+            /// Sets the connections between nodes corresponding to a parent @a a and its children @a b
             void setConnections(const std::string &a, std::vector<std::string> b);
 
             /// Returns map of connections using node's name as key
@@ -123,6 +123,44 @@ namespace bayesNet {
 
         /// Stream operator used to write string representation of @a iv to iostream @a os
         std::ostream &operator<<(std::ostream &os, InitializationVector &iv);
+
+        class FuzzyRule {
+        public:
+            FuzzyRule();
+
+            virtual ~FuzzyRule();
+
+            void addIfClause(const std::string &name, const std::string state);
+
+            void setThenClause(const std::string state);
+
+            size_t getThenClause() const;
+
+            std::unordered_map<std::string, size_t> &getIfClauses();
+
+        private:
+            std::unordered_map<std::string, size_t> _ifClauses;
+            size_t _thenClause;
+        };
+
+        class FuzzyRuleVector {
+        public:
+            FuzzyRuleVector(const std::string &name);
+
+            virtual ~FuzzyRuleVector();
+
+            void addRule(FuzzyRule *rule);
+
+            std::vector<FuzzyRule *> &getRules();
+
+            const std::string getName() const;
+
+            static std::vector<FuzzyRuleVector *> parse(const std::string &filename);
+
+        private:
+            std::string _name;
+            std::vector<FuzzyRule *> _rules;
+        };
     }
 }
 
