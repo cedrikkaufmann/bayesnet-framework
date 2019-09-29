@@ -122,11 +122,66 @@ namespace bayesNet {
 
         void Node::updateBelief(const state::BayesBelief &belief) {
             _belief = belief;
+            _nodeColor = colorFromBelief(belief);
             update();
         }
 
         const QString &Node::getName() const {
             return _name;
+        }
+
+        QColor &Node::colorFromBelief(const state::BayesBelief &belief) {
+            size_t maxBeliefIndex = 0;
+            double maxBelief = belief.get(0);
+
+            for (size_t j = 1; j < belief.nrStates(); ++j) {
+                double newBelief = belief.get(j);
+
+                if (newBelief > maxBelief) {
+                    maxBelief = newBelief;
+                    maxBeliefIndex = j;
+                }
+            }
+
+            if (belief.isBinary()) {
+                switch (maxBeliefIndex) {
+                    case 0: {
+                        // FALSE --> RED
+                        static QColor *color = new QColor(0xfa, 0x00, 0x1a);
+                        return *color;
+                    }
+                    case 1: {
+                        // TRUE --> GREEN
+                        static QColor *color = new QColor(0x14, 0x66, 0x22);
+                        return *color;
+                    }
+                }
+            }
+
+            switch (maxBeliefIndex) {
+                case 0: {
+                    // GOOD --> GREEN
+                    static QColor *color = new QColor(0x14, 0x66, 0x22);
+                    return *color;
+                }
+                case 1: {
+                    // PROBABLY_GOOD --> LIGHT YELLOW
+                    static QColor *color = new QColor(0xff, 0xfa, 0x6c);
+                    return *color;
+                }
+                case 2: {
+                    // PROBABLY_BAD --> DARK YELLOW
+                    static QColor *color = new QColor(0xe9, 0x89, 0x10);
+                    return *color;
+                }
+                case 3: {
+                    // BAD --> RED
+                    static QColor *color = new QColor(0xfa, 0x00, 0x1a);
+                    return *color;
+                }
+            }
+
+
         }
 
         NodeView::NodeView(bayesNet::Node *node, QWidget *parent) : _node(node), QWidget(parent) {

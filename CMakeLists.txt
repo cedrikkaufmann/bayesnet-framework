@@ -70,7 +70,6 @@ target_compile_options(
         -Werror
 )
 
-
 # CPT inference tool
 add_executable(
         infer_cpt
@@ -135,6 +134,22 @@ if(BUILD_EXAMPLES)
 
     add_dependencies(
             example_cpt_inference
+            bayesnet_lib
+    )
+
+    # m3 example
+    add_executable(
+            example_m3
+            examples/m3_annaehern.cpp
+    )
+
+    target_link_libraries(
+            example_m3
+            bayesnet_lib
+    )
+
+    add_dependencies(
+            example_m3
             bayesnet_lib
     )
 endif()

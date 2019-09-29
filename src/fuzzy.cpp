@@ -387,7 +387,11 @@ namespace bayesNet {
             return os;
         }
 
-        Set::Set(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {}
+        Set::Set(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {
+            for (size_t i = 0; i < states; i++) {
+                _mf[i] = NULL;
+            }
+        }
 
         Set::~Set() {}
 
@@ -520,8 +524,11 @@ namespace bayesNet {
                 size_t maxIncrement = stateCounter.getMaximumIncrement();
 
                 for (size_t i = 0; i < inferred.size(); i++) {
-                    cpt[(i * maxIncrement) + stateCounter.getIncrement()] = inferred[i];
+                    std::cout << (i * maxIncrement) + stateCounter.getIncrement() << ": " <<inferred[i] << "; ";
+                    cpt.set((i * maxIncrement) + stateCounter.getIncrement(), inferred[i]);
                 }
+
+                std::cout << std::endl;
             } while (stateCounter.countUp());
 
             return cpt;
@@ -545,6 +552,10 @@ namespace bayesNet {
                     tNorm *= _fuzzySet[j]->getStrength(max[j], rules[i]->getParentStates()[j]->getState());
                 }
 
+                // truncate
+                int trunc = static_cast<int>(tNorm * 100);
+                tNorm = trunc / 100.0;
+
                 conclusions[i] = tNorm;
             }
 
@@ -556,26 +567,24 @@ namespace bayesNet {
                 nrStates = 4;
             }
 
-            std::vector<double> inferredProbabilities(nrStates);
+            std::vector<double> inferredBeliefs(nrStates);
 
             for (size_t i = 0; i < conclusions.size(); ++i) {
                 size_t state = rules[i]->getChildState().getState();
 
-                if (conclusions[i] > inferredProbabilities[state]) {
-                    inferredProbabilities[state] = conclusions[i];
+                if (conclusions[i] > inferredBeliefs[state]) {
+                    inferredBeliefs[state] = conclusions[i];
                 }
             }
 
-            for (size_t i = 0; i < inferredProbabilities.size(); ++i) {
-                if (inferredProbabilities[i] < _nullBeliefTolerance) {
-                    inferredProbabilities[i] = _nullBeliefTolerance;
+            for (size_t i = 0; i < inferredBeliefs.size(); ++i) {
+                std::cout << "Nullbelief: " << _nullBeliefTolerance << std::endl;
+                if (inferredBeliefs[i] < _nullBeliefTolerance) {
+                    inferredBeliefs[i] = _nullBeliefTolerance;
                 }
             }
 
-            // normalize
-            utils::vectorNormalize(inferredProbabilities);
-
-            return inferredProbabilities;
+            return inferredBeliefs;
         }
 
         RuleState::RuleState(size_t state, bool binary) : _state(state), _binary(binary) {}

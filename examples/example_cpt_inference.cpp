@@ -74,7 +74,7 @@ int main() {
     bayesNet::CPT wetGrassCPT = wetGrassCtrl->inferCPT();
 
     for (size_t i = 0; i < wetGrassCPT.size(); ++i) {
-        std::cout << wetGrassCPT[i] << std::endl;
+        std::cout << wetGrassCPT.get(i) << std::endl;
     }
 
     return 0;

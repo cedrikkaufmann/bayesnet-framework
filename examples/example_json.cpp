@@ -4,6 +4,7 @@
 
 #include <bayesnet/network.h>
 #include <bayesnet/state.h>
+#include <bayesnet/file.h>
 
 #include <iostream>
 
@@ -11,8 +12,10 @@
 using namespace std;
 
 int main( int argc, char **argv ) {
-    bayesNet::Network net("../../networks/pregnancy.bayesnet");
+    //bayesNet::Network net("/Users/cedrik/Google Drive/Dokumente/Uni/Bachelor/Bachelorarbeit/Fertigkeitengraf/Netzwerke/M3_Annaehern_-_unbewegliche_elemente/m3_annaehern.bayesnet");
+    bayesNet::file::InitializationVector *v = bayesNet::file::InitializationVector::parse("/Users/cedrik/Google Drive/Dokumente/Uni/Bachelor/Bachelorarbeit/Fertigkeitengraf/Netzwerke/M3_Annaehern_-_unbewegliche_elemente/m3_annaehern.bayesnet");
 
+    /*
     net.setEvidence("scanningTest", bayesNet::state::FALSE);
     net.setEvidence("bloodTest", bayesNet::state::FALSE);
     net.setEvidence("urineTest", bayesNet::state::FALSE);
@@ -24,7 +27,7 @@ int main( int argc, char **argv ) {
     cout << "L: " << net.getBelief("progesteroneLevel") << endl;
     cout << "S: " << net.getBelief("scanningTest") << endl;
     cout << "U: " << net.getBelief("urineTest") << endl;
-    cout << "B: " << net.getBelief("bloodTest") << endl;
+    cout << "B: " << net.getBelief("bloodTest") << endl;*/
 
     return 0;
 }

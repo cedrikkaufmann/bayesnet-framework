@@ -33,7 +33,7 @@ namespace bayesNet {
         getFactor().clearEvidence();
     }
 
-    void Node::setCPT(const CPT &cpt) {
+    void Node::setCPT(CPT &cpt) {
         _cpt = cpt;
         Factor &factor = getFactor();
 
@@ -129,9 +129,6 @@ namespace bayesNet {
     void SensorNode::observe(double x) {
         // get state strenth from fuzzy set
         std::vector<double> strength = getFuzzySet().getStrength(x);
-
-        // normalize
-        utils::vectorNormalize(strength);
 
         // set cpt for node
         CPT cpt(strength);

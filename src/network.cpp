@@ -3,7 +3,6 @@
 #include <bayesnet/network.h>
 #include <bayesnet/exception.h>
 
-
 namespace bayesNet {
 
     Network::Network() : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {}
@@ -154,7 +153,7 @@ namespace bayesNet {
         return bayesBelief;
     }
 
-    void Network::setCPT(const std::string &name, const CPT &cpt) {
+    void Network::setCPT(const std::string &name, CPT &cpt) {
         getNode(name)->setCPT(cpt);
     }
 
@@ -185,7 +184,8 @@ namespace bayesNet {
         std::unordered_map<std::string, std::vector<double> > &cpts = iv->getCPTs();
 
         for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = cpts.begin(); it != cpts.end(); it++) {
-            setCPT((*it).first, CPT((*it).second));
+            CPT cpt(it->second);
+            setCPT(it->first, cpt);
         }
 
         // add fuzzy sets for sensor nodes
@@ -246,16 +246,22 @@ namespace bayesNet {
             }
 
             // add fuzzy sets
-            if (isSensor) {
-                fuzzyLogic::Set &fuzzySet = _nodes[i]->getFuzzySet();
-                std::vector<std::string> curves(fuzzySet.nrStates());
+            //if (isSensor) {
+            fuzzyLogic::Set &fuzzySet = _nodes[i]->getFuzzySet();
+            std::vector<std::string> curves(fuzzySet.nrStates());
 
-                for (size_t j = 0; j < fuzzySet.nrStates(); j++) {
+            for (size_t j = 0; j < fuzzySet.nrStates(); j++) {
+                fuzzyLogic::MembershipFunction *mf = fuzzySet.getMembershipFunction(j);
+
+                if (mf != NULL) {
                     curves[j] = fuzzySet.getMembershipFunction(j)->toString();
+                } else {
+                    curves[j] = "NULL";
                 }
-
-                iv->setFuzzySet(_nodes[i]->getName(), curves);
             }
+
+            iv->setFuzzySet(_nodes[i]->getName(), curves);
+            //}
 
             // add inference algorithm
             if (_init && !_inferenceAlgorithm->getFilename().empty()) {
@@ -344,7 +350,7 @@ namespace bayesNet {
         }
 
         // create inference controller instance
-        fuzzyLogic::Controller inferenceCtrl(fuzzySets, &node->getFuzzyRules());
+        fuzzyLogic::Controller inferenceCtrl(fuzzySets, &node->getFuzzyRules(), 0.01);
 
         // infer cpt
         CPT cpt = inferenceCtrl.inferCPT();

@@ -89,7 +89,7 @@ namespace bayesNet {
         CPT &getCPT();
 
         /// Sets the @a cpt
-        void setCPT(const CPT &cpt);
+        void setCPT(CPT &cpt);
 
         /// Sets the Node's @a index in the libDAI factorgraph representation
         void setFactorGraphIndex(size_t index);

@@ -157,7 +157,7 @@ namespace bayesNet {
                 }
             } else {
                 // iterate over belief states
-                for (size_t i = 0; i < 2; ++i) {
+                for (size_t i = 0; i < 4; ++i) {
                     switch (i) {
                         case GOOD: {
                             os << "GOOD: ";
@@ -178,6 +178,12 @@ namespace bayesNet {
                             os << "BAD: ";
                             break;
                         }
+                    }
+
+                    os << bayesBelief.get(i);
+
+                    if (i < 3) {
+                        os << "; ";
                     }
                 }
             }
