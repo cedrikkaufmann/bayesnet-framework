@@ -64,7 +64,6 @@ target_compile_options(
         -Weverything
         -Wno-deprecated
         -Wno-padded
-        -Wno-unused-function
         -Wno-exit-time-destructors
         -Wno-global-constructors
         -Werror
@@ -136,22 +135,6 @@ if(BUILD_EXAMPLES)
             example_cpt_inference
             bayesnet_lib
     )
-
-    # m3 example
-    add_executable(
-            example_m3
-            examples/m3_annaehern.cpp
-    )
-
-    target_link_libraries(
-            example_m3
-            bayesnet_lib
-    )
-
-    add_dependencies(
-            example_m3
-            bayesnet_lib
-    )
 endif()
 
 # Look for Qt5 dependecies
@@ -173,6 +156,13 @@ if (Qt5_FOUND)
             ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
             ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
             ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
+    )
+
+    target_compile_options(
+        bayesnet_gui_lib PRIVATE
+        -Wno-deprecated
+        -Wno-padded
+        -Wno-zero-as-null-pointer-constant
     )
 
     target_include_directories(

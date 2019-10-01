@@ -153,7 +153,7 @@ namespace bayesNet {
         return bayesBelief;
     }
 
-    void Network::setCPT(const std::string &name, CPT &cpt) {
+    void Network::setCPT(const std::string &name, const CPT &cpt) {
         getNode(name)->setCPT(cpt);
     }
 

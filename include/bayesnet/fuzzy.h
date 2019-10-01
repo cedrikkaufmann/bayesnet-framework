@@ -60,8 +60,8 @@ namespace bayesNet {
          */
         class Set {
         public:
-            /// Constructs a fuzzy set using @a states and tolerance value @a tol
-            explicit Set(size_t states, double tol = 0);
+            /// Constructs a fuzzy set using @a states
+            explicit Set(size_t states);
 
             /// Destructor
             virtual ~Set();
@@ -85,9 +85,6 @@ namespace bayesNet {
             size_t nrStates() const;
 
         private:
-            /// Stores the null belief tolerance, which is used in case of belief null instead
-            double _nullBeliefTolerance;
-
             /// Stores the membership functions
             std::vector<MembershipFunction *> _mf;
         };

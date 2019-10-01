@@ -72,7 +72,7 @@ namespace bayesNet {
         void clearEvidence(const std::string &name);
 
         /// Sets the @a cpt for node @a name 
-        void setCPT(const std::string &name, CPT &cpt);
+        void setCPT(const std::string &name, const CPT &cpt);
 
         /// Parses fuzzy rules from @a file and apply them to the corresponding nodes
         void setFuzzyRules(const std::string &file);

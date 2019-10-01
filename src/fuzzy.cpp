@@ -3,7 +3,6 @@
 #include <sstream>
 #include <regex>
 
-
 #include <bayesnet/fuzzy.h>
 #include <bayesnet/util.h>
 #include <bayesnet/exception.h>
@@ -284,8 +283,6 @@ namespace bayesNet {
                     pos += step;
                     valBefore = val;
                     val = fx(pos);
-
-                    std::cout << "Pos:" << pos << "; Val:" << val << std::endl;
                 }
 
                 return pos;
@@ -387,7 +384,7 @@ namespace bayesNet {
             return os;
         }
 
-        Set::Set(size_t states, double tol) : _nullBeliefTolerance(tol), _mf(states) {
+        Set::Set(size_t states) : _mf(states) {
             for (size_t i = 0; i < states; i++) {
                 _mf[i] = NULL;
             }
@@ -405,23 +402,17 @@ namespace bayesNet {
 
             for (size_t i = 0; i < states; ++i) {
                 beliefs[i] = _mf[i]->fx(x);
-
-                if (beliefs[i] < _nullBeliefTolerance) {
-                    beliefs[i] = _nullBeliefTolerance;
-                }
             }
 
             return beliefs;
         }
 
         double Set::getStrength(double x, size_t state) const {
-            double belief = _mf[state]->fx(x);
-
-            if (belief < _nullBeliefTolerance) {
-                belief = _nullBeliefTolerance;
+            if (state >= _mf.size()) {
+                BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
-            return belief;
+            return _mf[state]->fx(x);
         }
 
         double Set::findMaximum(size_t state) const {
@@ -524,11 +515,8 @@ namespace bayesNet {
                 size_t maxIncrement = stateCounter.getMaximumIncrement();
 
                 for (size_t i = 0; i < inferred.size(); i++) {
-                    std::cout << (i * maxIncrement) + stateCounter.getIncrement() << ": " <<inferred[i] << "; ";
                     cpt.set((i * maxIncrement) + stateCounter.getIncrement(), inferred[i]);
                 }
-
-                std::cout << std::endl;
             } while (stateCounter.countUp());
 
             return cpt;
@@ -578,11 +566,12 @@ namespace bayesNet {
             }
 
             for (size_t i = 0; i < inferredBeliefs.size(); ++i) {
-                std::cout << "Nullbelief: " << _nullBeliefTolerance << std::endl;
                 if (inferredBeliefs[i] < _nullBeliefTolerance) {
                     inferredBeliefs[i] = _nullBeliefTolerance;
                 }
             }
+
+            utils::vectorNormalize(inferredBeliefs);
 
             return inferredBeliefs;
         }

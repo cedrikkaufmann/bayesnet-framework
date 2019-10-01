@@ -89,6 +89,8 @@ namespace bayesNet {
 
             for (size_t i = 0; i < states; ++i) {
                 double currentBelief = _belief.get(i);
+                int trunc = currentBelief * 10000;
+                currentBelief = trunc / 10000.0;
                 int indicatorSize = static_cast<int>(currentBelief * barSize);
                 int position = static_cast<int>(static_cast<unsigned long>(fm.height() + 20) + 25 * i);
                 painter->drawRect(20, position, indicatorSize, 20);
@@ -103,9 +105,15 @@ namespace bayesNet {
 
             // calculate font measurements
             for (size_t i = 0; i < states; ++i) {
-                int position = static_cast<int>(static_cast<unsigned long>(fm.height() + 40) + 25 * i);
                 std::stringstream ss;
-                ss << _belief.get(i) * 100 << "%";
+
+                int position = static_cast<int>(static_cast<unsigned long>(fm.height() + 40) + 25 * i);
+                
+                double currentBelief = _belief.get(i);
+                int trunc = currentBelief * 10000;
+                currentBelief = trunc / 10000.0;
+
+                ss << currentBelief * 100 << "%";
                 str = QString(ss.str().c_str());
                 int strW = fm.horizontalAdvance(str);
 

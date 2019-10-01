@@ -42,7 +42,7 @@ namespace bayesNet {
         void set(size_t index, double value);
 
         /// Returns the probability of entry @a index
-        double get(size_t index);
+        double get(size_t index) const;
 
         /// Returns the whole CPT as vector
         std::vector<double> &getProbabilities();
@@ -50,9 +50,6 @@ namespace bayesNet {
     private:
         /// Stores the probabilities
         std::vector<double> _probabilities;
-
-        /// Stores changed flag
-        bool _changed;
     };
 }
 
