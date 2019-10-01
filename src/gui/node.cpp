@@ -57,8 +57,8 @@ namespace bayesNet {
 
             // draw name
             QFont font = painter->font() ;
-            font.setPointSize(18);
-            painter->setFont(font);
+            int pointSize = 18;
+            font.setPointSize(pointSize);
 
             // calculate font measurements
             QString str(_name);
@@ -66,10 +66,25 @@ namespace bayesNet {
             int strW = fm.horizontalAdvance(str);
             int height = fm.height();
 
+            while (strW >= boundingRect().width()) {
+                pointSize -= 2;
+                font.setPointSize(pointSize);
+                fm = QFontMetrics(font);
+                strW = fm.horizontalAdvance(str);
+                height = fm.height();
+            }
+
+            painter->setFont(font);
+
             // write node name
             double x = boundingRect().width() / 2 - static_cast<double>(strW) / 2 + boundingRect().x();
             painter->setPen(QPen(Qt::white, 1));
             painter->drawText(QPointF(x,height + 10), _name);
+
+            font.setPointSize(18);
+            painter->setFont(font);
+            fm = QFontMetrics(font);
+            height = fm.height();
 
             // draw beliefs bars
             nodeBrush.setColor(Qt::lightGray);
@@ -173,8 +188,8 @@ namespace bayesNet {
                     return *color;
                 }
                 case 1: {
-                    // PROBABLY_GOOD --> LIGHT YELLOW
-                    static QColor *color = new QColor(0xff, 0xfa, 0x6c);
+                    // PROBABLY_GOOD --> YELLOW-GREEN
+                    static QColor *color = new QColor(0xbd, 0xcd, 0x0d);
                     return *color;
                 }
                 case 2: {
