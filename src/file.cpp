@@ -95,7 +95,8 @@ namespace bayesNet {
             std::regex sectionRegEx("^\\s*\"(nodes|sensors|connections|cpt|fuzzySets)\"\\s*:\\s*\\{\\s*$");
             std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
             std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9_]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9_]+)\"\\s*,?)*)\\],?$");
-            std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
+            std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[(.*)],?$");
+            //std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
             std::regex fuzzySetsRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\{\\s*$");
             std::regex fuzzySetSensorStateRegEx("^\\s*[0-9]+\\s*:\\s*\\{(\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*[0-9]+\\.?)\\s*,?)*\\]\\s*)\\},?$");
             std::regex inferenceRegEx("^\\s*\"inference\"\\s*:\\s*\"([a-zA-Z0-9_.\\/]*)\"\\s*$");
