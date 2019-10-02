@@ -74,7 +74,7 @@ namespace bayesNet {
             /// Stores the color
             QColor _nodeColor;
 
-            static QColor &colorFromBelief(const state::BayesBelief &belief);
+            static QColor colorFromBelief(const state::BayesBelief &belief);
         };
 
         /// Represents the detailed view of a node

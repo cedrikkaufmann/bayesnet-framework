@@ -1,6 +1,8 @@
-#include <bayesnet/gui/node.h>
 #include <sstream>
 #include <string>
+
+#include <bayesnet/gui/node.h>
+#include <bayesnet/util.h>
 
 
 namespace bayesNet {
@@ -78,7 +80,7 @@ namespace bayesNet {
 
             // write node name
             double x = boundingRect().width() / 2 - static_cast<double>(strW) / 2 + boundingRect().x();
-            painter->setPen(QPen(Qt::white, 1));
+            painter->setPen(QPen(Qt::black, 1));
             painter->drawText(QPointF(x,height + 10), _name);
 
             font.setPointSize(18);
@@ -153,58 +155,46 @@ namespace bayesNet {
             return _name;
         }
 
-        QColor &Node::colorFromBelief(const state::BayesBelief &belief) {
-            size_t maxBeliefIndex = 0;
-            double maxBelief = belief.get(0);
-
-            for (size_t j = 1; j < belief.nrStates(); ++j) {
-                double newBelief = belief.get(j);
-
-                if (newBelief > maxBelief) {
-                    maxBelief = newBelief;
-                    maxBeliefIndex = j;
-                }
-            }
+        QColor Node::colorFromBelief(const state::BayesBelief &belief) {
+            qreal s = 0.7;
+            qreal v = 0.85;
 
             if (belief.isBinary()) {
-                switch (maxBeliefIndex) {
-                    case 0: {
-                        // FALSE --> RED
-                        static QColor *color = new QColor(0xfa, 0x00, 0x1a);
-                        return *color;
-                    }
-                    case 1: {
-                        // TRUE --> GREEN
-                        static QColor *color = new QColor(0x14, 0x66, 0x22);
-                        return *color;
-                    }
+                qreal angle = (120 * belief.get(1)) / 360.0;
+                return QColor::fromHsvF(angle, s, v); 
+            } else {
+                if (static_cast<int>(belief.get(0) * 100) == 100) {
+                    return QColor::fromHsvF(120 / 360.0, .70, .85); 
                 }
+
+                if (static_cast<int>(belief.get(1) * 100) == 100) {
+                    return QColor::fromHsvF(100 / 360.0, .70, .85); 
+                }
+
+                if (static_cast<int>(belief.get(2) * 100) == 100) {
+                    return QColor::fromHsvF(20 / 360.0, .70, .85); 
+                }
+
+                if (static_cast<int>(belief.get(3) * 100) == 100) {
+                    return QColor::fromHsvF(0, .70, .85); 
+                }
+
+
+                std::vector<double> v1;
+                v1.push_back(belief.get(0));
+                v1.push_back(belief.get(1));
+                qreal a1 = 60 * v1[0];
+                qreal a2 = 30 * v1[1];
+
+                std::vector<double> v2;
+                v2.push_back(belief.get(2));
+                v2.push_back(belief.get(3));
+                qreal b1 = 30 * v2[0];
+                qreal b2 = 60 * v2[1];
+
+                qreal angle = (60 + a1 + a2 - b1 - b2) / 360.0;
+                return QColor::fromHsvF(angle, .70, .85); 
             }
-
-            switch (maxBeliefIndex) {
-                case 0: {
-                    // GOOD --> GREEN
-                    static QColor *color = new QColor(0x14, 0x66, 0x22);
-                    return *color;
-                }
-                case 1: {
-                    // PROBABLY_GOOD --> YELLOW-GREEN
-                    static QColor *color = new QColor(0xbd, 0xcd, 0x0d);
-                    return *color;
-                }
-                case 2: {
-                    // PROBABLY_BAD --> DARK YELLOW
-                    static QColor *color = new QColor(0xe9, 0x89, 0x10);
-                    return *color;
-                }
-                case 3: {
-                    // BAD --> RED
-                    static QColor *color = new QColor(0xfa, 0x00, 0x1a);
-                    return *color;
-                }
-            }
-
-
         }
 
         NodeView::NodeView(bayesNet::Node *node, QWidget *parent) : _node(node), QWidget(parent) {
