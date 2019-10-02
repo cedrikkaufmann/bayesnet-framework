@@ -19,6 +19,7 @@ namespace bayesNet {
     }
 
     void CPT::set(size_t index, double value) {
+        // check if index is in bounds
         if (index > _probabilities.size()) {
             BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
         }
@@ -27,6 +28,7 @@ namespace bayesNet {
     }
 
     double CPT::get(size_t index) const {
+        // check if index is in bounds
         if (index > _probabilities.size()) {
             BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
         }
@@ -36,5 +38,18 @@ namespace bayesNet {
 
     std::vector<double> &CPT::getProbabilities() {
         return _probabilities;
+    }
+
+    std::vector<double> CPT::getProbabilities() const {
+        return _probabilities;
+    }
+
+    double &CPT::operator[](size_t index) {
+        // check if index is in bounds
+        if (index > _probabilities.size()) {
+            BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
+        }
+
+        return _probabilities[index];
     }
 }

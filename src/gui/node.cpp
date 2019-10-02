@@ -61,6 +61,7 @@ namespace bayesNet {
             QFont font = painter->font() ;
             int pointSize = 18;
             font.setPointSize(pointSize);
+            painter->setFont(font);
 
             // calculate font measurements
             QString str(_name);
@@ -122,15 +123,10 @@ namespace bayesNet {
 
             // calculate font measurements
             for (size_t i = 0; i < states; ++i) {
-                std::stringstream ss;
-
                 int position = static_cast<int>(static_cast<unsigned long>(fm.height() + 40) + 25 * i);
-                
-                double currentBelief = _belief.get(i);
-                int trunc = currentBelief * 10000;
-                currentBelief = trunc / 10000.0;
-
-                ss << currentBelief * 100 << "%";
+                std::stringstream ss;
+                int trunc = static_cast<int>(_belief.get(i) * 10000);
+                ss << trunc / 100.0 << "%";
                 str = QString(ss.str().c_str());
                 int strW = fm.horizontalAdvance(str);
 
