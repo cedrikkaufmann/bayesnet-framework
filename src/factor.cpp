@@ -34,8 +34,6 @@ namespace bayesNet {
         for (size_t i = 0; i < jointStates; i++) {
             if (i < evidenceBeginIndex || i >= evidenceEndIndex) {
                 set(i, 0);
-            } else {
-                set(i, 1);
             }
         }
 
