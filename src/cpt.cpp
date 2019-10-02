@@ -21,10 +21,20 @@ namespace bayesNet {
     }
 
     void CPT::set(size_t index, double value) {
+        // check if index is in bounds
+        if (index > _probabilities.size()) {
+            BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
+        }
+        
         _probabilities[index] = value;
     }
 
     double CPT::get(size_t index) const {
+        // check if index is in bounds
+        if (index > _probabilities.size()) {
+            BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
+        }
+
         return _probabilities[index];
     }
 

@@ -57,7 +57,8 @@ namespace bayesNet {
 
             // draw name
             QFont font = painter->font() ;
-            font.setPointSize(18);
+            int pointSize = 18;
+            font.setPointSize(pointSize);
             painter->setFont(font);
 
             // calculate font measurements
@@ -66,10 +67,25 @@ namespace bayesNet {
             int strW = fm.horizontalAdvance(str);
             int height = fm.height();
 
+            while (strW >= boundingRect().width()) {
+                pointSize -= 2;
+                font.setPointSize(pointSize);
+                fm = QFontMetrics(font);
+                strW = fm.horizontalAdvance(str);
+                height = fm.height();
+            }
+
+            painter->setFont(font);
+
             // write node name
             double x = boundingRect().width() / 2 - static_cast<double>(strW) / 2 + boundingRect().x();
-            painter->setPen(QPen(Qt::white, 1));
+            painter->setPen(QPen(Qt::black, 1));
             painter->drawText(QPointF(x,height + 10), _name);
+
+            font.setPointSize(18);
+            painter->setFont(font);
+            fm = QFontMetrics(font);
+            height = fm.height();
 
             // draw beliefs bars
             nodeBrush.setColor(Qt::lightGray);
@@ -122,11 +138,54 @@ namespace bayesNet {
 
         void Node::updateBelief(const state::BayesBelief &belief) {
             _belief = belief;
+            _nodeColor = colorFromBelief(belief);
             update();
         }
 
         const QString &Node::getName() const {
             return _name;
+        }
+
+        QColor Node::colorFromBelief(const state::BayesBelief &belief) {
+            qreal s = 0.7;
+            qreal v = 0.85;
+
+            if (belief.isBinary()) {
+                qreal angle = (120 * belief.get(1)) / 360.0;
+                return QColor::fromHsvF(angle, s, v); 
+            } else {
+                if (static_cast<int>(belief.get(0) * 100) == 100) {
+                    return QColor::fromHsvF(120 / 360.0, .70, .85); 
+                }
+
+                if (static_cast<int>(belief.get(1) * 100) == 100) {
+                    return QColor::fromHsvF(100 / 360.0, .70, .85); 
+                }
+
+                if (static_cast<int>(belief.get(2) * 100) == 100) {
+                    return QColor::fromHsvF(20 / 360.0, .70, .85); 
+                }
+
+                if (static_cast<int>(belief.get(3) * 100) == 100) {
+                    return QColor::fromHsvF(0, .70, .85); 
+                }
+
+
+                std::vector<double> v1;
+                v1.push_back(belief.get(0));
+                v1.push_back(belief.get(1));
+                qreal a1 = 60 * v1[0];
+                qreal a2 = 30 * v1[1];
+
+                std::vector<double> v2;
+                v2.push_back(belief.get(2));
+                v2.push_back(belief.get(3));
+                qreal b1 = 30 * v2[0];
+                qreal b2 = 60 * v2[1];
+
+                qreal angle = (60 + a1 + a2 - b1 - b2) / 360.0;
+                return QColor::fromHsvF(angle, .70, .85); 
+            }
         }
 
         NodeView::NodeView(bayesNet::Node *node, QWidget *parent) : _node(node), QWidget(parent) {
