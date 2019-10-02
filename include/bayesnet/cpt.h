@@ -47,6 +47,13 @@ namespace bayesNet {
         /// Returns the whole CPT as vector
         std::vector<double> &getProbabilities();
 
+        /// Returns the whole CPT as vector
+        std::vector<double> getProbabilities() const;
+
+        /// Access operator
+        double &operator[](size_t index);
+
+
     private:
         /// Stores the probabilities
         std::vector<double> _probabilities;
