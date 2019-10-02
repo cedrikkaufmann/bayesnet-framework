@@ -25,7 +25,7 @@ namespace bayesNet {
         // backup factor
         backup();
 
-        // calculate factor states which has to be set to probaility 1
+        // calculate factor states which has to be set to probability 1
         size_t jointStates = nrStates();
         size_t evidenceEntries = jointStates / _states;
         size_t evidenceBeginIndex = evidenceEntries * state;

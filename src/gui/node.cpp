@@ -121,7 +121,8 @@ namespace bayesNet {
             for (size_t i = 0; i < states; ++i) {
                 int position = static_cast<int>(static_cast<unsigned long>(fm.height() + 40) + 25 * i);
                 std::stringstream ss;
-                ss << _belief.get(i) * 100 << "%";
+                int trunc = static_cast<int>(_belief.get(i) * 10000);
+                ss << trunc / 100.0 << "%";
                 str = QString(ss.str().c_str());
                 int strW = fm.horizontalAdvance(str);
 
