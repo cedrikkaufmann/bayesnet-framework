@@ -1,6 +1,5 @@
-//
-// Created by Cedrik Kaufmann on 2019-08-15.
-//
+/// @file
+/// @brief BayesNet GUI, used to manage inference algorithms used by the engine
 
 #include <bayesnet/gui/inference.h>
 

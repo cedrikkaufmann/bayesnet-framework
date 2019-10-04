@@ -283,9 +283,6 @@ namespace bayesNet {
 
             // write json begin
             os << "{" << std::endl;
-            // write nodes section
-            // begin nodes section
-            os << indent << "\"nodes\": {" << std::endl;
 
             // write each node
             std::vector<Node *> &nodes = iv.getNodes();
@@ -299,26 +296,6 @@ namespace bayesNet {
                     normalNodes.push_back(nodes[i]);
                 }
             }
-
-            // write normal nodes
-            for (size_t i = 0; i < normalNodes.size(); ++i) {
-                os << indent << indent << "\"" << nodes[i]->getName();
-
-                if (normalNodes[i]->isBinary()) {
-                    os << "\": 2";
-                } else {
-                    os << "\": 4";
-                }
-
-                if (i == normalNodes.size() - 1) {
-                    os << std::endl;
-                } else {
-                    os << "," << std::endl;
-                }
-            }
-
-            // end nodes section
-            os << indent << "}," << std::endl;
 
             // write sensor nodes section
             // begin sensor nodes section
@@ -342,6 +319,30 @@ namespace bayesNet {
             }
 
             // end sensor nodes section
+            os << indent << "}," << std::endl;
+
+            // write nodes section
+            // begin nodes section
+            os << indent << "\"nodes\": {" << std::endl;
+
+            // write normal nodes
+            for (size_t i = 0; i < normalNodes.size(); ++i) {
+                os << indent << indent << "\"" << normalNodes[i]->getName();
+
+                if (normalNodes[i]->isBinary()) {
+                    os << "\": 2";
+                } else {
+                    os << "\": 4";
+                }
+
+                if (i == normalNodes.size() - 1) {
+                    os << std::endl;
+                } else {
+                    os << "," << std::endl;
+                }
+            }
+
+            // end nodes section
             os << indent << "}," << std::endl;
 
             // write connections section

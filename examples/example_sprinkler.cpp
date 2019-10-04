@@ -13,6 +13,7 @@ int main() {
     bayesNet::Network net;
 
     net.newNode("cloudy", true);
+    //net.newSensor("cloudy", true); this would make cloudy an observable sensor
     net.newNode("sprinkler", true);
     net.newNode("rainy", true);
     net.newNode("wetGrass", true);
@@ -21,6 +22,14 @@ int main() {
     net.newConnection("cloudy", "rainy"); // rainy given cloudy
     net.newConnection("rainy", "wetGrass"); // wet grass given rainy
     net.newConnection("sprinkler", "wetGrass"); // wet grass given sprinkler
+
+    // if cloudy is a sensor you need to specify the fuzzy set´s membership functions
+    /*
+    bayesNet::fuzzyLogic::MembershipFunction *mfFalse = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(0, 0.35);
+    bayesNet::fuzzyLogic::MembershipFunction *mfTrue = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(1, 0.35);
+    net.setMemebershipFunction("cloudy", bayesNet::state::FALSE, mfFalse);
+    net.setMemebershipFunction("cloudy", bayesNet::state::TRUE, mfTrue);
+    */
 
     std::vector<double> pCloudy;
     pCloudy.push_back(0.5);
@@ -65,16 +74,17 @@ int main() {
     net.doInference();
 
     cout << "Variable marginals:" << endl;
-    cout << "Cloudy: " << net.getBelief("cloudy") << endl; // display the belief of bp for that variable
+    cout << "Cloudy: " << net.getBelief("cloudy") << endl;
     cout << "Sprinkler: " << net.getBelief("sprinkler") << endl;
     cout << "Rainy: " << net.getBelief("rainy") << endl;
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl << endl;
 
     net.setEvidence("sprinkler", bayesNet::state::TRUE);
+    //net.observe("cloudy", 2); this would update CPT based on continous obersavtion 2, therefore cloudy has be a sensor  
     net.doInference();
 
     cout << "Variable marginals:" << endl;
-    cout << "Cloudy: " << net.getBelief("cloudy") << endl; // display the belief of bp for that variable
+    cout << "Cloudy: " << net.getBelief("cloudy") << endl;
     cout << "Sprinkler: " << net.getBelief("sprinkler") << endl;
     cout << "Rainy: " << net.getBelief("rainy") << endl;
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl;

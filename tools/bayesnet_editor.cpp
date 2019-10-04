@@ -1,6 +1,5 @@
-//
-// Created by Cedrik Kaufmann on 09.09.19.
-//
+/// @file
+/// @brief BayesNet GUI, used to visualize a network from a given network file
 
 #include <string>
 
@@ -16,8 +15,9 @@ int main(int argc, char **argv) {
     // create editor instance
     bayesNet::gui::Editor *editor;
 
+    // if program started with params, try to use first as network filename
     if (argc > 1) {
-        std::string file = std::string(argv[1]);
+        std::string file(argv[1]);
         editor = new bayesNet::gui::Editor(file);
     } else {
         editor = new bayesNet::gui::Editor();

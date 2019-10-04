@@ -27,7 +27,7 @@ namespace bayesNet {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
-            BAYESNET_THROW(NODE_ALREADY_EXISTS);
+            BAYESNET_THROWE(NODE_ALREADY_EXISTS, name);
         }
 
         // increment node counter
@@ -294,7 +294,7 @@ namespace bayesNet {
         std::unordered_map<std::string, size_t>::const_iterator search = _registry.find(name);
 
         if (search != _registry.end()) {
-            BAYESNET_THROW(NODE_ALREADY_EXISTS);
+            BAYESNET_THROWE(NODE_ALREADY_EXISTS, name);
         }
 
         // increment node counter

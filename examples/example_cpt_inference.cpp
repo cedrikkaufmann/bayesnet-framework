@@ -1,5 +1,5 @@
 /// @file
-/// @brief Example that demonstrates how to use the fuzzy logic to infer a CPT
+/// @brief Example that demonstrates how to use the fuzzy logic to infer a CPT. Have a look at tools/cpt_inference.cpp, to see how to infer CPTs using network and rules file.
 
 #include <iostream>
 #include <bayesnet/fuzzy.h>
@@ -67,7 +67,7 @@ int main() {
 
     bayesNet::fuzzyLogic::RuleSet *rules = new bayesNet::fuzzyLogic::RuleSet(rulesWetGrass);
 
-    // create controller from fuzzy sets and -rules
+    // create controller from fuzzy sets and rules
     bayesNet::fuzzyLogic::Controller *wetGrassCtrl = new bayesNet::fuzzyLogic::Controller(wetGrass, rules, 0.01);
 
     // infer cpts

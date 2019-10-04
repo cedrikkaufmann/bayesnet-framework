@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.13)
 project(BayesNet_Framework)
 
 
-set(BUILD_EXAMPLES TRUE)
+set(BUILD_EXAMPLES FALSE)
+set(BUILD_GUI_TOOLS TRUE)
+set(BUILD_CLI_TOOLS TRUE)
 
 
 # settings and flags
@@ -69,144 +71,147 @@ target_compile_options(
         -Werror
 )
 
-# CPT inference tool
-add_executable(
-        infer_cpt
-        tools/cpt_inference.cpp
-)
+if (BUILD_CLI_TOOLS)
+        # CPT inference tool
+        add_executable(
+                infer_cpt
+                tools/cpt_inference.cpp
+        )
 
-target_link_libraries(
-        infer_cpt
-        bayesnet_lib
-)
+        target_link_libraries(
+                infer_cpt
+                bayesnet_lib
+        )
 
-add_dependencies(
-        infer_cpt
-        bayesnet_lib
-)
+        add_dependencies(
+                infer_cpt
+                bayesnet_lib
+        )
+endif()
 
 
 if(BUILD_EXAMPLES)
-    # Sprinkler example
-    add_executable(
-            example_sprinkler
-            examples/example_sprinkler.cpp
-    )
+        # Sprinkler example
+        add_executable(
+                example_sprinkler
+                examples/example_sprinkler.cpp
+        )
 
-    target_link_libraries(
-            example_sprinkler
-            bayesnet_lib
-    )
+        target_link_libraries(
+                example_sprinkler
+                bayesnet_lib
+        )
 
-    add_dependencies(
-            example_sprinkler
-            bayesnet_lib
-    )
+        add_dependencies(
+                example_sprinkler
+                bayesnet_lib
+        )
 
 
-    # Json example
-    add_executable(
-            example_json
-            examples/example_json.cpp
-    )
+        # Json example
+        add_executable(
+                example_json
+                examples/example_json.cpp
+        )
 
-    target_link_libraries(
-            example_json
-            bayesnet_lib
-    )
+        target_link_libraries(
+                example_json
+                bayesnet_lib
+        )
 
-    add_dependencies(
-            example_json
-            bayesnet_lib
-    )
+        add_dependencies(
+                example_json
+                bayesnet_lib
+        )
 
-    # CPT inference example
-    add_executable(
-            example_cpt_inference
-            examples/example_cpt_inference.cpp
-    )
+        # CPT inference example
+        add_executable(
+                example_cpt_inference
+                examples/example_cpt_inference.cpp
+        )
 
-    target_link_libraries(
-            example_cpt_inference
-            bayesnet_lib
-    )
+        target_link_libraries(
+                example_cpt_inference
+                bayesnet_lib
+        )
 
-    add_dependencies(
-            example_cpt_inference
-            bayesnet_lib
-    )
+        add_dependencies(
+                example_cpt_inference
+                bayesnet_lib
+        )
 endif()
 
-# Look for Qt5 dependecies
-set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
-find_package(Qt5 COMPONENTS Core GUI Widgets)
+if (BUILD_GUI_TOOLS)
+        # Look for Qt5 dependecies
+        set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
+        find_package(Qt5 COMPONENTS Core GUI Widgets)
 
-# Build GUI components if Qt5 found
-if (Qt5_FOUND)
-    # GUI Library
-    add_library(
-            bayesnet_gui_lib STATIC
-            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
-            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
-            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
-            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
-            ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
-            ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
-            ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
-            ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
-            ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
-            ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
-    )
+        # Build GUI components if Qt5 found
+        if (Qt5_FOUND)
+                # GUI Library
+                add_library(
+                        bayesnet_gui_lib STATIC
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
+                        ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
+                )
 
-    target_compile_options(
-        bayesnet_gui_lib PRIVATE
-        -Wno-deprecated
-        -Wno-padded
-        -Wno-zero-as-null-pointer-constant
-    )
+                target_compile_options(
+                        bayesnet_gui_lib PRIVATE
+                        -Wno-deprecated
+                        -Wno-padded
+                        -Wno-zero-as-null-pointer-constant
+                )
 
-    target_include_directories(
-            bayesnet_gui_lib PUBLIC
-            ${Qt5Core_INCLUDE_DIRS}
-            ${Qt5GUI_INCLUDE_DIRS}
-            ${Qt5Widgets_INCLUDE_DIRS}
-    )
+                target_include_directories(
+                        bayesnet_gui_lib PUBLIC
+                        ${Qt5Core_INCLUDE_DIRS}
+                        ${Qt5GUI_INCLUDE_DIRS}
+                        ${Qt5Widgets_INCLUDE_DIRS}
+                )
 
-    target_link_directories(
-            bayesnet_gui_lib PUBLIC
-            ${Qt5Core_LINK_DIRS}
-            ${Qt5GUI_LINK_DIRS}
-            ${Qt5Widgets_LINK_DIRS}
-    )
+                target_link_directories(
+                        bayesnet_gui_lib PUBLIC
+                        ${Qt5Core_LINK_DIRS}
+                        ${Qt5GUI_LINK_DIRS}
+                        ${Qt5Widgets_LINK_DIRS}
+                )
 
-    set_target_properties(
-            bayesnet_gui_lib PROPERTIES
-            OUTPUT_NAME bayesnet_gui
-            AUTOMOC TRUE
-    )
+                set_target_properties(
+                        bayesnet_gui_lib PROPERTIES
+                        OUTPUT_NAME bayesnet_gui
+                        AUTOMOC TRUE
+                )
 
-    target_link_libraries(bayesnet_gui_lib Qt5::Core Qt5::Gui Qt5::Widgets bayesnet_lib)
+                target_link_libraries(bayesnet_gui_lib Qt5::Core Qt5::Gui Qt5::Widgets bayesnet_lib)
 
-    add_dependencies(bayesnet_gui_lib bayesnet_lib)
+                add_dependencies(bayesnet_gui_lib bayesnet_lib)
 
-    target_compile_options(
-            bayesnet_gui_lib PRIVATE
-            -Weverything
-    )
+                target_compile_options(
+                        bayesnet_gui_lib PRIVATE
+                        -Weverything
+                )
 
-    # Inference algorithm tool
-    add_executable(inference_algorithm_tool tools/inference_algorithm_tool.cpp)
+                # Inference algorithm tool
+                add_executable(inference_algorithm_tool tools/inference_algorithm_tool.cpp)
 
-    target_link_libraries(inference_algorithm_tool bayesnet_gui_lib)
+                target_link_libraries(inference_algorithm_tool bayesnet_gui_lib)
 
-    add_dependencies(inference_algorithm_tool bayesnet_gui_lib)
+                add_dependencies(inference_algorithm_tool bayesnet_gui_lib)
 
-    # BayesNet Editor
+                # BayesNet Editor
 
-    add_executable(bayesnet_editor tools/bayesnet_editor.cpp)
+                add_executable(bayesnet_editor tools/bayesnet_editor.cpp)
 
-    target_link_libraries(bayesnet_editor bayesnet_gui_lib)
+                target_link_libraries(bayesnet_editor bayesnet_gui_lib)
 
-    add_dependencies(bayesnet_editor bayesnet_gui_lib)
-
-endif ()
+                add_dependencies(bayesnet_editor bayesnet_gui_lib)
+        endif()
+endif()
