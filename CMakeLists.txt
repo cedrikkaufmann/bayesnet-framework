@@ -1,25 +1,35 @@
 cmake_minimum_required(VERSION 3.13)
 project(BayesNet_Framework)
 
+# options to specify which parts of the framework should be built
+# default library will always be built
+option(BUILD_EXAMPLES "Defines if example should be built" OFF)
+option(BUILD_GUI_TOOLS "Defines if gui applications based on Qt5 should be built" ON)
+option(BUILD_CLI_TOOLS "Defines if cli applications should be built " ON)
 
-set(BUILD_EXAMPLES FALSE)
-set(BUILD_GUI_TOOLS TRUE)
-set(BUILD_CLI_TOOLS TRUE)
+# make sure correct settings are specified
 
+# Qt5 prefix path
+set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
 
-# settings and flags
-set(CMAKE_CXX_COMPILER /usr/local/opt/llvm/bin/clang++)
+# GMP include and link directories
+set(BayesNet_INLCUDE_DIRS_GMPXX /usr/local/include)
+set(BayesNet_LINK_DIRS_GMPXX /usr/local/lib)
+
+# LibDAI include and link directories
+set(BayesNet_INLCUDE_DIRS_DAI /usr/local/opt/libdai/include)
+set(BayesNet_LINK_DIRS_DAI /usr/local/opt/libdai/lib)
+
+# Global Compiler flags
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
 
-
 # Set output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 
 # Bayesnet Library
 add_library(
@@ -37,16 +47,17 @@ add_library(
 )
 
 target_include_directories(
-        bayesnet_lib PUBLIC
+        bayesnet_lib PUBLIC 
         ${PROJECT_SOURCE_DIR}/include
-        /usr/local/include
-        /usr/local/opt/llvm/include
+        SYSTEM INTERFACE
+        ${BayesNet_INLCUDE_DIRS_GMP}
+        ${BayesNet_INLCUDE_DIRS_DAI}
 )
 
 target_link_directories(
-        bayesnet_lib PUBLIC
-        /usr/local/lib
-        /usr/local/opt/llvm/lib
+        bayesnet_lib INTERFACE
+        ${BayesNet_INLCUDE_DIRS_GMP}
+        ${BayesNet_INLCUDE_DIRS_DAI}
 )
 
 set_target_properties(
@@ -61,17 +72,31 @@ target_link_libraries(
         dai
 )
 
-target_compile_options(
-        bayesnet_lib PRIVATE
-        -Weverything
-        -Wno-deprecated
-        -Wno-padded
-        -Wno-exit-time-destructors
-        -Wno-global-constructors
-        -Werror
-)
+# Set compiler specific options
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+        target_compile_options(
+                bayesnet_lib PRIVATE
+                -Weverything
+                -Wno-deprecated 
+                -Wno-padded
+                -Wno-exit-time-destructors
+                -Wno-global-constructors
+        )
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        target_compile_options(
+                bayesnet_lib PRIVATE
+                -Wall -Wextra -pedantic
+                -Wno-deprecated
+                -Wno-padded
+                -Wno-exit-time-destructors
+                -Wno-global-constructors
+        )
+endif ()
+
 
 if (BUILD_CLI_TOOLS)
+        message(STATUS "Cli tools will be built")
+
         # CPT inference tool
         add_executable(
                 infer_cpt
@@ -87,10 +112,12 @@ if (BUILD_CLI_TOOLS)
                 infer_cpt
                 bayesnet_lib
         )
-endif()
+endif ()
 
 
 if(BUILD_EXAMPLES)
+        message(STATUS "Examples will be built")
+
         # Sprinkler example
         add_executable(
                 example_sprinkler
@@ -139,11 +166,12 @@ if(BUILD_EXAMPLES)
                 example_cpt_inference
                 bayesnet_lib
         )
-endif()
+endif ()
 
 if (BUILD_GUI_TOOLS)
+        message(STATUS "Gui tools will be built")
+
         # Look for Qt5 dependecies
-        set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
         find_package(Qt5 COMPONENTS Core GUI Widgets)
 
         # Build GUI components if Qt5 found
@@ -163,22 +191,32 @@ if (BUILD_GUI_TOOLS)
                         ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
                 )
 
-                target_compile_options(
-                        bayesnet_gui_lib PRIVATE
-                        -Wno-deprecated
-                        -Wno-padded
-                        -Wno-zero-as-null-pointer-constant
-                )
+                # Set compiler specific options
+                if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+                        target_compile_options(
+                                bayesnet_gui_lib PRIVATE
+                                -Weverything
+                                -Wno-deprecated
+                                -Wno-padded
+                        )
+                elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+                        target_compile_options(
+                                bayesnet_lib PRIVATE
+                                -Wall -Wextra -pedantic
+                                -Wno-deprecated
+                                -Wno-padded
+                        )
+                endif ()
 
                 target_include_directories(
-                        bayesnet_gui_lib PUBLIC
+                        bayesnet_gui_lib SYSTEM INTERFACE   
                         ${Qt5Core_INCLUDE_DIRS}
                         ${Qt5GUI_INCLUDE_DIRS}
                         ${Qt5Widgets_INCLUDE_DIRS}
                 )
 
                 target_link_directories(
-                        bayesnet_gui_lib PUBLIC
+                        bayesnet_gui_lib INTERFACE
                         ${Qt5Core_LINK_DIRS}
                         ${Qt5GUI_LINK_DIRS}
                         ${Qt5Widgets_LINK_DIRS}
@@ -194,11 +232,6 @@ if (BUILD_GUI_TOOLS)
 
                 add_dependencies(bayesnet_gui_lib bayesnet_lib)
 
-                target_compile_options(
-                        bayesnet_gui_lib PRIVATE
-                        -Weverything
-                )
-
                 # Inference algorithm tool
                 add_executable(inference_algorithm_tool tools/inference_algorithm_tool.cpp)
 
@@ -213,5 +246,5 @@ if (BUILD_GUI_TOOLS)
                 target_link_libraries(bayesnet_editor bayesnet_gui_lib)
 
                 add_dependencies(bayesnet_editor bayesnet_gui_lib)
-        endif()
-endif()
+        endif ()
+endif ()

@@ -12,6 +12,8 @@ namespace bayesNet {
         _conditionalDiscrete = dai::VarSet(_discrete);
     }
 
+    Node::~Node() {}
+
     void Node::addChild(Node *node) {
         _children.push_back(node);
         node->_conditionalDiscrete |= _discrete;
@@ -40,10 +42,6 @@ namespace bayesNet {
         for (size_t i = 0; i < cpt.size(); ++i) {
             factor.set(i, dai::Real(cpt.get(i)));
         }
-    }
-
-    Node::~Node() {
-
     }
 
     const std::string &Node::getName() const {
@@ -126,6 +124,8 @@ namespace bayesNet {
 
     SensorNode::SensorNode(const std::string &name, size_t label, size_t states) : Node(name, label, states) {}
 
+    SensorNode::~SensorNode() {}
+
     void SensorNode::observe(double x) {
         // get state strenth from fuzzy set
         std::vector<double> strength = getFuzzySet().getStrength(x);
@@ -142,6 +142,4 @@ namespace bayesNet {
         CPT cpt(strength);
         setCPT(cpt);
     }
-
-    SensorNode::~SensorNode() {}
 }

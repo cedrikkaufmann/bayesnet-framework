@@ -493,10 +493,13 @@ namespace bayesNet {
         Controller::~Controller() {}
 
         CPT Controller::inferCPT() {
+            // get rules
             std::vector<Rule *> &fuzzyRules = _rules->getRules();
+            // create cpt
             size_t jointStates = fuzzyRules[0]->nrJointStates();
             CPT cpt(jointStates);
 
+            // get states
             std::vector<RuleState *> &parentStates = fuzzyRules[0]->getParentStates();
             std::vector<size_t> maxStates(parentStates.size());
 
@@ -507,18 +510,22 @@ namespace bayesNet {
                     maxStates[j] = 4;
                 }
             }
-
+            
+            // init state counter
             utils::Counter stateCounter(parentStates.size(), maxStates);
 
+            // iterate over every possible parental state and infer partial cpt
             do {
                 std::vector<double> inferred = infer(stateCounter.getCount());
                 size_t maxIncrement = stateCounter.getMaximumIncrement();
 
+                // apply partial cpt
                 for (size_t i = 0; i < inferred.size(); i++) {
                     cpt.set((i * maxIncrement) + stateCounter.getIncrement(), inferred[i]);
                 }
             } while (stateCounter.countUp());
 
+            // return cpt
             return cpt;
         }
 
@@ -530,9 +537,11 @@ namespace bayesNet {
                 max[i] = _fuzzySet[i]->findMaximum(states[i]);
             }
 
+            // get rules
             std::vector<Rule *> &rules = _rules->getRules();
             std::vector<double> conclusions(rules.size());
 
+            // iterate over rules and appyl Mamdani fuzzy inference using Product as tnorm
             for (size_t i = 0; i < rules.size(); ++i) {
                 double tNorm = 1;
 
@@ -547,6 +556,7 @@ namespace bayesNet {
                 conclusions[i] = tNorm;
             }
 
+            // apply inferred values to partial cpt
             size_t nrStates;
 
             if (_rules->getRules()[0]->getChildState().isBinary()) {
@@ -571,8 +581,10 @@ namespace bayesNet {
                 }
             }
 
+            // normalize inferred table
             utils::vectorNormalize(inferredBeliefs);
 
+            // return partial cpt
             return inferredBeliefs;
         }
 

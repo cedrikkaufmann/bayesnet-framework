@@ -1,5 +1,5 @@
 /// @file
-/// @brief Defines Factor class which represent factors in probability distributions.
+/// @brief Defines Factor class which represents a factor in a factor graph.
 
 
 #ifndef BAYESNET_FRAMEWORK_FACTOR_H
@@ -15,7 +15,7 @@ namespace bayesNet {
 
     /// Represents a (probability) factor.
     /**
-     * Factor represents the joint states of its corresponding variables.
+     * Factor represents the joint probability of its corresponding variables.
      * 
      * The factor class is derived from the dai::Factor class of libDAI
      * and is used as facade for our own bayesian network structure

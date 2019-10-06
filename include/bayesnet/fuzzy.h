@@ -215,7 +215,7 @@ namespace bayesNet {
 
         namespace membershipFunctions {
 
-            /// Returns a memebership function based on string @a s
+            /// Returns a membership function based on string @a s
             MembershipFunction *fromString(std::string s);
 
             //// Represents a linear membership function. 

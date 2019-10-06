@@ -20,7 +20,7 @@ namespace bayesNet {
      *  Furthermore it holds its own CPT and the corresponding factor representation. 
      *  The factor is used to built a factorgraph using libDAI to apply the inference algorithm,
      *  provided by libDAI. 
-     *  So the Node is a facade/proxy representing of a factor in a factorgraph, which is based on the libDAI,
+     *  So the Node is a facade/proxy representing a factor in a factorgraph, which is based on the libDAI,
      *  to provide a more expressive interface to the inference engine from libDAI.
      */
     class Node {
