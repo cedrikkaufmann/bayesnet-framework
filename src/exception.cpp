@@ -32,10 +32,10 @@ namespace bayesNet {
         "Index out of bounds",
         "File not found",
         "Unable to write file",
-        "Invalid bayes algorithm file",
-        "Invalid conditional probability table",
-        "Invalid curve string",
+        "Invalid algorithm file",
+        "Invalid membership function string",
         "Currently no evidence on factor",
+        "The inference algorithm is not initialized",
         "Unknown state value"
     };
 }

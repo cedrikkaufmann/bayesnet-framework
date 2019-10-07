@@ -1,5 +1,5 @@
 /// @file
-/// @brief Defines inference algorithm facade.
+/// @brief Defines inference algorithm. Implemented as facade for dai::DAIAlg<GRM>.
 
 
 #ifndef BAYESNET_FRAMEWORK_INFERENCE_H
@@ -8,8 +8,11 @@
 
 #include <string>
 
+#include <bayesnet/factor.h>
+#include <bayesnet/node.h>
+#include <bayesnet/state.h>
+
 #include <dai/properties.h>
-#include <dai/factorgraph.h>
 #include <dai/daialg.h>
 
 
@@ -27,7 +30,7 @@ namespace bayesNet {
 
     namespace inference {
 
-        /// Represents a inference algorithm class
+        /// Represents a inference algorithm class. Facade class to dai::DAIAlg< GRM >.
         /** The class represents a bayesian inference algorithm and its corresponding algorithm parameters.
          *  The algorithm class is able to contruct a inference instance.
          */
@@ -38,35 +41,45 @@ namespace bayesNet {
                 LOOPY_BELIEF_PROPAGATION,
                 CONDITIONED_BELIEF_PROPAGATION,
                 FRACTIONAL_BELIEF_PROPAGATION,
-                JUNCTION_TREE
+                JUNCTION_TREE,
+                NUM_TYPES
             };
 
             /// Constructor
             Algorithm();
 
-            /// Constructs a inference algorithm using properties defined in file @a filenam
+            /// Constructs a inference algorithm using properties defined in file @a filename
             explicit Algorithm(const std::string &filename);
 
+            /// Constructs a inference algorithm using algorithm type @a type and default properties for teh given type
+            explicit Algorithm(size_t type);
+
             /// Constructs a inference algorithm using algorithm type @a alg and @a properties
-            explicit Algorithm(const Algorithm::Type &alg, const std::string &properties);
+            explicit Algorithm(size_t type, const std::string &properties);
 
             /// Destructor
             virtual ~Algorithm();
 
-            /// Generates a bayesian inference instance for the provided factor graph @a fg
-            void generateInferenceInstance(dai::FactorGraph &fg);
-
-            /// Saves the inference algorithm to file
+            /// Saves the inference algorithm properties to file
             void save();
 
-            /// Saves the inference algorithm to @a filename
+            /// Saves the inference algorithm properties to @a filename
             void save(const std::string &filename);
 
-            /// Returns the generated inference instance
-            dai::InfAlg *getInstance();
+            /// Creates a inference instance for the provided factor graph @a fg
+            void init(const std::vector<Node *> &nodes);
+
+            /// Partially init the inference instance based on @a node
+            void init(Node *node);
+
+            /// Runs the inference algorithm
+            void run();
+
+            /// Returns the belief based on the given @a node
+            state::BayesBelief belief(Node *node);
 
             /// Returns the algorithm type
-            Algorithm::Type getType() const;
+            size_t getType() const;
 
             /// Returns the algorithm properties
             dai::PropertySet getProperties() const;
@@ -79,7 +92,7 @@ namespace bayesNet {
 
         private:
             /// Stores the algorithm type
-            Algorithm::Type _algorithm;
+            size_t _algorithm;
 
             /// Stores the algorithm properties
             dai::PropertySet _inferenceProperties;
@@ -90,9 +103,6 @@ namespace bayesNet {
             /// Stores the filename
             std::string _filename;
         };
-
-        // Stream operator used to write @a algorithm string represenation to iostream @a os
-        std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm);
     }
 }
 

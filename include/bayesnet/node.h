@@ -80,7 +80,7 @@ namespace bayesNet {
         void addFuzzyRule(fuzzyLogic::Rule *rule);
 
         /// Returns fuzzy set
-        fuzzyLogic::Set &getFuzzySet();
+        fuzzyLogic::FuzzySet &getFuzzySet();
 
         /// Returns all fuzzy rules
         fuzzyLogic::RuleSet &getFuzzyRules();
@@ -120,7 +120,7 @@ namespace bayesNet {
         CPT _cpt;
 
         /// Stores the fuzzy set
-        fuzzyLogic::Set _fuzzySet;
+        fuzzyLogic::FuzzySet _fuzzySet;
 
         /// Stores the fuzzy rules
         fuzzyLogic::RuleSet _fuzzyRules;

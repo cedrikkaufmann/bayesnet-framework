@@ -13,12 +13,14 @@ using namespace std;
 
 int main( int argc, char **argv ) {
     bayesNet::Network net("../../networks/pregnancy.bayesnet");
+    net.init();
 
     net.setEvidence("scanningTest", bayesNet::state::FALSE);
     net.setEvidence("bloodTest", bayesNet::state::FALSE);
     net.setEvidence("urineTest", bayesNet::state::FALSE);
 
-    net.doInference();
+    net.init();
+    net.run();
 
     cout << "Variable marginals:" << endl;
     cout << "P: " << net.getBelief("pregnant") << endl;

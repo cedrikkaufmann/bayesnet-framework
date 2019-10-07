@@ -84,7 +84,7 @@ namespace bayesNet {
         _fuzzyRules.addRule(rule);
     }
 
-    fuzzyLogic::Set &Node::getFuzzySet() {
+    fuzzyLogic::FuzzySet &Node::getFuzzySet() {
         return _fuzzySet;
     }
 

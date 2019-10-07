@@ -365,13 +365,13 @@ namespace bayesNet {
                         goto factoryReturn;
                     }
 
-                    BAYESNET_THROWE(INVALID_CURVE_STRING, s);
+                    BAYESNET_THROWE(INVALID_MF_STRING, s);
 
                     factoryReturn:
                         return mf;  
                 }
 
-                BAYESNET_THROWE(INVALID_CURVE_STRING, s);
+                BAYESNET_THROWE(INVALID_MF_STRING, s);
             }
         }
 
@@ -384,19 +384,19 @@ namespace bayesNet {
             return os;
         }
 
-        Set::Set(size_t states) : _mf(states) {
+        FuzzySet::FuzzySet(size_t states) : _mf(states) {
             for (size_t i = 0; i < states; i++) {
                 _mf[i] = NULL;
             }
         }
 
-        Set::~Set() {}
+        FuzzySet::~FuzzySet() {}
 
-        MembershipFunction *Set::getMembershipFunction(size_t state) {
+        MembershipFunction *FuzzySet::getMembershipFunction(size_t state) {
             return _mf[state];
         }
 
-        std::vector<double> Set::getStrength(double x) const {
+        std::vector<double> FuzzySet::getStrength(double x) const {
             size_t states = _mf.size();
             std::vector<double> beliefs(states);
 
@@ -407,7 +407,7 @@ namespace bayesNet {
             return beliefs;
         }
 
-        double Set::getStrength(double x, size_t state) const {
+        double FuzzySet::getStrength(double x, size_t state) const {
             if (state >= _mf.size()) {
                 BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
@@ -415,15 +415,15 @@ namespace bayesNet {
             return _mf[state]->fx(x);
         }
 
-        double Set::findMaximum(size_t state) const {
+        double FuzzySet::findMaximum(size_t state) const {
             return _mf[state]->findMaximum();
         }
 
-        void Set::setMembershipFunction(size_t state, MembershipFunction *mf) {
+        void FuzzySet::setMembershipFunction(size_t state, MembershipFunction *mf) {
             _mf[state] = mf;
         }
 
-        size_t Set::nrStates() const {
+        size_t FuzzySet::nrStates() const {
             return _mf.size();
         }
 
@@ -473,10 +473,6 @@ namespace bayesNet {
 
         RuleSet::~RuleSet() {}
 
-        void RuleSet::setRules(const std::vector<Rule *> &rules) {
-            _rules = rules;
-        }
-
         std::vector<Rule *> &RuleSet::getRules() {
             return _rules;
         }
@@ -485,8 +481,8 @@ namespace bayesNet {
             return _rules.size() * _rules[0]->nrJointStates();
         }
 
-        Controller::Controller(const std::vector<Set *> &set, RuleSet *rules, double tolerance) : _rules(rules), _fuzzySet(set), 
-                                                                                                  _nullBeliefTolerance(tolerance) {
+        Controller::Controller(const std::vector<FuzzySet *> &set, RuleSet *rules, double tolerance) : _rules(rules), _fuzzySet(set),
+                                                                                                       _nullBeliefTolerance(tolerance) {
 
         }
 

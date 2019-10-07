@@ -5,10 +5,18 @@
 
 namespace bayesNet {
 
-    Network::Network() : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {}
+    Network::Network() : _nodeCounter(0), _init(false) {}
 
-    Network::Network(const std::string &file) : _inferenceAlgorithm(NULL), _nodeCounter(0), _init(false) {
-        load(file::InitializationVector::parse(file));
+    Network::Network(size_t type) : _inferenceAlgorithm(type), _nodeCounter(0), _init(false) {}
+
+    Network::Network(const inference::Algorithm &algorithm) : _inferenceAlgorithm(algorithm), _nodeCounter(0), _init(false) {}
+
+    Network::Network(const std::string &file) : _nodeCounter(0), _init(false) {
+        file::InitializationVector *iv = file::InitializationVector::parse(file);
+        load(iv);
+
+        // free memory for iv
+        delete iv;
     }
 
     Network::~Network() {}
@@ -57,27 +65,9 @@ namespace bayesNet {
         return _nodes[nodeValue];
     }
 
-    void Network::init(inference::Algorithm *alg) {
-        // get factors from nodes
-        std::vector<dai::Factor> factors;
-
-        for (size_t i = 0; i < _nodes.size(); ++i) {
-            factors.push_back(_nodes[i]->getFactor());
-        }
-
-        // create factorgraph from factors
-        _factorGraph = dai::FactorGraph(factors);
-
-        // lookup factorgraph index and set in node
-        for (size_t i = 0; i < _nodes.size(); ++i) {
-            size_t factorIndex = _factorGraph.findFactor(_nodes[i]->getConditionalDiscrete());
-            _nodes[i]->setFactorGraphIndex(factorIndex);
-        }
-
-        // create inference algorithm instance using factorgraph
-        _inferenceAlgorithm = alg;
-        alg->generateInferenceInstance(_factorGraph);
-        alg->getInstance()->init();
+    void Network::init() {
+        // create inference algorithm instance using nodes
+        _inferenceAlgorithm.init(_nodes);
 
         // set initialized flag
         _init = true;
@@ -99,8 +89,8 @@ namespace bayesNet {
                 BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
 
-            // update factorgraph
-            refreshFactorGraph(node);
+            // update inference instance
+            _inferenceAlgorithm.init(node);
         } catch (const std::exception &) {
             BAYESNET_THROW(NODE_NOT_FOUND);
         }
@@ -117,21 +107,22 @@ namespace bayesNet {
             size_t nodeValue = _registry.at(name);
             Node *node = _nodes[nodeValue];
             node->clearEvidence();
-            // update factorgraph
-            refreshFactorGraph(node);
+
+            // update inference instance
+            _inferenceAlgorithm.init(node);
         } catch (const std::exception &) {
             BAYESNET_THROW(NODE_NOT_FOUND);
         }
     }
 
-    void Network::doInference() {
+    void Network::run() {
         // check if initialized
         if (!_init) {
             BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
         // run infernece algorithm
-        this->_inferenceAlgorithm->getInstance()->run();
+        _inferenceAlgorithm.run();
     }
 
     state::BayesBelief Network::getBelief(const std::string &name) {
@@ -140,70 +131,13 @@ namespace bayesNet {
             BAYESNET_THROW(NET_NOT_INITIALIZED);
         }
 
-        // get node and read belief from factorgraph
+        // get node and read belief from inference instance
         Node *node = getNode(name);
-
-        dai::Factor belief = this->_inferenceAlgorithm->getInstance()->belief(node->getDiscrete());
-        state::BayesBelief bayesBelief(node->isBinary());
-
-        for (size_t i = 0; i < belief.nrStates(); ++i) {
-            bayesBelief[i] = belief[i];
-        }
-
-        return bayesBelief;
+        return _inferenceAlgorithm.belief(node);
     }
 
     void Network::setCPT(const std::string &name, const CPT &cpt) {
         getNode(name)->setCPT(cpt);
-    }
-
-    void Network::load(file::InitializationVector *iv) {
-        // add nodes to network
-        std::vector<file::Node *> &nodes = iv->getNodes();
-
-        for (size_t i = 0; i < nodes.size(); i++) {
-
-            if (nodes[i]->isSensor()) {
-                newSensorNode(nodes[i]->getName(), nodes[i]->isBinary());
-                continue;
-            }
-
-            newNode(nodes[i]->getName(), nodes[i]->isBinary());
-        }
-        
-        // add connections for nodes to network
-        std::unordered_map<std::string, std::vector<std::string> > &connections = iv->getConnections();
-
-        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = connections.begin(); it != connections.end(); it++) {
-            for (size_t i = 0; i < (*it).second.size(); ++i) {
-                newConnection((*it).first, (*it).second[i]);
-            }
-        }
-
-        // add cpt for nodes to network
-        std::unordered_map<std::string, std::vector<double> > &cpts = iv->getCPTs();
-
-        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = cpts.begin(); it != cpts.end(); it++) {
-            CPT cpt(it->second);
-            setCPT(it->first, cpt);
-        }
-
-        // add fuzzy sets for sensor nodes
-        std::unordered_map<std::string, std::vector<std::string> > &fuzzySets = iv->getFuzzySets();
-
-        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = fuzzySets.begin(); it != fuzzySets.end(); it++) {
-            for (size_t i = 0; i < (*it).second.size(); ++i) {
-                // compile membership function from string
-                fuzzyLogic::MembershipFunction *mf = fuzzyLogic::membershipFunctions::fromString((*it).second[i]);
-                setMembershipFunction((*it).first, i, mf);
-            }
-        }
-
-        // generate inference algorithm from string
-        inference::Algorithm *algorithm = new inference::Algorithm(iv->getInferenceAlgorithm());
-
-        // initialize network
-        init(algorithm);
     }
 
     void Network::save(const std::string &filename) {
@@ -246,8 +180,7 @@ namespace bayesNet {
             }
 
             // add fuzzy sets
-            //if (isSensor) {
-            fuzzyLogic::Set &fuzzySet = _nodes[i]->getFuzzySet();
+            fuzzyLogic::FuzzySet &fuzzySet = _nodes[i]->getFuzzySet();
             std::vector<std::string> curves(fuzzySet.nrStates());
 
             for (size_t j = 0; j < fuzzySet.nrStates(); j++) {
@@ -261,11 +194,10 @@ namespace bayesNet {
             }
 
             iv->setFuzzySet(_nodes[i]->getName(), curves);
-            //}
 
             // add inference algorithm
-            if (_init && !_inferenceAlgorithm->getFilename().empty()) {
-                iv->setInferenceAlgorithm(_inferenceAlgorithm->getFilename());
+            if (_init && !_inferenceAlgorithm.getFilename().empty()) {
+                iv->setInferenceAlgorithm(_inferenceAlgorithm.getFilename());
             }
         }
 
@@ -273,10 +205,7 @@ namespace bayesNet {
     }
 
     void Network::save(const std::string &networkFilename, const std::string &algorithmFilename) {
-        if (_inferenceAlgorithm != NULL) {
-            _inferenceAlgorithm->save(algorithmFilename);
-        }
-
+        _inferenceAlgorithm.save(algorithmFilename);
         save(networkFilename);
     }
 
@@ -313,23 +242,15 @@ namespace bayesNet {
         SensorNode *node = dynamic_cast<SensorNode *>(getNode(name));
         // set oberved variable
         node->observe(x);
-        // update factorgraph
-        refreshFactorGraph(node);
+
+        // update inference instance
+        _inferenceAlgorithm.init(node);
     }
 
-    void Network::refreshFactorGraph(Node *node) {
-        if (!_init) {
-            BAYESNET_THROW(NET_NOT_INITIALIZED);
-        }
-
-        // update corresponding factor in factorgraph
-        _inferenceAlgorithm->getInstance()->fg().setFactor(node->getFactorGraphIndex(), node->getFactor(), false);
-        _inferenceAlgorithm->getInstance()->init(node->getConditionalDiscrete());
-    }
-
-    void Network::setMembershipFunction(const std::string &name, size_t state, fuzzyLogic::MembershipFunction *mf) {
+    void Network::setMembershipFunction(const std::string &name, size_t state, const std::string &mf) {
         Node *node = getNode(name);
-        node->setMembershipFunction(state, mf);
+        fuzzyLogic::MembershipFunction *instance = fuzzyLogic::membershipFunctions::fromString(mf);
+        node->setMembershipFunction(state, instance);
     }
 
     void Network::inferCPT() {
@@ -342,7 +263,7 @@ namespace bayesNet {
         Node *node = getNode(name);
         std::vector<Node *> parents = getParents(node);
 
-        std::vector<fuzzyLogic::Set *> fuzzySets(parents.size());
+        std::vector<fuzzyLogic::FuzzySet *> fuzzySets(parents.size());
 
         // collect fuzzy sets
         for (size_t i = 0; i < parents.size(); ++i) {
@@ -451,5 +372,50 @@ namespace bayesNet {
             node->setFuzzyRules(set);
             _availableFuzzySets.push_back(node->getName());
         }
+    }
+
+    void Network::load(file::InitializationVector *iv) {
+        // add nodes to network
+        std::vector<file::Node *> &nodes = iv->getNodes();
+
+        for (size_t i = 0; i < nodes.size(); i++) {
+
+            if (nodes[i]->isSensor()) {
+                newSensorNode(nodes[i]->getName(), nodes[i]->isBinary());
+                continue;
+            }
+
+            newNode(nodes[i]->getName(), nodes[i]->isBinary());
+        }
+
+        // add connections for nodes to network
+        std::unordered_map<std::string, std::vector<std::string> > &connections = iv->getConnections();
+
+        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = connections.begin(); it != connections.end(); it++) {
+            for (size_t i = 0; i < (*it).second.size(); ++i) {
+                newConnection(it->first, it->second[i]);
+            }
+        }
+
+        // add cpt for nodes to network
+        std::unordered_map<std::string, std::vector<double> > &cpts = iv->getCPTs();
+
+        for (std::unordered_map<std::string, std::vector<double> >::const_iterator it = cpts.begin(); it != cpts.end(); it++) {
+            CPT cpt(it->second);
+            setCPT(it->first, cpt);
+        }
+
+        // add fuzzy sets for sensor nodes
+        std::unordered_map<std::string, std::vector<std::string> > &fuzzySets = iv->getFuzzySets();
+
+        for (std::unordered_map<std::string, std::vector<std::string> >::const_iterator it = fuzzySets.begin(); it != fuzzySets.end(); it++) {
+            for (size_t i = 0; i < (*it).second.size(); ++i) {
+                // set membership function
+                setMembershipFunction(it->first, i, it->second[i]);
+            }
+        }
+
+        // generate inference algorithm from string
+        _inferenceAlgorithm = inference::Algorithm(iv->getInferenceAlgorithm());
     }
 }

@@ -29,8 +29,8 @@ namespace bayesNet {
     namespace fuzzyLogic {
 
         /// Represents the base class for membership functions used by fuzzy logic
-        /** A membership function represents the strength a discrete/state occuring 
-         *  based on a continuous overserved value.
+        /** A membership function represents the strength of a discrete/state
+         *  based on a continuous value.
          */
         class MembershipFunction {
         public:
@@ -50,21 +50,21 @@ namespace bayesNet {
             virtual const std::string toString() const = 0;
         };
 
-        /// Stream operator to write string reperesentation of membership function @a mf to iostream @a os 
+        /// Stream operator to write string representation of membership function @a mf to iostream @a os
         std::ostream &operator<<(std::ostream &os, MembershipFunction &mf);
 
         /// Represents a set of membership function, mapping them to a state. This is called fuzzy set.
         /** Each state/event has an own membership function mapped to it. Those can overlap, so
-         *  a certain amount of strength a state ocurring corresponding to multiple states can be 
+         *  a certain amount of strength of a state corresponding to multiple states can be
          *  calculated based on a continuous observed value.
          */
-        class Set {
+        class FuzzySet {
         public:
             /// Constructs a fuzzy set using @a states
-            explicit Set(size_t states);
+            explicit FuzzySet(size_t states);
 
             /// Destructor
-            virtual ~Set();
+            virtual ~FuzzySet();
 
             /// Sets a membership function @a mf for @a state
             void setMembershipFunction(size_t state, MembershipFunction *mf);
@@ -78,7 +78,7 @@ namespace bayesNet {
             /// Returns the strength vector for continuous value @a x
             std::vector<double> getStrength(double x) const;
 
-            /// Returns the strength for continuous value @a x and memebership function for @a state
+            /// Returns the strength for continuous value @a x and membership function for @a state
             double getStrength(double x, size_t state) const;
 
             /// Returns the number of states
@@ -170,9 +170,6 @@ namespace bayesNet {
             /// Adds a new @a rule to the set
             void addRule(Rule *rule);
 
-            /// Sets the rules using the rule vector @a rules
-            void setRules(const std::vector<Rule *> &rules);
-
             /// Returns all fuzzy rules
             std::vector<Rule *> &getRules();
 
@@ -191,7 +188,7 @@ namespace bayesNet {
         class Controller {
         public:
             /// Constructs a controller using a fuzzy @a set, fuzzy @a rules and the null belief @a tolerance
-            Controller(const std::vector<Set *> &set, RuleSet *rules, double tolerance = 0);
+            Controller(const std::vector<FuzzySet *> &set, RuleSet *rules, double tolerance = 0);
 
             /// Destructor
             virtual ~Controller();
@@ -204,7 +201,7 @@ namespace bayesNet {
             RuleSet *_rules;
 
             /// Stores the fuzzy set
-            std::vector<Set *> _fuzzySet;
+            std::vector<FuzzySet *> _fuzzySet;
 
             /// Stores the null belief tolerance
             double _nullBeliefTolerance;

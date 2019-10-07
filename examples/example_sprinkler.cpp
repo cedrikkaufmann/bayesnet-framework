@@ -67,11 +67,8 @@ int main() {
     net.setCPT("rainy", rainy);
     net.setCPT("wetGrass", wetGrass);
 
-    bayesNet::inference::Algorithm *algo = new bayesNet::inference::Algorithm("../../algorithms/default_jtree.algorithm");
-
-    net.init(algo);
-
-    net.doInference();
+    net.init();
+    net.run();
 
     cout << "Variable marginals:" << endl;
     cout << "Cloudy: " << net.getBelief("cloudy") << endl;
@@ -80,8 +77,8 @@ int main() {
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl << endl;
 
     net.setEvidence("sprinkler", bayesNet::state::TRUE);
-    //net.observe("cloudy", 2); this would update CPT based on continous obersavtion 2, therefore cloudy has be a sensor  
-    net.doInference();
+    //net.observe("cloudy", 2); this would update CPT based on continous obersavtion 2, therefore cloudy has be a sensor
+    net.run();
 
     cout << "Variable marginals:" << endl;
     cout << "Cloudy: " << net.getBelief("cloudy") << endl;

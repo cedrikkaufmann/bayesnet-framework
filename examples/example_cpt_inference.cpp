@@ -12,15 +12,15 @@ int main() {
     bayesNet::fuzzyLogic::MembershipFunction *mfTrueRainy = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(1, 0.35);
 
     // setup fuzzy sets
-    bayesNet::fuzzyLogic::Set *fuzzySetSprinkler = new bayesNet::fuzzyLogic::Set(2);
+    bayesNet::fuzzyLogic::FuzzySet *fuzzySetSprinkler = new bayesNet::fuzzyLogic::FuzzySet(2);
     fuzzySetSprinkler->setMembershipFunction(bayesNet::state::FALSE, mfFalseSprinkler);
     fuzzySetSprinkler->setMembershipFunction(bayesNet::state::TRUE, mfTrueSprinkler);
 
-    bayesNet::fuzzyLogic::Set *fuzzySetRainy = new bayesNet::fuzzyLogic::Set(2);
+    bayesNet::fuzzyLogic::FuzzySet *fuzzySetRainy = new bayesNet::fuzzyLogic::FuzzySet(2);
     fuzzySetRainy->setMembershipFunction(bayesNet::state::FALSE, mfFalseRainy);
     fuzzySetRainy->setMembershipFunction(bayesNet::state::TRUE, mfTrueRainy);
 
-    std::vector<bayesNet::fuzzyLogic::Set *> wetGrass;
+    std::vector<bayesNet::fuzzyLogic::FuzzySet *> wetGrass;
     wetGrass.push_back(fuzzySetSprinkler);
     wetGrass.push_back(fuzzySetRainy);
 

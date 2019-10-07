@@ -3,9 +3,11 @@ project(BayesNet_Framework)
 
 # options to specify which parts of the framework should be built
 # default library will always be built
-option(BUILD_EXAMPLES "Defines if example should be built" OFF)
-option(BUILD_GUI_TOOLS "Defines if gui applications based on Qt5 should be built" ON)
-option(BUILD_CLI_TOOLS "Defines if cli applications should be built " ON)
+option(SHARED "Defines if library should be dynamically linked" OFF)
+option(SHARED_GUI "Defines if gui library should be linked dynamically" OFF)
+option(BUILD_EXAMPLES "Defines if examples should be built" OFF)
+option(BUILD_GUI "Defines if gui applications based on Qt5 should be built" OFF)
+option(BUILD_CLI "Defines if cli applications should be built " OFF)
 
 # make sure correct settings are specified
 
@@ -26,25 +28,44 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
 
-# Set output directories
+# FuzzySet output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Bayesnet Library
-add_library(
-        bayesnet_lib STATIC
-        ${PROJECT_SOURCE_DIR}/src/cpt.cpp
-        ${PROJECT_SOURCE_DIR}/src/exception.cpp
-        ${PROJECT_SOURCE_DIR}/src/factor.cpp
-        ${PROJECT_SOURCE_DIR}/src/inference.cpp
-        ${PROJECT_SOURCE_DIR}/src/file.cpp
-        ${PROJECT_SOURCE_DIR}/src/network.cpp
-        ${PROJECT_SOURCE_DIR}/src/node.cpp
-        ${PROJECT_SOURCE_DIR}/src/state.cpp
-        ${PROJECT_SOURCE_DIR}/src/util.cpp
-        ${PROJECT_SOURCE_DIR}/src/fuzzy.cpp
-)
+if (SHARED)
+        message(STATUS "Shared library enabled")
+        add_library(
+                bayesnet_lib SHARED
+                ${PROJECT_SOURCE_DIR}/src/cpt.cpp
+                ${PROJECT_SOURCE_DIR}/src/exception.cpp
+                ${PROJECT_SOURCE_DIR}/src/factor.cpp
+                ${PROJECT_SOURCE_DIR}/src/inference.cpp
+                ${PROJECT_SOURCE_DIR}/src/file.cpp
+                ${PROJECT_SOURCE_DIR}/src/network.cpp
+                ${PROJECT_SOURCE_DIR}/src/node.cpp
+                ${PROJECT_SOURCE_DIR}/src/state.cpp
+                ${PROJECT_SOURCE_DIR}/src/util.cpp
+                ${PROJECT_SOURCE_DIR}/src/fuzzy.cpp
+        )
+else ()
+        message(STATUS "Static library enabled")
+        add_library(
+                bayesnet_lib STATIC
+                ${PROJECT_SOURCE_DIR}/src/cpt.cpp
+                ${PROJECT_SOURCE_DIR}/src/exception.cpp
+                ${PROJECT_SOURCE_DIR}/src/factor.cpp
+                ${PROJECT_SOURCE_DIR}/src/inference.cpp
+                ${PROJECT_SOURCE_DIR}/src/file.cpp
+                ${PROJECT_SOURCE_DIR}/src/network.cpp
+                ${PROJECT_SOURCE_DIR}/src/node.cpp
+                ${PROJECT_SOURCE_DIR}/src/state.cpp
+                ${PROJECT_SOURCE_DIR}/src/util.cpp
+                ${PROJECT_SOURCE_DIR}/src/fuzzy.cpp
+        )
+endif ()
+
 
 target_include_directories(
         bayesnet_lib PUBLIC 
@@ -72,7 +93,7 @@ target_link_libraries(
         dai
 )
 
-# Set compiler specific options
+# FuzzySet compiler specific options
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         target_compile_options(
                 bayesnet_lib PRIVATE
@@ -94,8 +115,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 endif ()
 
 
-if (BUILD_CLI_TOOLS)
-        message(STATUS "Cli tools will be built")
+if (BUILD_CLI)
+        message(STATUS "CLI will be built")
 
         # CPT inference tool
         add_executable(
@@ -115,7 +136,7 @@ if (BUILD_CLI_TOOLS)
 endif ()
 
 
-if(BUILD_EXAMPLES)
+if (BUILD_EXAMPLES)
         message(STATUS "Examples will be built")
 
         # Sprinkler example
@@ -135,19 +156,19 @@ if(BUILD_EXAMPLES)
         )
 
 
-        # Json example
+        # Load network from file example
         add_executable(
-                example_json
-                examples/example_json.cpp
+                example_file
+                examples/example_network_file.cpp
         )
 
         target_link_libraries(
-                example_json
+                example_file
                 bayesnet_lib
         )
 
         add_dependencies(
-                example_json
+                example_file
                 bayesnet_lib
         )
 
@@ -168,8 +189,8 @@ if(BUILD_EXAMPLES)
         )
 endif ()
 
-if (BUILD_GUI_TOOLS)
-        message(STATUS "Gui tools will be built")
+if (BUILD_GUI)
+        message(STATUS "GUI will be built")
 
         # Look for Qt5 dependecies
         find_package(Qt5 COMPONENTS Core GUI Widgets)
@@ -177,21 +198,39 @@ if (BUILD_GUI_TOOLS)
         # Build GUI components if Qt5 found
         if (Qt5_FOUND)
                 # GUI Library
-                add_library(
-                        bayesnet_gui_lib STATIC
-                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
-                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
-                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
-                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
-                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
-                        ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
-                        ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
-                        ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
-                        ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
-                        ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
-                )
+                if (SHARED_GUI)
+                        message(STATUS "Shared library for GUI enabled")
+                        add_library(
+                                bayesnet_gui_lib STATIC
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
+                                ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
+                        )
+                else ()
+                        message(STATUS "Static library for GUI enabled")
+                        add_library(
+                                bayesnet_gui_lib STATIC
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
+                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
+                                ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
+                                ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
+                        )
+                endif()
 
-                # Set compiler specific options
+                # FuzzySet compiler specific options
                 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
                         target_compile_options(
                                 bayesnet_gui_lib PRIVATE

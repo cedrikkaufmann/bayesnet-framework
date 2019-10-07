@@ -63,7 +63,7 @@ namespace bayesNet {
             std::string toString() const;
 
         private:
-            /// Stores the bliefs
+            /// Stores the beliefs
             std::vector<double> _beliefs;
 
             /// Binary flag

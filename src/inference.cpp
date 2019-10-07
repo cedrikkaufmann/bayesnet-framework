@@ -17,10 +17,40 @@ namespace bayesNet {
                                  _inferenceProperties(DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES),
                                  _inferenceInstance(NULL) {}
 
-        Algorithm::Algorithm(const Algorithm::Type &alg, const std::string &properties) : _algorithm(alg),
-                                                                                        _inferenceProperties(
-                                                                                                properties),
-                                                                                        _inferenceInstance(NULL) {}
+        Algorithm::Algorithm(size_t type) : _algorithm(type), _inferenceInstance(NULL) {
+            switch (type) {
+                case Algorithm::LOOPY_BELIEF_PROPAGATION: {
+                    _inferenceProperties = dai::PropertySet(DEFAULT_LOOPY_BELIEF_PROPAGATION_PROPERTIES);
+                    break;
+                }
+
+                case Algorithm::CONDITIONED_BELIEF_PROPAGATION: {
+                    _inferenceProperties = dai::PropertySet(DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES);
+                    break;
+                }
+
+                case Algorithm::FRACTIONAL_BELIEF_PROPAGATION: {
+                    _inferenceProperties = dai::PropertySet(DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES);
+                    break;
+                }
+
+                case Algorithm::JUNCTION_TREE: {
+                    _inferenceProperties = dai::PropertySet(DEFAULT_JUNCTION_TREE_PROPERTIES);
+                    break;
+                }
+
+                default:
+                    BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
+            }
+        }
+
+        Algorithm::Algorithm(size_t type, const std::string &properties) : _inferenceProperties(properties), _inferenceInstance(NULL) {
+            if (type >= NUM_TYPES) {
+                BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
+            }
+
+            _algorithm = type;
+        }
 
         Algorithm::Algorithm(const std::string &filename) : _inferenceInstance(NULL) {
             // load inference algorithm string from file
@@ -63,7 +93,23 @@ namespace bayesNet {
             }
         }
 
-        void Algorithm::generateInferenceInstance(dai::FactorGraph &fg) {
+        void Algorithm::init(const std::vector<Node *> &nodes) {
+            // collect factors
+            std::vector<dai::Factor> factors;
+
+            for (size_t i = 0; i < nodes.size(); ++i) {
+                factors.push_back(nodes[i]->getFactor());
+            }
+
+            // create factor graph instance
+            dai::FactorGraph fg(factors);
+
+            // lookup factor graph index
+            for (size_t i = 0; i < nodes.size(); ++i) {
+                size_t factorIndex = fg.findFactor(nodes[i]->getConditionalDiscrete());
+                nodes[i]->setFactorGraphIndex(factorIndex);
+            }
+
             switch (_algorithm) {
                 case Algorithm::LOOPY_BELIEF_PROPAGATION: {
                     _inferenceInstance = new dai::BP(fg, _inferenceProperties);
@@ -87,14 +133,46 @@ namespace bayesNet {
             }
         }
 
+        void Algorithm::init(Node *node) {
+            if (_inferenceInstance == NULL) {
+                BAYESNET_THROW(ALGORITHM_NOT_INITIALIZED);
+            }
+
+            _inferenceInstance->fg().setFactor(node->getFactorGraphIndex(), node->getFactor());
+            _inferenceInstance->init(node->getConditionalDiscrete());
+        }
+
         void Algorithm::save(const std::string &filename) {
             std::ofstream file(filename);
 
             if (file.is_open()) {
-                file << *this;
-                file.close();
-
                 _filename = filename;
+
+                switch (_algorithm) {
+                    case Algorithm::LOOPY_BELIEF_PROPAGATION: {
+                        file << "BP" << std::endl;
+                        break;
+                    }
+
+                    case Algorithm::CONDITIONED_BELIEF_PROPAGATION: {
+                        file << "CBP" << std::endl;
+                        break;
+                    }
+
+                    case Algorithm::FRACTIONAL_BELIEF_PROPAGATION: {
+                        file << "FBP" << std::endl;
+                        break;
+                    }
+
+                    case Algorithm::JUNCTION_TREE: {
+                        file << "JT" << std::endl;
+                        break;
+                    }
+                }
+
+                file << _inferenceProperties;
+
+                file.close();
             } else {
                 BAYESNET_THROW(UNABLE_TO_WRITE_FILE);
             }
@@ -104,11 +182,7 @@ namespace bayesNet {
             save(_filename);
         }
 
-        dai::InfAlg *Algorithm::getInstance() {
-            return _inferenceInstance;
-        }
-
-        Algorithm::Type Algorithm::getType() const {
+        size_t Algorithm::getType() const {
             return _algorithm;
         }
 
@@ -124,32 +198,27 @@ namespace bayesNet {
             return _filename;
         }
 
-        std::ostream &operator<<(std::ostream &os, const Algorithm &algorithm) {
-            switch (algorithm.getType()) {
-                case Algorithm::LOOPY_BELIEF_PROPAGATION: {
-                    os << "BP" << std::endl;
-                    break;
-                }
-
-                case Algorithm::CONDITIONED_BELIEF_PROPAGATION: {
-                    os << "CBP" << std::endl;
-                    break;
-                }
-
-                case Algorithm::FRACTIONAL_BELIEF_PROPAGATION: {
-                    os << "FBP" << std::endl;
-                    break;
-                }
-
-                case Algorithm::JUNCTION_TREE: {
-                    os << "JT" << std::endl;
-                    break;
-                }
+        void Algorithm::run() {
+            if (_inferenceInstance == NULL) {
+                BAYESNET_THROW(ALGORITHM_NOT_INITIALIZED);
             }
 
-            os << algorithm.getProperties();
+            _inferenceInstance->run();
+        }
 
-            return os;
+        state::BayesBelief Algorithm::belief(Node *node) {
+            if (_inferenceInstance == NULL) {
+                BAYESNET_THROW(ALGORITHM_NOT_INITIALIZED);
+            }
+
+            dai::Factor belief = _inferenceInstance->belief(node->getDiscrete());
+            state::BayesBelief bayesBelief(node->isBinary());
+
+            for (size_t i = 0; i < belief.nrStates(); ++i) {
+                bayesBelief[i] = belief[i];
+            }
+
+            return bayesBelief;
         }
     }
 }

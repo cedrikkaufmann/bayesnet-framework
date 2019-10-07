@@ -74,6 +74,7 @@ namespace bayesNet {
 
             _network = new Network();
             _network->load(_initializationVector);
+            _network->init();
         }
 
         void Editor::updateBayesNet() {
@@ -86,7 +87,7 @@ namespace bayesNet {
                 return;
             }
 
-            _network->doInference();
+            _network->run();
             populateBeliefs();
         }
 
@@ -151,7 +152,7 @@ namespace bayesNet {
 
             // create set inference algorithm action
             _setInferenceAlgorithm = new QAction(tr("Algorithm"), this);
-            _setInferenceAlgorithm->setStatusTip(tr("Set inference algorithm"));
+            _setInferenceAlgorithm->setStatusTip(tr("FuzzySet inference algorithm"));
             _setInferenceAlgorithm->setIcon(QIcon("./../../images/set_algorithm.svg"));
             _setInferenceAlgorithm->setIconVisibleInMenu(true);
             connect(_setInferenceAlgorithm, SIGNAL(triggered()), this, SLOT(setAlgorithmFileDialog()));

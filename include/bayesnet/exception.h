@@ -66,10 +66,10 @@ namespace bayesNet {
             FILE_NOT_FOUND,
             UNABLE_TO_WRITE_FILE,
             INVALID_ALGORITHM_FILE,
-            INVALID_CPT,
-            INVALID_CURVE_STRING,
+            INVALID_MF_STRING,
             NO_EVIDENCE_ON_FACTOR,
             UNKNOWN_STATE_VALUE,
+            ALGORITHM_NOT_INITIALIZED,
             NUM_ERRORS
         };
 
