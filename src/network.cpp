@@ -195,7 +195,7 @@ namespace bayesNet {
             iv->setFuzzySet(_nodes[i]->getName(), curves);
 
             // add inference algorithm
-            if (_init && !_inferenceAlgorithm.getFilename().empty()) {
+            if (!_inferenceAlgorithm.getFilename().empty()) {
                 iv->setInferenceAlgorithm(_inferenceAlgorithm.getFilename());
             }
         }
@@ -415,6 +415,11 @@ namespace bayesNet {
         }
 
         // generate inference algorithm from string
-        _inferenceAlgorithm = inference::Algorithm(iv->getInferenceAlgorithm());
+        if (!iv->getInferenceAlgorithm().empty()) {
+            _inferenceAlgorithm = inference::Algorithm(iv->getInferenceAlgorithm());
+        } else {
+            // no algorithm file given, use default
+            _inferenceAlgorithm = inference::Algorithm();
+        }   
     }
 }
