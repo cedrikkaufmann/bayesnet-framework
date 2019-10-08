@@ -59,10 +59,10 @@ namespace bayesNet {
         _nodes[nodeParentValue]->addChild(node);
     }
 
-    Node *Network::getNode(const std::string &name) {
+    Node &Network::getNode(const std::string &name) {
         // lookup and return node
         size_t nodeValue = _registry.at(name);
-        return _nodes[nodeValue];
+        return *_nodes[nodeValue];
     }
 
     void Network::init() {
@@ -81,10 +81,10 @@ namespace bayesNet {
 
         try {
             // set evidence on node
-            Node *node = getNode(name);
+            Node &node = getNode(name);
 
-            if (state < node->getDiscrete().states()) {
-                node->setEvidence(state);
+            if (state < node.getDiscrete().states()) {
+                node.setEvidence(state);
             } else {
                 BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
             }
@@ -104,9 +104,8 @@ namespace bayesNet {
 
         try {
             // clear evidence
-            size_t nodeValue = _registry.at(name);
-            Node *node = _nodes[nodeValue];
-            node->clearEvidence();
+            Node &node = getNode(name);
+            node.clearEvidence();
 
             // update inference instance
             _inferenceAlgorithm.init(node);
@@ -132,12 +131,12 @@ namespace bayesNet {
         }
 
         // get node and read belief from inference instance
-        Node *node = getNode(name);
+        Node &node = getNode(name);
         return _inferenceAlgorithm.belief(node);
     }
 
     void Network::setCPT(const std::string &name, const CPT &cpt) {
-        getNode(name)->setCPT(cpt);
+        getNode(name).setCPT(cpt);
     }
 
     void Network::save(const std::string &filename) {
@@ -239,18 +238,18 @@ namespace bayesNet {
 
     void Network::observe(const std::string &name, double x) {
         // cast node to sensor node
-        SensorNode *node = dynamic_cast<SensorNode *>(getNode(name));
+        SensorNode *node = dynamic_cast<SensorNode *>(&getNode(name));
         // set oberved variable
         node->observe(x);
 
         // update inference instance
-        _inferenceAlgorithm.init(node);
+        _inferenceAlgorithm.init(*node);
     }
 
     void Network::setMembershipFunction(const std::string &name, size_t state, const std::string &mf) {
-        Node *node = getNode(name);
+        Node &node = getNode(name);
         fuzzyLogic::MembershipFunction *instance = fuzzyLogic::membershipFunctions::fromString(mf);
-        node->setMembershipFunction(state, instance);
+        node.setMembershipFunction(state, instance);
     }
 
     void Network::inferCPT() {
@@ -260,7 +259,7 @@ namespace bayesNet {
     }
 
     void Network::inferCPT(const std::string &name) {
-        Node *node = getNode(name);
+        Node &node = getNode(name);
         std::vector<Node *> parents = getParents(node);
 
         std::vector<fuzzyLogic::FuzzySet *> fuzzySets(parents.size());
@@ -271,7 +270,7 @@ namespace bayesNet {
         }
 
         // create inference controller instance
-        fuzzyLogic::Controller inferenceCtrl(fuzzySets, &node->getFuzzyRules(), 0.01);
+        fuzzyLogic::Controller inferenceCtrl(fuzzySets, &node.getFuzzyRules(), 0.01);
 
         // infer cpt
         CPT cpt = inferenceCtrl.inferCPT();
@@ -280,7 +279,7 @@ namespace bayesNet {
         setCPT(name, cpt);
     }
 
-    std::vector<Node *> Network::getParents(Node *node) {
+    std::vector<Node *> Network::getParents(Node &node) {
         std::vector<Node *> parents;
 
         // iterate over all nodes
@@ -290,7 +289,7 @@ namespace bayesNet {
             // iterate over children
             for (size_t j = 0; j < children.size(); ++j) {
                 // check if node has given node as child
-                if (children[j] == node) {
+                if (children[j] == &node) {
                     // add parent to parents vector
                     parents.push_back(_nodes[i]);
                     break;
@@ -302,7 +301,7 @@ namespace bayesNet {
     }
 
     std::vector<Node *> Network::getParents(const std::string &name) {
-        Node *node = getNode(name);
+        Node &node = getNode(name);
         return getParents(node);
     }
 
@@ -324,7 +323,7 @@ namespace bayesNet {
 
         for (size_t i = 0; i < v.size(); ++i) {
             // get node
-            Node *node = getNode(v[i]->getName());
+            Node &node = getNode(v[i]->getName());
 
             // setup fuzzy rule set
             std::vector<bayesNet::fuzzyLogic::Rule *> fuzzyRules;
@@ -340,12 +339,12 @@ namespace bayesNet {
                 std::map<size_t, fuzzyLogic::RuleState *> sortedClauses;
 
                 for (std::unordered_map<std::string, size_t>::const_iterator it = ifClauses.begin(); it != ifClauses.end(); it++) {
-                    Node *parent = getNode(it->first);
+                    Node &parent = getNode(it->first);
 
-                    if (parent->isBinary()) {
-                        sortedClauses[parent->getDiscrete().label()] = binaryStates[it->second];
+                    if (parent.isBinary()) {
+                        sortedClauses[parent.getDiscrete().label()] = binaryStates[it->second];
                     } else {
-                        sortedClauses[parent->getDiscrete().label()] = states[it->second];
+                        sortedClauses[parent.getDiscrete().label()] = states[it->second];
                     }
                 }
 
@@ -357,7 +356,7 @@ namespace bayesNet {
                 // create fuzzy rule from states
                 fuzzyLogic::RuleState *thenState;
 
-                if (node->isBinary()) {
+                if (node.isBinary()) {
                     thenState = binaryStates[rules[j]->getThenClause()];
                 } else {
                     thenState = states[rules[j]->getThenClause()];
@@ -369,8 +368,8 @@ namespace bayesNet {
 
             // set fuzzy set for node
             fuzzyLogic::RuleSet set(fuzzyRules);
-            node->setFuzzyRules(set);
-            _availableFuzzySets.push_back(node->getName());
+            node.setFuzzyRules(set);
+            _availableFuzzySets.push_back(node.getName());
         }
     }
 

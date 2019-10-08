@@ -70,13 +70,13 @@ namespace bayesNet {
             void init(const std::vector<Node *> &nodes);
 
             /// Partially init the inference instance based on @a node
-            void init(Node *node);
+            void init(Node &node);
 
             /// Runs the inference algorithm
             void run();
 
             /// Returns the belief based on the given @a node
-            state::BayesBelief belief(Node *node);
+            state::BayesBelief belief(const Node &node);
 
             /// Returns the algorithm type
             size_t getType() const;

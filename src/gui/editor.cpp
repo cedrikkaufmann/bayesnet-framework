@@ -110,9 +110,9 @@ namespace bayesNet {
                 if (selectedNode != NULL) {
                     // create node view
                     const QString& nodeName = selectedNode->getName();
-                    bayesNet::Node *node = _network->getNode(nodeName.toStdString());
-                    bool isSensor = (dynamic_cast<bayesNet::SensorNode *>(node) != NULL);
-                    _nodeView = new NodeView(node, this);
+                    bayesNet::Node &node = _network->getNode(nodeName.toStdString());
+                    bool isSensor = (dynamic_cast<bayesNet::SensorNode *>(&node) != NULL);
+                    _nodeView = new NodeView(&node, this);
                     centralWidget()->layout()->addWidget(_nodeView);
                     _nodeView->show();
 

@@ -24,10 +24,10 @@ namespace bayesNet {
      */
     class Factor : public dai::Factor {
     public:
-        /// Constructs factor with number of /a states
+        /// Constructs factor with number of @a states
         explicit Factor(size_t states = 4);
 
-        /// Constructs a factor based on a conditional VarSet /a vars and number of /a states
+        /// Constructs a factor based on a conditional VarSet @a vars and number of @a states
         explicit Factor(dai::VarSet &vars, size_t states);
 
         /// Destructor

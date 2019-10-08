@@ -1,5 +1,5 @@
 /// @file
-/// @brief Defines InitializationVector class and other parsing tools to load bayesian networks and algorithms from file.
+/// @brief Defines intermediate classes to represent parsed files. These can be used to load a network and fuzzy rules from file.
 
 
 #ifndef BAYESNET_FRAMEWORK_FILE_H
@@ -99,9 +99,10 @@ namespace bayesNet {
             /// Returns the string representation of the used inference algorithm
             const std::string &getInferenceAlgorithm() const;
 
+            /// Saves the InitializationVector to @a filename
             void save(const std::string &filename);
 
-            /// Parses an InitializationVector based on the given network file with @a filename
+            /// Parses a network based on the given @a filename and returns the @return InitializationVector
             static InitializationVector *parse(const std::string &filename);
 
         private:
@@ -117,48 +118,74 @@ namespace bayesNet {
             /// Stores fuzzy set of each node
             std::unordered_map<std::string, std::vector<std::string> > _fuzzySets;
 
-            /// Stores inference algorithm
+            /// Stores inference algorithm filename
             std::string _inferenceAlgorithm;
         };
 
         /// Stream operator used to write string representation of @a iv to iostream @a os
         std::ostream &operator<<(std::ostream &os, InitializationVector &iv);
 
+        /// Represents a parsed Fuzzy Rule in a raw intermediate format
+        /** This is a intermediate representation of a fuzzy rule which then can be used
+         *  to infer CPTs
+         */
         class FuzzyRule {
         public:
+            /// Constructor
             FuzzyRule();
 
+            /// Destructor
             virtual ~FuzzyRule();
 
+            /// Adds a new if-clause for node @a name with @a state
             void addIfClause(const std::string &name, const std::string state);
 
+            /// Sets the then-clause
             void setThenClause(const std::string state);
 
+            /// Returns the then-clause
             size_t getThenClause() const;
 
+            /// Returns the if-clauses
             std::unordered_map<std::string, size_t> &getIfClauses();
 
         private:
+            /// Stores the if clauses of a fuzzy rule
             std::unordered_map<std::string, size_t> _ifClauses;
+
+            /// Stores the then clause of a fuzzy rule
             size_t _thenClause;
         };
 
+        /// Represents a set of Fuzzy Rules in a raw intermediate format
+        /** This is a intermediate representation of a whole system of fuzzy rules which then can be used
+         *  to infer CPTs
+         */
         class FuzzyRuleVector {
         public:
+            /// Constructs a new FuzzyRuleVector for node @a name
             FuzzyRuleVector(const std::string &name);
 
+            /// Destructor
             virtual ~FuzzyRuleVector();
 
+            /// Adds a new fuzzy @a rule
             void addRule(FuzzyRule *rule);
 
+            /// Returns fuzzy rules
             std::vector<FuzzyRule *> &getRules();
 
+            /// Returns the corresponding node name
             const std::string getName() const;
 
+            /// Parses a fuzzy rule file based on the given @a filename and returns a set of FuzzyRuleVector
             static std::vector<FuzzyRuleVector *> parse(const std::string &filename);
 
         private:
+            /// Stores the node name
             std::string _name;
+            
+            /// Stores the rules
             std::vector<FuzzyRule *> _rules;
         };
     }

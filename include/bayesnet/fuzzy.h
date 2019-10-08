@@ -152,7 +152,7 @@ namespace bayesNet {
             RuleState &_state;
         };
 
-        //// Represents a set of fuzzy rules.
+        /// Represents a set of fuzzy rules.
         /** A fuzzy rule expresses a whole system of state rules and therefore can be used to apply fuzzy inference on them,
          *  to infer a CPT corresponding to the set of rule states.
          */
@@ -181,7 +181,7 @@ namespace bayesNet {
             std::vector<Rule *> _rules;
         };
 
-        //// Represents a fuzzy controller. 
+        /// Represents a fuzzy controller. 
         /** A fuzzy controller uses a set of membership function and a set of fuzzy rules to apply fuzzy inference on them
          *  and calculate a corresponding CPT.
          */
@@ -215,7 +215,7 @@ namespace bayesNet {
             /// Returns a membership function based on string @a s
             MembershipFunction *fromString(std::string s);
 
-            //// Represents a linear membership function. 
+            /// Represents a linear membership function. 
             class Linear : public MembershipFunction {
             public:
                 /// Constructs a linear membership function based on @a fxMin and @a fxMax
@@ -244,7 +244,7 @@ namespace bayesNet {
                 double _fxMax;
             };
 
-            //// Represents a triangular membership function. 
+            /// Represents a triangular membership function. 
             class Triangle : public MembershipFunction {
             public:
                 /// Constructs triangular curve
@@ -279,7 +279,7 @@ namespace bayesNet {
                 Linear _decreasing;
             };
 
-            //// Represents a trapezoidal membership function. 
+            /// Represents a trapezoidal membership function. 
             class Trapezoid : public MembershipFunction {
             public:
                 /// Constructs a trapeziodal curve
@@ -318,7 +318,7 @@ namespace bayesNet {
                 Linear _decreasingLinear;
             };
 
-            //// Represents a s-shaped membership function. 
+            /// Represents a s-shaped membership function. 
             class SShape : public MembershipFunction {
             public:
                 /// Constructs s-shaped curve with minimum at @a a and maximum at @a b
@@ -347,7 +347,7 @@ namespace bayesNet {
                 double _b;
             };
 
-            //// Represents a z-shaped membership function. 
+            /// Represents a z-shaped membership function. 
             class ZShape : public MembershipFunction {
             public:
                 /// Constructs z-shaped curve with maximum at @a a and minimum at @a b
@@ -373,7 +373,7 @@ namespace bayesNet {
                 SShape _sShape;
             };
 
-            //// Represents a pi-shaped membership function. 
+            /// Represents a pi-shaped membership function. 
             class PiShape : public MembershipFunction {
             public:
                 /// Constructs pi shaped curve based on a s-shaped with @a a and @b b and a z-shaped one with @a c and @a d
@@ -396,7 +396,7 @@ namespace bayesNet {
                 ZShape _zShape;
             };
 
-            //// Represents a sigmoidal membership function. 
+            /// Represents a sigmoidal membership function. 
             class Sigmoid : public MembershipFunction {
             public:
                 /// Constructs a sigmoidal curve corresponding to @a a and @a c
@@ -419,7 +419,7 @@ namespace bayesNet {
                 double _c;
             };
 
-            //// Represents a bell curve membership function. 
+            /// Represents a bell curve membership function. 
             class Bell : public MembershipFunction {
             public:
                 /// Constructs a bell curve with start @a a, maximum @a b and end @a c
@@ -445,7 +445,7 @@ namespace bayesNet {
                 double _c;
             };
 
-            //// Represents a gaussian membership function.
+            /// Represents a gaussian membership function.
             class Gaussian : public MembershipFunction {
             public:
                 /// Constructs a gaussian curve with @a mean and @a deviation
@@ -474,7 +474,7 @@ namespace bayesNet {
                 double _deviation;
             };
 
-            //// Represents a membership function resulting from two combined gaussians.
+            /// Represents a membership function resulting from two combined gaussians.
             class Gaussian2 : public MembershipFunction {
             public:
                 /// Constructs a gaussian2 curve corresponding to a left gaussian using @a meanLeft @a deviationLeft and a right gaussian using @a meanRight and @a deviationRight

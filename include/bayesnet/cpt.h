@@ -53,7 +53,6 @@ namespace bayesNet {
         /// Access operator
         double &operator[](size_t index);
 
-
     private:
         /// Stores the probabilities
         std::vector<double> _probabilities;

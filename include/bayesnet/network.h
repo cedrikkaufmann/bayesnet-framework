@@ -49,8 +49,8 @@ namespace bayesNet {
         /// Adds a new sensor node to the newtork with @a name and @a binary info
         void newSensorNode(const std::string &name, bool binary = false);
 
-        /// Connects two nodes by its name @a parentName as parent and @a childName as child 
-        void newConnection(const std::string &parentName, const std::string &childName);
+        /// Connects two nodes by its name, @a parent node and @a child node
+        void newConnection(const std::string &parent, const std::string &child);
 
         /// Initialize the network
         void init();
@@ -83,7 +83,7 @@ namespace bayesNet {
         void run();
 
         /// Returns a Node @a name
-        Node *getNode(const std::string &name);
+        Node &getNode(const std::string &name);
 
         /// Returns all parents of a node @a name
         std::vector<Node *> getParents(const std::string &name);
@@ -116,10 +116,11 @@ namespace bayesNet {
         /// Stores network initialized flag
         bool _init;
 
+        /// Stores the nodes with available fuzzy sets
         std::vector<std::string> _availableFuzzySets;
 
         /// Returns parents of a @a node
-        std::vector<Node *> getParents(Node *node);
+        std::vector<Node *> getParents(Node &node);
     };
 }
 

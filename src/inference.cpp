@@ -133,13 +133,13 @@ namespace bayesNet {
             }
         }
 
-        void Algorithm::init(Node *node) {
+        void Algorithm::init(Node &node) {
             if (_inferenceInstance == NULL) {
                 BAYESNET_THROW(ALGORITHM_NOT_INITIALIZED);
             }
 
-            _inferenceInstance->fg().setFactor(node->getFactorGraphIndex(), node->getFactor());
-            _inferenceInstance->init(node->getConditionalDiscrete());
+            _inferenceInstance->fg().setFactor(node.getFactorGraphIndex(), node.getFactor());
+            _inferenceInstance->init(node.getConditionalDiscrete());
         }
 
         void Algorithm::save(const std::string &filename) {
@@ -206,13 +206,13 @@ namespace bayesNet {
             _inferenceInstance->run();
         }
 
-        state::BayesBelief Algorithm::belief(Node *node) {
+        state::BayesBelief Algorithm::belief(const Node &node) {
             if (_inferenceInstance == NULL) {
                 BAYESNET_THROW(ALGORITHM_NOT_INITIALIZED);
             }
 
-            dai::Factor belief = _inferenceInstance->belief(node->getDiscrete());
-            state::BayesBelief bayesBelief(node->isBinary());
+            dai::Factor belief = _inferenceInstance->belief(node.getDiscrete());
+            state::BayesBelief bayesBelief(node.isBinary());
 
             for (size_t i = 0; i < belief.nrStates(); ++i) {
                 bayesBelief[i] = belief[i];
