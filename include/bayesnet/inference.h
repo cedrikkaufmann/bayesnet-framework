@@ -24,7 +24,10 @@
 #define DEFAULT_FRACTIONAL_BELIEF_PROPAGATION_PROPERTIES "[maxiter=1000,tol=1e-9,verbose=1,updates=SEQRND,inference=SUMPROD,logdomain=0]"
 /// Macro that defines default conditioned loopy belief propagation inference algorithm property string
 #define DEFAULT_CONDITIONED_BELIEF_PROPAGATION_PROPERTIES "[bbp_cfn=CFN_GIBBS_B,bbp_props=[damping=0,maxiter=1000,tol=1e-09,updates=SEQ_FIX,verbose=1],choose=CHOOSE_BBP,clamp=CLAMP_VAR,max_levels=100,maxiter=1000,min_max_adj=1,rec_tol=1e-09,recursion=REC_LOGZ,tol=1e-09,updates=SEQRND,verbose=1]"
-
+/// Macro that defines default gibbs sampling inference algorithm property string
+#define DEFAULT_MEAN_FIELD "[init=UNIFORM,updates=HARDSPIN,damping=0.0,maxiter=1000,tol=1e-9,verbose=1]"
+/// Macro that defines default gibbs sampling inference algorithm property string
+#define DEFAULT_GIBBS_SAMPLING "[maxiter=1000,verbose=1]"
 
 namespace bayesNet {
 
@@ -42,6 +45,8 @@ namespace bayesNet {
                 CONDITIONED_BELIEF_PROPAGATION,
                 FRACTIONAL_BELIEF_PROPAGATION,
                 JUNCTION_TREE,
+                MEAN_FIELD,
+                GIBBS_SAMPLING,
                 NUM_TYPES
             };
 

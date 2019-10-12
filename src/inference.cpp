@@ -6,6 +6,8 @@
 #include <dai/bp.h>
 #include <dai/cbp.h>
 #include <dai/fbp.h>
+#include <dai/mf.h>
+#include <dai/gibbs.h>
 #include <dai/jtree.h>
 
 
@@ -36,6 +38,16 @@ namespace bayesNet {
 
                 case Algorithm::JUNCTION_TREE: {
                     _inferenceProperties = dai::PropertySet(DEFAULT_JUNCTION_TREE_PROPERTIES);
+                    break;
+                }
+
+                case Algorithm::MEAN_FIELD: {
+                    _inferenceProperties = dai::PropertySet(DEFAULT_MEAN_FIELD);
+                    break;
+                }
+
+                case Algorithm::GIBBS_SAMPLING: {
+                    _inferenceProperties = dai::PropertySet(DEFAULT_GIBBS_SAMPLING);
                     break;
                 }
 
@@ -76,6 +88,10 @@ namespace bayesNet {
                     _algorithm = FRACTIONAL_BELIEF_PROPAGATION;
                 } else if (inferenceAlgorithmType == "JT") {
                     _algorithm = JUNCTION_TREE;
+                } else if (inferenceAlgorithmType == "MF") {
+                    _algorithm = MEAN_FIELD;
+                } else if (inferenceAlgorithmType == "GIBBS") {
+                    _algorithm = GIBBS_SAMPLING;
                 } else {
                     BAYESNET_THROW(INVALID_ALGORITHM_FILE);
                 }
@@ -130,6 +146,14 @@ namespace bayesNet {
                     _inferenceInstance = new dai::JTree(fg, _inferenceProperties);
                     break;
                 }
+
+                case Algorithm::MEAN_FIELD: {
+                    _inferenceInstance = new dai::MF(fg, _inferenceProperties);
+                }
+
+                case Algorithm::GIBBS_SAMPLING: {
+                    _inferenceInstance = new dai::Gibbs(fg, _inferenceProperties);
+                }
             }
         }
 
@@ -167,6 +191,15 @@ namespace bayesNet {
                     case Algorithm::JUNCTION_TREE: {
                         file << "JT" << std::endl;
                         break;
+                    }
+
+                    case Algorithm::MEAN_FIELD: {
+                        file << "MF" << std::endl;
+                        break;
+                    }
+
+                    case Algorithm::GIBBS_SAMPLING: {
+                        file << "GIBBS" << std::endl;
                     }
                 }
 

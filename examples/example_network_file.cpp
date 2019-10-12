@@ -18,8 +18,7 @@ int main( int argc, char **argv ) {
     net.setEvidence("scanningTest", bayesNet::state::FALSE);
     net.setEvidence("bloodTest", bayesNet::state::FALSE);
     net.setEvidence("urineTest", bayesNet::state::FALSE);
-
-    net.init();
+    
     net.run();
 
     cout << "Variable marginals:" << endl;

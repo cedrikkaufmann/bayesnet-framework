@@ -10,7 +10,9 @@
 using namespace std;
 
 int main() {
-    bayesNet::Network net;
+    //bayesNet::Network net() // Use default bp
+    //bayesNet::Network net(bayesNet::inference::Algorithm::JUNCTION_TREE) // Use default jt
+    bayesNet::Network net(bayesNet::inference::Algorithm("../../algorithms/default_gibbs.algorithm"));
 
     net.newNode("cloudy", true);
     //net.newSensor("cloudy", true); this would make cloudy an observable sensor
@@ -23,12 +25,10 @@ int main() {
     net.newConnection("rainy", "wetGrass"); // wet grass given rainy
     net.newConnection("sprinkler", "wetGrass"); // wet grass given sprinkler
 
-    // if cloudy is a sensor you need to specify the fuzzy set´s membership functions
+    // if e.g. cloudy is a sensor
     /*
-    bayesNet::fuzzyLogic::MembershipFunction *mfFalse = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(0, 0.35);
-    bayesNet::fuzzyLogic::MembershipFunction *mfTrue = new bayesNet::fuzzyLogic::membershipFunctions::Gaussian(1, 0.35);
-    net.setMemebershipFunction("cloudy", bayesNet::state::FALSE, mfFalse);
-    net.setMemebershipFunction("cloudy", bayesNet::state::TRUE, mfTrue);
+    net.setMemebershipFunction("cloudy", bayesNet::state::FALSE, "gaussian: [0, 0.35]");
+    net.setMemebershipFunction("cloudy", bayesNet::state::TRUE, "gaussian: [1, 0.35]");
     */
 
     std::vector<double> pCloudy;
@@ -77,7 +77,7 @@ int main() {
     cout << "Wet grass: " << net.getBelief("wetGrass") << endl << endl;
 
     net.setEvidence("sprinkler", bayesNet::state::TRUE);
-    //net.observe("cloudy", 2); this would update CPT based on continous obersavtion 2, therefore cloudy has be a sensor
+    //net.observe("cloudy", 2); this would update CPT based on continous obsersvation 2
     net.run();
 
     cout << "Variable marginals:" << endl;

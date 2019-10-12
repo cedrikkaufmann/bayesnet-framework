@@ -28,7 +28,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
 
-# FuzzySet output directories
+# output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -77,8 +77,8 @@ target_include_directories(
 
 target_link_directories(
         bayesnet_lib INTERFACE
-        ${BayesNet_INLCUDE_DIRS_GMP}
-        ${BayesNet_INLCUDE_DIRS_DAI}
+        ${BayesNet_LINK_DIRS_GMP}
+        ${BayesNet_LINK_DIRS_DAI}
 )
 
 set_target_properties(
