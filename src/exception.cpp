@@ -30,12 +30,14 @@ namespace bayesNet {
         "Bayes node already exists",
         "Bayes node not found",
         "Index out of bounds",
-        "File not found",
+        "Unable to open file",
         "Unable to write file",
         "Invalid algorithm file",
         "Invalid membership function string",
         "Currently no evidence on factor",
         "The inference algorithm is not initialized",
-        "Unknown state value"
+        "Unknown state value",
+        "Unknown inference algorithm type",
+        "Node is no sensor"
     };
 }

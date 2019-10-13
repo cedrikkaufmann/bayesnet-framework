@@ -121,6 +121,12 @@ namespace bayesNet {
 
         /// Returns parents of a @a node
         std::vector<Node *> getParents(Node &node);
+
+        /// Returns SensorNode instance for @a node or throws exception
+        static SensorNode &getSensor(Node &node);
+
+        /// Returns boolean whether @a node is sensor
+        static bool isSensor(Node &node);
     };
 }
 

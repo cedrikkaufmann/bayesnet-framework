@@ -143,19 +143,11 @@ namespace bayesNet {
         file::InitializationVector *iv = new file::InitializationVector();
 
         for (size_t i = 0; i < _nodes.size(); ++i) {
-            bool isSensor = false;
-
             // add node names to iv
-            SensorNode *sensorNode = dynamic_cast<SensorNode *>(_nodes[i]);
-
-            if (sensorNode != NULL) {
-                isSensor = true;
-            }
-
             if (_nodes[i]->isBinary()) {
-                iv->addNode(_nodes[i]->getName(), 2, isSensor);
+                iv->addNode(_nodes[i]->getName(), 2, isSensor(*_nodes[i]));
             } else {
-                iv->addNode(_nodes[i]->getName(), 4, isSensor);
+                iv->addNode(_nodes[i]->getName(), 4, isSensor(*_nodes[i]));
             }
 
             // add connections to iv
@@ -237,13 +229,14 @@ namespace bayesNet {
     }
 
     void Network::observe(const std::string &name, double x) {
-        // cast node to sensor node
-        SensorNode *node = dynamic_cast<SensorNode *>(&getNode(name));
+        Node &node = getNode(name);
+        // get SensorNode from Node instance
+        SensorNode &sensor = getSensor(node);
         // set oberved variable
-        node->observe(x);
+        sensor.observe(x);
 
         // update inference instance
-        _inferenceAlgorithm.init(*node);
+        _inferenceAlgorithm.init(sensor);
     }
 
     void Network::setMembershipFunction(const std::string &name, size_t state, const std::string &mf) {
@@ -421,5 +414,30 @@ namespace bayesNet {
             // no algorithm file given, use default
             _inferenceAlgorithm = inference::Algorithm();
         }   
+    }
+
+    SensorNode &Network::getSensor(Node &node) {
+        // cast node to sensor node
+        SensorNode *sensor = dynamic_cast<SensorNode *>(&node);
+
+        // node is no Sensor
+        if (sensor == NULL) {
+            BAYESNET_THROWE(NO_SENSOR, node.getName());
+        }
+
+        return *sensor;
+    }
+
+    bool Network::isSensor(Node &node) {
+        // cast node to sensor node
+        SensorNode *sensor = dynamic_cast<SensorNode *>(&node);
+
+        // node is no Sensor
+        if (sensor == NULL) {
+            return false;
+        }
+
+        // node is sensor
+        return true;
     }
 }

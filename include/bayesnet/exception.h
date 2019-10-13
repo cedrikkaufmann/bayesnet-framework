@@ -63,13 +63,15 @@ namespace bayesNet {
             NODE_ALREADY_EXISTS,
             NODE_NOT_FOUND,
             INDEX_OUT_OF_BOUNDS,
-            FILE_NOT_FOUND,
+            UNABLE_TO_OPEN_FILE,
             UNABLE_TO_WRITE_FILE,
             INVALID_ALGORITHM_FILE,
             INVALID_MF_STRING,
             NO_EVIDENCE_ON_FACTOR,
             UNKNOWN_STATE_VALUE,
             ALGORITHM_NOT_INITIALIZED,
+            UNKNOWN_ALGORITHM_TYPE,
+            NO_SENSOR,
             NUM_ERRORS
         };
 

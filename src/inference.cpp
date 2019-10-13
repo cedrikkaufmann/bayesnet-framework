@@ -52,16 +52,14 @@ namespace bayesNet {
                 }
 
                 default:
-                    BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
+                    BAYESNET_THROWE(UNKNOWN_ALGORITHM_TYPE, std::to_string(type));
             }
         }
 
-        Algorithm::Algorithm(size_t type, const std::string &properties) : _inferenceProperties(properties), _inferenceInstance(NULL) {
+        Algorithm::Algorithm(size_t type, const std::string &properties) : _algorithm(type), _inferenceProperties(properties), _inferenceInstance(NULL) {
             if (type >= NUM_TYPES) {
-                BAYESNET_THROW(INDEX_OUT_OF_BOUNDS);
+                BAYESNET_THROWE(UNKNOWN_ALGORITHM_TYPE, std::to_string(type));
             }
-
-            _algorithm = type;
         }
 
         Algorithm::Algorithm(const std::string &filename) : _inferenceInstance(NULL) {
@@ -93,13 +91,13 @@ namespace bayesNet {
                 } else if (inferenceAlgorithmType == "GIBBS") {
                     _algorithm = GIBBS_SAMPLING;
                 } else {
-                    BAYESNET_THROW(INVALID_ALGORITHM_FILE);
+                    BAYESNET_THROWE(UNKNOWN_ALGORITHM_TYPE, inferenceAlgorithmType);
                 }
 
                 _inferenceProperties = dai::PropertySet(inferenceAlgorithm);
                 _filename = filename;
             } else {
-                BAYESNET_THROW(INVALID_ALGORITHM_FILE);
+                BAYESNET_THROWE(UNABLE_TO_OPEN_FILE, filename);
             }
         }
 
@@ -149,11 +147,16 @@ namespace bayesNet {
 
                 case Algorithm::MEAN_FIELD: {
                     _inferenceInstance = new dai::MF(fg, _inferenceProperties);
+                    break;
                 }
 
                 case Algorithm::GIBBS_SAMPLING: {
                     _inferenceInstance = new dai::Gibbs(fg, _inferenceProperties);
+                    break;
                 }
+
+                default:
+                    BAYESNET_THROWE(UNKNOWN_ALGORITHM_TYPE, std::to_string(_algorithm));
             }
         }
 
@@ -200,6 +203,7 @@ namespace bayesNet {
 
                     case Algorithm::GIBBS_SAMPLING: {
                         file << "GIBBS" << std::endl;
+                        break;
                     }
                 }
 
@@ -207,7 +211,7 @@ namespace bayesNet {
 
                 file.close();
             } else {
-                BAYESNET_THROW(UNABLE_TO_WRITE_FILE);
+                BAYESNET_THROWE(UNABLE_TO_WRITE_FILE, filename);
             }
         }
 
@@ -236,6 +240,7 @@ namespace bayesNet {
                 BAYESNET_THROW(ALGORITHM_NOT_INITIALIZED);
             }
 
+            // run libDAI inference algorithm
             _inferenceInstance->run();
         }
 

@@ -257,7 +257,7 @@ namespace bayesNet {
                 // return initialization vector
                 return iv;
             } else {
-                BAYESNET_THROWE(FILE_NOT_FOUND, filename);
+                BAYESNET_THROWE(UNABLE_TO_OPEN_FILE, filename);
             }
         }
 
@@ -564,7 +564,7 @@ namespace bayesNet {
 
                 return rules;
             } else {
-                BAYESNET_THROWE(FILE_NOT_FOUND, filename);
+                BAYESNET_THROWE(UNABLE_TO_OPEN_FILE, filename);
             }
         }
     }

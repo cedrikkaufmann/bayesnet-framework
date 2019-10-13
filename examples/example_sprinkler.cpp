@@ -12,7 +12,7 @@ using namespace std;
 int main() {
     //bayesNet::Network net() // Use default bp
     //bayesNet::Network net(bayesNet::inference::Algorithm::JUNCTION_TREE) // Use default jt
-    bayesNet::Network net(bayesNet::inference::Algorithm("../../algorithms/default_gibbs.algorithm"));
+    bayesNet::Network net(bayesNet::inference::Algorithm("../../algorithms/default_mf.algorithm"));
 
     net.newNode("cloudy", true);
     //net.newSensor("cloudy", true); this would make cloudy an observable sensor
