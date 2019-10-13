@@ -4,7 +4,6 @@ project(BayesNet_Framework)
 # options to specify which parts of the framework should be built
 # default library will always be built
 option(SHARED "Defines if library should be dynamically linked" OFF)
-option(SHARED_GUI "Defines if gui library should be linked dynamically" OFF)
 option(BUILD_EXAMPLES "Defines if examples should be built" OFF)
 option(BUILD_GUI "Defines if gui applications based on Qt5 should be built" OFF)
 option(BUILD_CLI "Defines if cli applications should be built " OFF)
@@ -198,37 +197,19 @@ if (BUILD_GUI)
         # Build GUI components if Qt5 found
         if (Qt5_FOUND)
                 # GUI Library
-                if (SHARED_GUI)
-                        message(STATUS "Shared library for GUI enabled")
-                        add_library(
-                                bayesnet_gui_lib STATIC
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
-                                ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
-                        )
-                else ()
-                        message(STATUS "Static library for GUI enabled")
-                        add_library(
-                                bayesnet_gui_lib STATIC
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
-                                ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
-                                ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
-                                ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
-                        )
-                endif()
+                add_library(
+                        bayesnet_gui_lib STATIC
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/inference.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/editor.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/diagramscene.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/node.h
+                        ${PROJECT_SOURCE_DIR}/include/bayesnet/gui/connection.h
+                        ${PROJECT_SOURCE_DIR}/src/gui/inference.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/editor.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/diagramscene.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/node.cpp
+                        ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
+                )
 
                 # FuzzySet compiler specific options
                 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

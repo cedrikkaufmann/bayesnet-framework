@@ -125,7 +125,7 @@ namespace bayesNet {
 
         /// Represents a fuzzy rule, which consists of a set of fuzzy rule states for its corresponding conditionals.
         /** A fuzzy rule state is mapped to its conditionals, thus represents a mathematical boolean expression of 
-         *  the form \f$if 0=TRUE & 1=TRUE then TRUE\f$
+         *  the form if 0=TRUE & 1=TRUE then TRUE.
          */
         class Rule {
         public:
