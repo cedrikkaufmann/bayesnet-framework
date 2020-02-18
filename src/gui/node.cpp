@@ -81,7 +81,7 @@ namespace bayesNet {
 
             // write node name
             double x = boundingRect().width() / 2 - static_cast<double>(strW) / 2 + boundingRect().x();
-            painter->setPen(QPen(Qt::black, 1));
+            painter->setPen(QPen(Qt::white, 1));
             painter->drawText(QPointF(x,height + 10), _name);
 
             font.setPointSize(18);
@@ -189,7 +189,7 @@ namespace bayesNet {
                 qreal b2 = 60 * v2[1];
 
                 qreal angle = (60 + a1 + a2 - b1 - b2) / 360.0;
-                return QColor::fromHsvF(angle, .70, .85); 
+                return QColor::fromHsvF(angle, s, v); 
             }
         }
 

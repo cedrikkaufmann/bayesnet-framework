@@ -11,21 +11,16 @@ option(BUILD_CLI "Defines if cli applications should be built " OFF)
 # make sure correct settings are specified
 
 # Qt5 prefix path
-set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
-
-# GMP include and link directories
-set(BayesNet_INLCUDE_DIRS_GMPXX /usr/local/include)
-set(BayesNet_LINK_DIRS_GMPXX /usr/local/lib)
-
-# LibDAI include and link directories
-set(BayesNet_INLCUDE_DIRS_DAI /usr/local/opt/libdai/include)
-set(BayesNet_LINK_DIRS_DAI /usr/local/opt/libdai/lib)
+set(CMAKE_PREFIX_PATH /Users/cedrik/Qt/5.14.1/clang_64)
 
 # Global Compiler flags
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
+
+include_directories(/opt/local/include /usr/local/include)
+link_directories(/opt/local/lib /usr/local/lib)
 
 # output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -67,17 +62,8 @@ endif ()
 
 
 target_include_directories(
-        bayesnet_lib PUBLIC 
+	bayesnet_lib PUBLIC
         ${PROJECT_SOURCE_DIR}/include
-        SYSTEM INTERFACE
-        ${BayesNet_INLCUDE_DIRS_GMP}
-        ${BayesNet_INLCUDE_DIRS_DAI}
-)
-
-target_link_directories(
-        bayesnet_lib INTERFACE
-        ${BayesNet_LINK_DIRS_GMP}
-        ${BayesNet_LINK_DIRS_DAI}
 )
 
 set_target_properties(
@@ -92,26 +78,10 @@ target_link_libraries(
         dai
 )
 
-# FuzzySet compiler specific options
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-        target_compile_options(
-                bayesnet_lib PRIVATE
-                -Weverything
-                -Wno-deprecated 
-                -Wno-padded
-                -Wno-exit-time-destructors
-                -Wno-global-constructors
-        )
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        target_compile_options(
-                bayesnet_lib PRIVATE
-                -Wall -Wextra -pedantic
-                -Wno-deprecated
-                -Wno-padded
-                -Wno-exit-time-destructors
-                -Wno-global-constructors
-        )
-endif ()
+target_compile_options(
+	bayesnet_lib PRIVATE
+        -Weverything
+)
 
 
 if (BUILD_CLI)
@@ -211,22 +181,10 @@ if (BUILD_GUI)
                         ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
                 )
 
-                # FuzzySet compiler specific options
-                if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-                        target_compile_options(
-                                bayesnet_gui_lib PRIVATE
-                                -Weverything
-                                -Wno-deprecated
-                                -Wno-padded
-                        )
-                elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-                        target_compile_options(
-                                bayesnet_lib PRIVATE
-                                -Wall -Wextra -pedantic
-                                -Wno-deprecated
-                                -Wno-padded
-                        )
-                endif ()
+                target_compile_options(
+                        bayesnet_gui_lib PRIVATE
+                        -Weverything
+                )
 
                 target_include_directories(
                         bayesnet_gui_lib SYSTEM INTERFACE   
