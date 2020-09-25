@@ -32,6 +32,8 @@ Build successful on the following systems, library and compiler combinations:
 - MacOS 10.14 Mojave (64-Bit)
     - Apple LLVM 10.0.1, libGMP 6.1.2, libDAI 0.3.2
     - Apple LLVM 11.0.0, libGMP 6.1.2, libDAI 0.3.2
+- Ubuntu 20.04 LTS x64
+    - LLVM Clang++ 10.0.0, libGMP 6.2, libDAI 0.3.2
 
 # Supported Features
 - Approximate inference on discrete bayesian networks
