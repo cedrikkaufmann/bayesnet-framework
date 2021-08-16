@@ -75,7 +75,11 @@ namespace bayesNet {
             // increment each digit til no digit overflow has happend
             while (digit < _count.size() && _count[digit] == _states[digit]) {
                 _count[digit] = 0;
-                _count[++digit]++;
+                digit++;
+                
+                if (digit < _count.size()) {
+                  _count[digit]++;
+                }
             }
 
             // check if whole counter overflow has happpend
