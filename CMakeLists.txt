@@ -12,6 +12,8 @@ option(BUILD_CLI "Defines if cli applications should be built " OFF)
 
 # Qt5 prefix path
 set(CMAKE_PREFIX_PATH /Users/cedrik/Qt/5.14.1/clang_64)
+# Libdai Path
+set(LIBDAI_PREFIX_PATH /opt/libDAI-0.3.2)
 
 # Global Compiler flags
 set(CMAKE_CXX_STANDARD 11)
@@ -19,8 +21,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
 
-include_directories(/opt/local/include /usr/local/include)
-link_directories(/opt/local/lib /usr/local/lib)
+include_directories(${LIBDAI_PREFIX_PATH}/include)
+link_directories(${LIBDAI_PREFIX_PATH}/lib)
 
 # output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -73,15 +75,25 @@ set_target_properties(
 
 target_link_libraries(
         bayesnet_lib
+        dai
         gmp
         gmpxx
-        dai
 )
 
-target_compile_options(
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  # using Clang
+  target_compile_options(
 	bayesnet_lib PRIVATE
         -Weverything
-)
+  )
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # using GCC
+  target_compile_options(
+	bayesnet_lib PRIVATE
+        -Wall -Wextra
+  )
+endif()
+
 
 
 if (BUILD_CLI)
