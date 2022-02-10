@@ -8,21 +8,16 @@ option(BUILD_EXAMPLES "Defines if examples should be built" OFF)
 option(BUILD_GUI "Defines if gui applications based on Qt5 should be built" OFF)
 option(BUILD_CLI "Defines if cli applications should be built " OFF)
 
-# make sure correct settings are specified
-
-# Qt5 prefix path
-set(CMAKE_PREFIX_PATH /Users/cedrik/Qt/5.14.1/clang_64)
-# Libdai Path
-set(LIBDAI_PREFIX_PATH /opt/libDAI-0.3.2)
+# Libdai path search path
+set(LIBDAI_PREFIX_PATH ${PROJECT_SOURCE_DIR}/libdai CACHE PATH "LIBDAI_PREFIX_PATH")
+include_directories(${LIBDAI_PREFIX_PATH}/include)
+link_directories(${LIBDAI_PREFIX_PATH}/lib)
 
 # Global Compiler flags
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)
-
-include_directories(${LIBDAI_PREFIX_PATH}/include)
-link_directories(${LIBDAI_PREFIX_PATH}/lib)
 
 # output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -80,6 +75,7 @@ target_link_libraries(
         gmpxx
 )
 
+# check for compiler id
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   # using Clang
   target_compile_options(
@@ -174,7 +170,7 @@ if (BUILD_GUI)
         message(STATUS "GUI will be built")
 
         # Look for Qt5 dependecies
-        find_package(Qt5 COMPONENTS Core GUI Widgets)
+        find_package(Qt5 COMPONENTS Core Gui Widgets)
 
         # Build GUI components if Qt5 found
         if (Qt5_FOUND)
@@ -193,10 +189,20 @@ if (BUILD_GUI)
                         ${PROJECT_SOURCE_DIR}/src/gui/connection.cpp
                 )
 
-                target_compile_options(
-                        bayesnet_gui_lib PRIVATE
-                        -Weverything
-                )
+                # check for compiler id
+                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+                        # using Clang
+                        target_compile_options(
+                                bayesnet_gui_lib PRIVATE
+                                -Weverything
+                        )
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                        # using GCC
+                        target_compile_options(
+                                bayesnet_gui_lib PRIVATE
+                                -Wall -Wextra
+                        )
+                endif()
 
                 target_include_directories(
                         bayesnet_gui_lib SYSTEM INTERFACE   
@@ -218,23 +224,19 @@ if (BUILD_GUI)
                         AUTOMOC TRUE
                 )
 
+                # link bayesnet gui
                 target_link_libraries(bayesnet_gui_lib Qt5::Core Qt5::Gui Qt5::Widgets bayesnet_lib)
-
                 add_dependencies(bayesnet_gui_lib bayesnet_lib)
 
                 # Inference algorithm tool
                 add_executable(inference_algorithm_tool tools/inference_algorithm_tool.cpp)
-
                 target_link_libraries(inference_algorithm_tool bayesnet_gui_lib)
-
                 add_dependencies(inference_algorithm_tool bayesnet_gui_lib)
 
                 # BayesNet Editor
-
                 add_executable(bayesnet_editor tools/bayesnet_editor.cpp)
-
                 target_link_libraries(bayesnet_editor bayesnet_gui_lib)
-
                 add_dependencies(bayesnet_editor bayesnet_gui_lib)
         endif ()
 endif ()
+
