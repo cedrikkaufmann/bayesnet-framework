@@ -73,6 +73,9 @@ namespace bayesNet {
         /// Parses fuzzy rules from @a file and apply them to the corresponding nodes
         void setFuzzyRules(const std::string &file);
 
+        /// Generates a default set of fuzzy rules for a loaded network and saves them in @a file
+        void generateDefaultFuzzyRules(const std::string &file);
+
         /// Infer CPTs from fuzzy rules for all available nodes, which has got set fuzzy sets
         void inferCPT();
 

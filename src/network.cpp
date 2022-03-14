@@ -1,7 +1,12 @@
 #include <map>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 #include <bayesnet/network.h>
 #include <bayesnet/exception.h>
+#include <bayesnet/util.h>
+
 
 namespace bayesNet {
 
@@ -439,5 +444,102 @@ namespace bayesNet {
 
         // node is sensor
         return true;
+    }
+
+    void Network::generateDefaultFuzzyRules(const std::string &file) {
+        // open file
+        std::ofstream fuzzyRuleFile(file);
+
+        if (!fuzzyRuleFile.is_open()) {
+            throw std::runtime_error("cannot write fuzzy rule file");
+        }
+
+        // write fuzzy rules
+        // iterate over all network nodes
+        for (auto node : _nodes)  {
+            // check if node has any parents
+            auto parents = getParents(*node);
+
+            if (parents.size() > 0) {
+                // write node header
+                fuzzyRuleFile << node->getName() << " begin\n";
+                
+                // calculate joint states
+                std::vector<size_t> maxStates;
+                std::vector<std::string> nodeNames;
+            
+                for (auto parent : parents) {
+                    if (parent->isBinary()) {
+                        maxStates.push_back(2);
+                    } else {
+                        maxStates.push_back(4);
+                    }
+
+                    nodeNames.push_back(parent->getName());
+                }
+
+                utils::Counter stateCounter(parents.size(), maxStates);
+                
+                do {
+                    auto currentStates = stateCounter.getCount();
+                    std::string rule("   ");
+
+                    for (size_t i = 0; i < currentStates.size(); i++) {
+                        rule += nodeNames[i] + "=";
+
+                        if (maxStates[i] == 4) {
+                            // node with 4 states
+                            switch (currentStates[i]) {
+                            case 0:
+                                rule += "good";
+                                break;
+
+                            case 1:
+                                rule += "probably_good";
+                                break;
+
+                            case 2:
+                                rule += "probably_bad";
+                                break;
+
+                            case 3:
+                                rule += "bad";
+                                break;
+                            
+                            default:
+                                break;
+                            }
+                        } else {
+                            switch (currentStates[i]) {
+                            case 0:
+                                rule += "true";
+                                break;
+
+                            case 1:
+                                rule += "false";
+                                break;
+                            
+                            default:
+                                break;
+                            }
+                        }
+
+                        if (i < currentStates.size() - 1) {
+                            rule += " & ";
+                        }
+                    }
+
+                    rule += " then good\n";
+                    fuzzyRuleFile << rule;
+                } while (stateCounter.countUp());
+
+                // write node end
+                fuzzyRuleFile << "end\n\n";
+            } 
+        }
+        
+
+        // close file
+        fuzzyRuleFile.close();        
     }
 }

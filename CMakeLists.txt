@@ -110,6 +110,22 @@ if (BUILD_CLI)
                 infer_cpt
                 bayesnet_lib
         )
+
+        # Fuzzy rule generator
+        add_executable(
+                fuzzy_rule_generator
+                tools/fuzzy_rule_generator.cpp
+        )
+
+        target_link_libraries(
+                fuzzy_rule_generator
+                bayesnet_lib
+        )
+
+        add_dependencies(
+                fuzzy_rule_generator
+                bayesnet_lib
+        )
 endif ()
 
 
