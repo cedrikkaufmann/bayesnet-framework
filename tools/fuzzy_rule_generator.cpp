@@ -10,6 +10,9 @@ int main(int argc, char **argv) {
         std::string networkFile(argv[1]);
         std::string ruleFile(argv[2]);
 
+        // std::string networkFile("failure_stop.bayesnet");
+        // std::string ruleFile("failure_stop.rules");
+
         std::cout << "FuzzyRuleGenerator using following arguments" << std::endl;
         std::cout << "Network >> " << networkFile << std::endl;
         std::cout << "Fuzzy rules >> " << ruleFile << std::endl << std::endl;

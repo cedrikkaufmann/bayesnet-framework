@@ -482,7 +482,7 @@ namespace bayesNet {
                 
                 do {
                     auto currentStates = stateCounter.getCount();
-                    std::string rule("   ");
+                    std::string rule("   if ");
 
                     for (size_t i = 0; i < currentStates.size(); i++) {
                         rule += nodeNames[i] + "=";
@@ -510,6 +510,7 @@ namespace bayesNet {
                                 break;
                             }
                         } else {
+                            // binary node
                             switch (currentStates[i]) {
                             case 0:
                                 rule += "true";
