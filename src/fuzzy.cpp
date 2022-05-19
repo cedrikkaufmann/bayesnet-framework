@@ -311,7 +311,7 @@ namespace bayesNet {
                         values.push_back(std::stod(valuesStr[i]));
                     }
                     
-                    MembershipFunction *mf = NULL;
+                    MembershipFunction *mf = nullptr;
 
                     std::string curveName = match.str(1);
 
@@ -386,11 +386,18 @@ namespace bayesNet {
 
         FuzzySet::FuzzySet(size_t states) : _mf(states) {
             for (size_t i = 0; i < states; i++) {
-                _mf[i] = NULL;
+                _mf[i] = nullptr;
             }
         }
 
-        FuzzySet::~FuzzySet() {}
+        FuzzySet::~FuzzySet() {
+            // free memory for membership functions
+            for (auto mf : _mf) {
+                if (mf != nullptr) {
+                    delete mf;
+                }
+            }
+        }
 
         MembershipFunction *FuzzySet::getMembershipFunction(size_t state) {
             return _mf[state];
