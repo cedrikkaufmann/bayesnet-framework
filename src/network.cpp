@@ -454,6 +454,25 @@ namespace bayesNet {
             throw std::runtime_error("cannot write fuzzy rule file");
         }
 
+        // define generator logic
+        // TODO: load from file
+        bayesNet::fuzzyLogic::MembershipFunction *mfGood = new bayesNet::fuzzyLogic::membershipFunctions::ZShape(0, 0.25);
+        bayesNet::fuzzyLogic::MembershipFunction *mfProbablyGood = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(0, 0.25, 0.5);
+        bayesNet::fuzzyLogic::MembershipFunction *mfProbablyBad = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(0.25, 0.5, 1);
+        bayesNet::fuzzyLogic::MembershipFunction *mfBad = new bayesNet::fuzzyLogic::membershipFunctions::SShape(0.75, 1);
+
+        bayesNet::fuzzyLogic::FuzzySet *generatorLogic = new bayesNet::fuzzyLogic::FuzzySet(4);
+        generatorLogic->setMembershipFunction(bayesNet::state::GOOD, mfGood);
+        generatorLogic->setMembershipFunction(bayesNet::state::PROBABLY_GOOD, mfProbablyGood);
+        generatorLogic->setMembershipFunction(bayesNet::state::PROBABLY_BAD, mfProbablyBad);
+        generatorLogic->setMembershipFunction(bayesNet::state::BAD, mfBad);
+
+        double incrementGood = 0;
+        double incrementProbablyGood = 0.25;
+        double incrementProbablyBad = 0.5;
+        double incrementBad = 1;
+        // end generator logic, tbd load from file instead of static define
+
         // write fuzzy rules
         // iterate over all network nodes
         for (auto node : _nodes)  {
@@ -484,26 +503,34 @@ namespace bayesNet {
                     auto currentStates = stateCounter.getCount();
                     std::string rule("   if ");
 
+                    // calculate quality based on generator logic
+                    // assume node weights of 1 for now
+                    double quality = 0;
+                   
                     for (size_t i = 0; i < currentStates.size(); i++) {
                         rule += nodeNames[i] + "=";
 
                         if (maxStates[i] == 4) {
                             // node with 4 states
                             switch (currentStates[i]) {
-                            case 0:
+                            case 0: 
                                 rule += "good";
+                                quality += incrementGood;
                                 break;
 
                             case 1:
                                 rule += "probably_good";
+                                quality += incrementProbablyGood;
                                 break;
 
                             case 2:
                                 rule += "probably_bad";
+                                quality += incrementProbablyBad;
                                 break;
 
                             case 3:
                                 rule += "bad";
+                                quality += incrementBad;
                                 break;
                             
                             default:
@@ -530,7 +557,36 @@ namespace bayesNet {
                         }
                     }
 
-                    rule += " then good\n";
+                    std::vector<double> strength = generatorLogic->getStrength(quality / (double)currentStates.size());
+                    size_t max = 0;
+
+                    for (size_t i = 1; i < strength.size(); i++) {
+                        if (strength[i] >= strength[max]) {
+                            max = i;
+                        }
+                    }
+                    
+                    switch (max) {
+                    case bayesNet::state::GOOD:
+                        rule += " then good\n";
+                        break;
+
+                    case bayesNet::state::PROBABLY_GOOD:
+                        rule += " then probably_good\n";
+                        break;
+
+                    case bayesNet::state::PROBABLY_BAD:
+                        rule += " then probably_bad\n";
+                        break;
+
+                    case bayesNet::state::BAD:
+                        rule += " then bad\n";
+                        break;
+                    
+                    default:
+                        break;
+                    }
+
                     fuzzyRuleFile << rule;
                 } while (stateCounter.countUp());
 
