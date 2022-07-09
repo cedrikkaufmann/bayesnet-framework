@@ -95,8 +95,8 @@ namespace bayesNet {
             std::regex sectionRegEx("^\\s*\"(nodes|sensors|connections|cpt|fuzzySets)\"\\s*:\\s*\\{\\s*$");
             std::regex nodesRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*(2|4)\\s*,?\\s*$");
             std::regex connectionsRegEx("^\\s*\"([a-zA-Z0-9_]+)\":\\s*\\[((\\s*\"([a-zA-Z0-9_]+)\"\\s*,?)*)\\],?$");
-            std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[(.*)],?$");
-            //std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*([0-9]+\\.?)\\s*,?)*)\\],?$");
+            // not used anymore due to too large cpt tables
+            // std::regex cptRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[(.*)],?$");
             std::regex fuzzySetsRegEx("^\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\{\\s*$");
             std::regex fuzzySetSensorStateRegEx("^\\s*[0-9]+\\s*:\\s*\\{(\\s*\"([a-zA-Z0-9_]+)\"\\s*:\\s*\\[((\\s*[0-9]+\\.?)\\s*,?)*\\]\\s*)\\},?$");
             std::regex inferenceRegEx("^\\s*\"inference\"\\s*:\\s*\"([a-zA-Z0-9_.\\/]*)\"\\s*$");
@@ -189,22 +189,78 @@ namespace bayesNet {
 
                         continue;
                     }
-
+                    
                     // check for cpts
-                    if (sectionCPT && std::regex_match(line, match, cptRegEx)) {
-                        // get cpt list
-                        std::string cpt = match.str(2);
+                    if (sectionCPT) {
+                        // regex not working for large strings
+                        // so we use a manual parsing approach
+                        bool cptBegin = false;
+                        bool nameBegin = false;
+                        std::vector<double> cpt;
+                        std::string cptName;
+                        std::string cptNumber;
 
-                        // remove whitespaces
-                        cpt.erase(std::remove(cpt.begin(), cpt.end(), ' '), cpt.end());
-                        // split connection list
-                        std::vector<std::string> splitCPT = utils::split(cpt, ',');
+                        for (size_t i = 0; i < line.size(); i++) {
+                            
+                            // check for begin of cpt name
+                            if (!nameBegin && line[i] == '"') {
+                                nameBegin = true;
+                                continue;
+                            } 
+                            
+                            // check for end of cpt name
+                            if (nameBegin && line[i] == '"') {
+                                nameBegin = false;
+                                continue;
+                            } 
+                            
+                            // check for begin of cpt
+                            if (!cptBegin && line[i] == '[') {
+                                cptBegin = true;
+                                continue;
+                            } 
+                            
+                            // check for end of cpt
+                            if (cptBegin && line[i] == ']') {
+                                cptBegin = false;
 
-                        // convert string to double and add to iv
-                        iv->setCPT(match.str(1), std::vector<double>(splitCPT.size()));
+                                // save last parsed cpt entry
+                                cpt.push_back(std::stod(cptNumber));
+                                // set cpt of iv
+                                iv->setCPT(cptName, cpt);
+                        
+                                continue;
+                            }
 
-                        for (size_t i = 0; i < splitCPT.size(); ++i) {
-                            iv->setCPT(match.str(1), i, std::stod(splitCPT[i]));
+                            // parse cpt name
+                            if (nameBegin) {
+                                cptName += line[i];
+                                continue;
+                            }
+
+                            // parse cpt entries
+                            if (cptBegin) {
+
+                                // ignore whitespaces
+                                if (line[i] == ' ') {
+                                    continue;
+                                }
+
+                                // next cpt entry
+                                if (line[i] == ',') {
+                                    // save cpt entry
+                                    cpt.push_back(std::stod(cptNumber));
+                                    // reset to cpt number to empty string
+                                    cptNumber = "";
+
+                                    continue;
+                                }
+
+                                // add current char as part of cpt entry
+                                cptNumber += line[i];
+
+                                continue;
+                            }
                         }
 
                         continue;
