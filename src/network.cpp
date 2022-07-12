@@ -456,21 +456,16 @@ namespace bayesNet {
 
         // define generator logic
         // TODO: load from file
-        bayesNet::fuzzyLogic::MembershipFunction *mfGood = new bayesNet::fuzzyLogic::membershipFunctions::ZShape(0, 0.25);
-        bayesNet::fuzzyLogic::MembershipFunction *mfProbablyGood = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(0, 0.25, 0.5);
-        bayesNet::fuzzyLogic::MembershipFunction *mfProbablyBad = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(0.25, 0.5, 1);
-        bayesNet::fuzzyLogic::MembershipFunction *mfBad = new bayesNet::fuzzyLogic::membershipFunctions::SShape(0.75, 1);
+        bayesNet::fuzzyLogic::MembershipFunction *mfGood = new bayesNet::fuzzyLogic::membershipFunctions::ZShape(0, 1);
+        bayesNet::fuzzyLogic::MembershipFunction *mfProbablyGood = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(0, 1, 2);
+        bayesNet::fuzzyLogic::MembershipFunction *mfProbablyBad = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(1, 2, 3);
+        bayesNet::fuzzyLogic::MembershipFunction *mfBad = new bayesNet::fuzzyLogic::membershipFunctions::SShape(2, 3);
 
         bayesNet::fuzzyLogic::FuzzySet *generatorLogic = new bayesNet::fuzzyLogic::FuzzySet(4);
         generatorLogic->setMembershipFunction(bayesNet::state::GOOD, mfGood);
         generatorLogic->setMembershipFunction(bayesNet::state::PROBABLY_GOOD, mfProbablyGood);
         generatorLogic->setMembershipFunction(bayesNet::state::PROBABLY_BAD, mfProbablyBad);
         generatorLogic->setMembershipFunction(bayesNet::state::BAD, mfBad);
-
-        double incrementGood = 0;
-        double incrementProbablyGood = 0.25;
-        double incrementProbablyBad = 0.5;
-        double incrementBad = 1;
         // end generator logic, tbd load from file instead of static define
 
         // write fuzzy rules
@@ -515,22 +510,22 @@ namespace bayesNet {
                             switch (currentStates[i]) {
                             case 0: 
                                 rule += "good";
-                                quality += incrementGood;
+                                quality += bayesNet::state::GOOD;
                                 break;
 
                             case 1:
                                 rule += "probably_good";
-                                quality += incrementProbablyGood;
+                                quality += bayesNet::state::PROBABLY_GOOD;
                                 break;
 
                             case 2:
                                 rule += "probably_bad";
-                                quality += incrementProbablyBad;
+                                quality += bayesNet::state::PROBABLY_BAD;
                                 break;
 
                             case 3:
                                 rule += "bad";
-                                quality += incrementBad;
+                                quality += bayesNet::state::BAD;
                                 break;
                             
                             default:

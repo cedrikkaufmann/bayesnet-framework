@@ -3,10 +3,11 @@ project(BayesNet_Framework)
 
 # options to specify which parts of the framework should be built
 # default library will always be built
-option(SHARED "Defines if library should be dynamically linked" OFF)
-option(BUILD_EXAMPLES "Defines if examples should be built" OFF)
-option(BUILD_GUI "Defines if gui applications based on Qt5 should be built" OFF)
-option(BUILD_CLI "Defines if cli applications should be built " OFF)
+option(SHARED "Defines whether library should be dynamically linked" OFF)
+option(BUILD_EXAMPLES "Defines whether examples should be built" OFF)
+option(BUILD_GUI "Defines whether gui applications based on Qt5 should be built" OFF)
+option(BUILD_CLI "Defines whether cli applications should be built " OFF)
+option(BUILD_STANDALONE_SERVER "Defines whether standalone bayesserver is built" OFF)
 
 # Libdai path search path
 set(LIBDAI_PREFIX_PATH ${PROJECT_SOURCE_DIR}/libdai CACHE PATH "LIBDAI_PREFIX_PATH")
@@ -23,6 +24,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR YES)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Bayesnet Library
 if (SHARED)
@@ -127,6 +130,43 @@ if (BUILD_CLI)
                 bayesnet_lib
         )
 endif ()
+
+if (BUILD_STANDALONE_SERVER)
+        message(STATUS "Standalone Bayesserver will be built")
+
+        # Look for Qt5 dependecies
+        find_package(Qt5 COMPONENTS Core WebSockets)
+
+        # Build GUI components if Qt5 found
+        if (Qt5_FOUND)
+                add_executable(standalone_bayesserver)
+
+                target_sources(standalone_bayesserver PRIVATE 
+                        ${PROJECT_SOURCE_DIR}/tools/standalone_bayesserver.cpp
+                        ${PROJECT_SOURCE_DIR}/src/bayesserver/server.cpp
+                        ${PROJECT_SOURCE_DIR}/include/bayesserver/server.h
+                )
+
+                set_target_properties( standalone_bayesserver PROPERTIES AUTOMOC ON)
+
+                target_include_directories(
+                        standalone_bayesserver PRIVATE
+                        ${PROJECT_SOURCE_DIR}/include
+                )
+
+                target_link_libraries(
+                        standalone_bayesserver PRIVATE
+                        Qt5::Core
+                        Qt5::WebSockets
+                        bayesnet_lib
+                )
+                
+                add_dependencies(
+                        standalone_bayesserver
+                        bayesnet_lib
+                )
+        endif()
+endif()
 
 
 if (BUILD_EXAMPLES)
@@ -255,4 +295,3 @@ if (BUILD_GUI)
                 add_dependencies(bayesnet_editor bayesnet_gui_lib)
         endif ()
 endif ()
-

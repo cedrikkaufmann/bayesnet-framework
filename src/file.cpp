@@ -150,7 +150,7 @@ namespace bayesNet {
                             continue;
                         }
 
-                        // end of json file, stop parsing
+                        // end of file, stop parsing
                         break;
                     }
 
@@ -337,7 +337,7 @@ namespace bayesNet {
             // set indentations
             std::string indent(2, ' ');
 
-            // write json begin
+            // write begin
             os << "{" << std::endl;
 
             // write each node
@@ -509,7 +509,7 @@ namespace bayesNet {
                 os << std::endl;
             }
 
-            // write end json file
+            // write end file
             os << "}" << std::endl;
 
             return os;

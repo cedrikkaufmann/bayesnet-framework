@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
         network.generateDefaultFuzzyRules(ruleFile);
     } else {
         std::cout << "FuzzyRuleGenerator is a tool to generate a default set of fuzzy rules for a given network" << std::endl << std::endl;
-        std::cout << "Usage:   " << "generate_fuzzy_rules <network_file> <fuzzy_rules_file>" << std::endl;
+        std::cout << "Usage:   " << "generate_fuzzy_rules <network_file> <logic_file> <fuzzy_rules_file>" << std::endl;
     }
 
     return 0;
