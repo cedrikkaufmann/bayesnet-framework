@@ -1,0 +1,19 @@
+;print a message
+print BayesScript v1 
+
+;load a network from file
+load_network ../../networks/lane_change.bayesnet
+
+;read initial beliefs for some nodes
+get_belief positioning_sensor
+get_belief perceive_dynamic_objects
+get_belief lane_change
+
+;set some evidence
+set_evidence perceive_dynamic_objects 2
+observe positioning_sensor 0.5
+
+;read some beliefs again
+get_belief positioning_sensor
+get_belief perceive_dynamic_objects
+get_belief lane_change
