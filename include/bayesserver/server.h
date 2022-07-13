@@ -26,11 +26,13 @@ namespace bayesServer {
         void onNewConnection();
         void processTextMessage(const QString& message);
         void socketDisconnected();
+        void networkChanged();
 
     private:
         QWebSocketServer* _socket;
         QList<QWebSocket*> _clients;
         bayesNet::Network* _network;
+        bool _networkChanged;
     };
 }
 
