@@ -1,6 +1,5 @@
 #!./bayesserver-env/bin/python
 
-from inspect import Traceback
 import sys
 import argparse
 import json
