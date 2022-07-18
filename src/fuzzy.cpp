@@ -2,6 +2,7 @@
 #include <limits>
 #include <sstream>
 #include <regex>
+#include <memory>
 
 #include <bayesnet/fuzzy.h>
 #include <bayesnet/util.h>
@@ -608,38 +609,46 @@ namespace bayesNet {
             RuleState *get(const state::State &state) {
                 switch (state) {
                     case state::GOOD: {
-                        static RuleState *rule = new RuleState(state::GOOD);
-                        return rule;
+                        static std::unique_ptr<RuleState> rule = std::make_unique<RuleState>(state::GOOD);
+                        return rule.get();
                     }
 
                     case state::PROBABLY_GOOD: {
-                        static RuleState *rule = new RuleState(state::PROBABLY_GOOD);
-                        return rule;
+                        static std::unique_ptr<RuleState> rule = std::make_unique<RuleState>(state::PROBABLY_GOOD);
+                        return rule.get();
                     }
 
                     case state::PROBABLY_BAD: {
-                        static RuleState *rule = new RuleState(state::PROBABLY_BAD);
-                        return rule;
+                        static std::unique_ptr<RuleState> rule = std::make_unique<RuleState>(state::PROBABLY_BAD);
+                        return rule.get();
                     }
 
                     case state::BAD: {
-                        static RuleState *rule = new RuleState(state::BAD);
-                        return rule;
+                        static std::unique_ptr<RuleState> rule = std::make_unique<RuleState>(state::BAD);
+                        return rule.get();
                     }
+
+                    default:
+                        // should never happen
+                        return nullptr;
                 }
             }
 
             RuleState *get(const state::StateBinary &state) {
                 switch (state) {
                     case state::TRUE: {
-                        static RuleState *rule = new RuleState(state::TRUE, true);
-                        return rule;
+                        static std::unique_ptr<RuleState> rule = std::make_unique<RuleState>(state::TRUE, true);
+                        return rule.get();
                     }
 
                     case state::FALSE: {
-                        static RuleState *rule = new RuleState(state::FALSE, true);
-                        return rule;
+                        static std::unique_ptr<RuleState> rule = std::make_unique<RuleState>(state::FALSE, true);
+                        return rule.get();
                     }
+
+                    default:
+                        // should never happen
+                        return nullptr;
                 }
             }
         }
