@@ -1,4 +1,4 @@
-#!./bayesserver-env/bin/python
+#!./bayescli-env/bin/python
 
 import sys
 import argparse
@@ -12,6 +12,7 @@ async def main():
     parser.add_argument('HOST', type=str, help='websocket host to connect to')
     parser.add_argument('PORT', type=int, help='websocket port to connect to')
     parser.add_argument('-s', '--script', action='store', dest='SCRIPT', type=str, help='script file to load')
+    parser.add_argument('-c', '--command', action='store', dest='COMMAND', type=str, help='execute single command and disconnect')
 
     # parse arguments
     args = parser.parse_args()
@@ -19,6 +20,7 @@ async def main():
     port = args.PORT
     host = args.HOST
     script = args.SCRIPT
+    command = args.COMMAND
     interactiveShell = False
 
     # check if interactive shell should be spawned
@@ -29,6 +31,11 @@ async def main():
         # connect to websocket
         async with websockets.connect(f"ws://{host}:{port}") as ws:
         
+            # execute single command
+            if command != None:
+                await execute(ws, command)
+                sys.exit(1)
+
             # interactive shell
             while interactiveShell:
                 # read command
@@ -109,8 +116,8 @@ async def execute(ws, cmd, index = None):
             return
 
         if s[0] == "observe":
-                await observe(ws, s[1], float(s[2]))
-                return
+            await observe(ws, s[1], float(s[2]))
+            return
 
         # unknown command
         print_error(cmd, index)
@@ -129,7 +136,12 @@ async def load_network(ws, file):
     }
     
     await ws.send(json.dumps(data))
-
+    result = await ws.recv()
+    
+    data = json.loads(result)
+    
+    if data['payload']['status'] != 'success':
+        print(f"error: {data['payload']['error']}")
 
 async def set_evidence(ws, node, state):
     data = {
@@ -141,6 +153,12 @@ async def set_evidence(ws, node, state):
     }
 
     await ws.send(json.dumps(data))
+    result = await ws.recv()
+    
+    data = json.loads(result)
+    
+    if data['payload']['status'] != 'success':
+        print(f"error: {data['payload']['error']}")
 
 
 async def clear_evidence(ws, node):
@@ -152,6 +170,12 @@ async def clear_evidence(ws, node):
     }
 
     await ws.send(json.dumps(data))
+    result = await ws.recv()
+
+    data = json.loads(result)
+    
+    if data['payload']['status'] != 'success':
+        print(f"error: {data['payload']['error']}")
 
 
 async def observe(ws, node, value):
@@ -164,6 +188,12 @@ async def observe(ws, node, value):
     }
 
     await ws.send(json.dumps(data))
+    result = await ws.recv()
+    
+    data = json.loads(result)
+    
+    if data['payload']['status'] != 'success':
+        print(f"error: {data['payload']['error']}")
 
 
 async def get_belief(ws, node):
@@ -176,7 +206,13 @@ async def get_belief(ws, node):
 
     await ws.send(json.dumps(data))
     result = await ws.recv()
-    print(result)
+
+    data = json.loads(result)
+    
+    if data['payload']['status'] != 'success':
+        print(f"error: {data['payload']['error']}")
+    else:
+        print(data['payload'][node])
 
 
 if __name__ == '__main__':

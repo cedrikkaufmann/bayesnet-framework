@@ -94,6 +94,9 @@ namespace bayesNet {
         /// Returns bayes belief for node @a name 
         state::BayesBelief getBelief(const std::string &name);
 
+        /// Returns bayes belief as continious value from -1 to 1 for node @a name
+        double getContinousBelief(const std::string &name);
+
         /// Loads a network from @a iv
         void load(file::InitializationVector *iv);
 

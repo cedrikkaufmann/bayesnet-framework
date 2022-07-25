@@ -140,6 +140,38 @@ namespace bayesNet {
         return _inferenceAlgorithm.belief(node);
     }
 
+    double Network::getContinousBelief(const std::string &name) {
+        // check if initialized
+        if (!_init) {
+            BAYESNET_THROW(NET_NOT_INITIALIZED);
+        }
+
+        // get node and 
+        Node &node = getNode(name);
+        // read belief from inference instance
+        auto belief = _inferenceAlgorithm.belief(node);
+      
+        size_t nrStates = belief.nrStates();
+        double continousBelief;
+
+        for (size_t i = 0; i < nrStates; i++) {
+            continousBelief += belief[i] * i;
+        }
+
+        // normalize to a range of 2 and move by -1 thus we get a value from -1 to 1
+        
+        continousBelief *= (2.0 / (nrStates - 1));
+        continousBelief -= 1;
+
+        /* IMPORTANT NOTICE
+         * FOR BINARY NODES -1 represents FALSE and 1 TRUE
+         * FOR NODES WITH 4 STATES -1 represents GOOD and 1 BAD
+         */
+        
+        // return continous belief
+        return continousBelief;
+    }
+
     void Network::setCPT(const std::string &name, const CPT &cpt) {
         getNode(name).setCPT(cpt);
     }

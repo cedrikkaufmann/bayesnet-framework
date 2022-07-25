@@ -57,9 +57,26 @@ namespace bayesServer {
                 _network->init();
                 _network->run();
                 _networkChanged = false;
-            } catch(const std::exception& e) {
+
+                QJsonObject json;
+                QJsonObject payload;
+                json["action"] = "response";
+                payload["status"] = "success";
+                payload["response_to"] = action;
+                json["payload"] = payload;
+
                 QWebSocket* client = qobject_cast<QWebSocket*>(sender());
-                client->sendTextMessage(e.what());
+                client->sendTextMessage(QJsonDocument(json).toJson());
+            } catch(const std::exception& e) {
+                QJsonObject json;
+                QJsonObject payload;
+                json["action"] = "response";
+                payload["status"] = "error";
+                payload["error"] = e.what();
+                json["payload"] = payload;
+                
+                QWebSocket* client = qobject_cast<QWebSocket*>(sender());
+                client->sendTextMessage(QJsonDocument(json).toJson());
             }
 
             return;
@@ -74,9 +91,26 @@ namespace bayesServer {
                 try {
                     _network->setEvidence(node.toStdString(), state);
                     networkChanged();
-                } catch(const std::exception& e) {
+
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "success";
+                    payload["response_to"] = action;
+                    json["payload"] = payload;
+
                     QWebSocket* client = qobject_cast<QWebSocket*>(sender());
-                    client->sendTextMessage(e.what());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
+                } catch(const std::exception& e) {
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "error";
+                    payload["error"] = e.what();
+                    json["payload"] = payload;
+                    
+                    QWebSocket* client = qobject_cast<QWebSocket*>(sender());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
                 }
             }
 
@@ -91,9 +125,26 @@ namespace bayesServer {
                 try {
                     _network->clearEvidence(node.toStdString());
                     networkChanged();
-                } catch(const std::exception& e) {
+
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "success";
+                    payload["response_to"] = action;
+                    json["payload"] = payload;
+
                     QWebSocket* client = qobject_cast<QWebSocket*>(sender());
-                    client->sendTextMessage(e.what());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
+                } catch(const std::exception& e) {
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "error";
+                    payload["error"] = e.what();
+                    json["payload"] = payload;
+                    
+                    QWebSocket* client = qobject_cast<QWebSocket*>(sender());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
                 }
             }
 
@@ -109,9 +160,26 @@ namespace bayesServer {
                 try {
                     _network->observe(node.toStdString(), value);
                     networkChanged();
-                } catch(const std::exception& e) {
+
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "success";
+                    payload["response_to"] = action;
+                    json["payload"] = payload;
+                    
                     QWebSocket* client = qobject_cast<QWebSocket*>(sender());
-                    client->sendTextMessage(e.what());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
+                } catch(const std::exception& e) {
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "error";
+                    payload["error"] = e.what();
+                    json["payload"] = payload;
+                    
+                    QWebSocket* client = qobject_cast<QWebSocket*>(sender());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
                 }
             }
 
@@ -130,13 +198,44 @@ namespace bayesServer {
                         _networkChanged = false;
                     }
 
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "success";
+                    payload["response_to"] = action;
+
                     // read belief
+                    QJsonObject jsonBelief;
                     auto belief = _network->getBelief(node);
+                    auto continiousBelief = _network->getContinousBelief(node);
+
+                    if (belief.nrStates() == 2) {
+                        jsonBelief["TRUE"] = belief[bayesNet::state::TRUE];
+                        jsonBelief["FALSE"] = belief[bayesNet::state::FALSE];
+                    } else {
+                        jsonBelief["GOOD"] = belief[bayesNet::state::GOOD];
+                        jsonBelief["PROBABLY_GOOD"] = belief[bayesNet::state::PROBABLY_GOOD];
+                        jsonBelief["PROBABLY_BAD"] = belief[bayesNet::state::PROBABLY_BAD];
+                        jsonBelief["BAD"] = belief[bayesNet::state::BAD];
+                    }
+                    
+                    jsonBelief["continious_belief"] = std::to_string(continiousBelief).c_str();
+                    payload[node.c_str()] = jsonBelief;
+                    
+                    json["payload"] = payload;
+
                     QWebSocket* client = qobject_cast<QWebSocket*>(sender());
-                    client->sendTextMessage(belief.toString().c_str());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
                 } catch(const std::exception& e) {
+                    QJsonObject json;
+                    QJsonObject payload;
+                    json["action"] = "response";
+                    payload["status"] = "error";
+                    payload["error"] = e.what();
+                    json["payload"] = payload;
+                    
                     QWebSocket* client = qobject_cast<QWebSocket*>(sender());
-                    client->sendTextMessage(e.what());
+                    client->sendTextMessage(QJsonDocument(json).toJson());
                 }
             }
 
