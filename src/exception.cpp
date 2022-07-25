@@ -38,6 +38,7 @@ namespace bayesNet {
         "The inference algorithm is not initialized",
         "Unknown state value",
         "Unknown inference algorithm type",
-        "Node is no sensor"
+        "Node is no sensor",
+        "Invalid rule state"
     };
 }

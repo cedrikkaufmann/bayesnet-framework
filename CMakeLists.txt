@@ -15,7 +15,7 @@ include_directories(${LIBDAI_PREFIX_PATH}/include)
 link_directories(${LIBDAI_PREFIX_PATH}/lib)
 
 # Global Compiler flags
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_INCLUDE_CURRENT_DIR YES)

@@ -72,6 +72,7 @@ namespace bayesNet {
             ALGORITHM_NOT_INITIALIZED,
             UNKNOWN_ALGORITHM_TYPE,
             NO_SENSOR,
+            INVALID_RULE_STATE,
             NUM_ERRORS
         };
 

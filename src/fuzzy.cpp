@@ -630,7 +630,7 @@ namespace bayesNet {
 
                     default:
                         // should never happen
-                        return nullptr;
+                        BAYESNET_THROWE(Exception::INVALID_RULE_STATE, std::to_string(state));
                 }
             }
 
@@ -648,7 +648,7 @@ namespace bayesNet {
 
                     default:
                         // should never happen
-                        return nullptr;
+                        BAYESNET_THROWE(Exception::INVALID_RULE_STATE, std::to_string(state));
                 }
             }
         }
