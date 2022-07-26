@@ -158,15 +158,14 @@ namespace bayesNet {
             continousBelief += belief[i] * i;
         }
 
-        // normalize to a range of 2 and move by -1 thus we get a value from -1 to 1
-        
+        // normalize to a range of 2 and move by -1 thus we get a value from -1 to 1, where -1 is worst and 1 best state
         continousBelief *= (2.0 / (nrStates - 1));
         continousBelief -= 1;
 
-        /* IMPORTANT NOTICE
-         * FOR BINARY NODES -1 represents FALSE and 1 TRUE
-         * FOR NODES WITH 4 STATES -1 represents GOOD and 1 BAD
-         */
+        // if node is not binary inverse value
+        if (!node.isBinary()) {
+            continousBelief *= -1;
+        }
         
         // return continous belief
         return continousBelief;
