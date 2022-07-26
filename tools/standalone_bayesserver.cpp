@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     bayesServer::Server srv(port, &app);
 
     // print program info
-    std::cout << ">> Standalone BayesServer\n" << ">> Compiled: " << __TIMESTAMP__ << "\n" ">> Listening on port " << parser.value(portOption).toStdString() << std::endl;
+    std::cout << ">> Standalone BayesServer\n>> Listening on port " << parser.value(portOption).toStdString() << std::endl;
 
     // run main event loop
     return app.exec();
