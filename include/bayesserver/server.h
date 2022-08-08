@@ -19,9 +19,6 @@ namespace bayesServer {
         void closed();
         void listening();
 
-    private:
-        void sendToClients(const QString& data);
-
     private slots:
         void onNewConnection();
         void processTextMessage(const QString& message);
