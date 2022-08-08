@@ -134,7 +134,7 @@ observe         |
 
 ## BayesServer Client
 
-The BayesServer Client is a Python clientside implemenation of the BayesServer WebSocet API. It can be used to connect to a BayesServer and provides a interactive shell. The interactive shell is driven by a simple scripting language implemented by the client. It is also possible to load scripts from file to automate the management of Bayesian Networks through the WebSocket API.
+The BayesServer Client is a Python clientside implementation of the BayesServer WebSocet API. It can be used to connect to a BayesServer and provides an interactive shell. The interactive shell is driven by a simple scripting language implemented by the client. It is also possible to load scripts from file to automate the management of Bayesian Networks through the WebSocket API.
 
 ### BayesScript
 
