@@ -6,9 +6,10 @@
 #include <bayesnet/network.h>
 
 int main(int argc, char **argv) {
-    if (argc == 3) {
+    if (argc == 4) {
         std::string networkFile(argv[1]);
-        std::string ruleFile(argv[2]);
+        std::string ruleFile(argv[3]);
+        std::string generatorFile(argv[2]);
 
         // std::string networkFile("failure_stop.bayesnet");
         // std::string ruleFile("failure_stop.rules");
@@ -23,7 +24,7 @@ int main(int argc, char **argv) {
 
         // generate fuzzy rules
         std::cout << ">> Generate fuzzy rules" << std::endl;
-        network.generateDefaultFuzzyRules(ruleFile);
+        network.generateDefaultFuzzyRules(ruleFile, generatorFile);
     } else {
         std::cout << "FuzzyRuleGenerator is a tool to generate a default set of fuzzy rules for a given network" << std::endl << std::endl;
         std::cout << "Usage:   " << "generate_fuzzy_rules <network_file> <logic_file> <fuzzy_rules_file>" << std::endl;

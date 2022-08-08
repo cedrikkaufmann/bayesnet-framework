@@ -623,5 +623,153 @@ namespace bayesNet {
                 BAYESNET_THROWE(UNABLE_TO_OPEN_FILE, filename);
             }
         }
+
+
+        GeneratorLogic::GeneratorLogic(const std::string& file) : _file(file) {}
+
+        void GeneratorLogic::parse() {
+            setlocale(LC_ALL, "C/de_DE.UTF-8/en_US.UTF-8/C/C/C/C");
+
+            // state flags
+            bool node = false;
+            bool fuzzySet = false;
+            bool weights = false;
+
+            // current node name
+            std::string currentNode;
+
+            // open file
+            std::ifstream file(_file);
+            std::string line;
+
+            // parsing file
+            if (file.is_open()) {
+                
+                // read line
+                while (getline(file, line)) {
+                    // check for end of current section
+                    if (node || fuzzySet || weights) {
+                        auto n = line.find("end");
+                        
+                        if (n != std::string::npos) {
+                            // end found
+                            if (fuzzySet) {
+                                fuzzySet = false;
+                            } else if (weights) {
+                                weights = false;
+
+                                // normalize weights to 1
+                                double sum = 0;
+
+                                auto nodeLogic = _nodes[currentNode].get();
+
+                                for (auto weight : nodeLogic->weights) {
+                                    sum += weight.second;
+                                }
+
+                                for (auto weight : nodeLogic->weights) {
+                                    weight.second *= 1.0/sum;
+                                }
+                                
+                            } else {
+                                node = false;
+                            } 
+                            
+                            continue;
+                        }
+                    }
+
+                    // check for node section
+                    if (!node) {
+                        auto n = line.find("begin");
+                        
+                        if (n == std::string::npos) {
+                            // no begin found
+                            continue;
+                        }
+
+                        currentNode = line.substr(0, n);
+                        currentNode.erase(std::remove_if(currentNode.begin(), currentNode.end(), ::isspace), currentNode.end());
+                        node = true;
+
+                        _nodes[currentNode] = std::make_unique<NodeLogic>();
+
+                        continue;
+                    }
+
+                    // look for fuzzy set or weights section
+                    if (node && !fuzzySet && !weights) {
+                        auto n = line.find("begin");
+
+                        if (n == std::string::npos) {
+                            // no begin found
+                            continue;
+                        }
+
+                        auto section = line.substr(0, n - 1);
+
+                        section.erase(std::remove_if(section.begin(), section.end(), ::isspace), section.end());
+
+                        if (section == "fuzzySet") {
+                            fuzzySet = true;
+                            continue;
+                        }
+
+                        if (section == "weights") {
+                            weights = true;
+                            continue;
+                        }
+                    }
+
+                    // parse membership functions
+                    if (fuzzySet) {
+                        line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
+                        auto n = line.find("=>");
+
+                        if (n == std::string::npos) {
+                            continue;
+                        }
+
+                        auto state = line.substr(0, n);
+                        std::transform(state.begin(), state.end(), state.begin(),[](unsigned char c){ return std::tolower(c); });
+                        
+                        auto mf = line.substr(n + 2);
+
+                        // get node
+                        auto nodeLogic = _nodes[currentNode].get();
+                        
+                        // save membership function
+                        nodeLogic->mf[state::fromString(state)] = mf;
+                    }
+
+                    // parse weights
+                    if (weights) {
+                        line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
+                        auto n = line.find("=>");
+
+                        if (n == std::string::npos) {
+                            continue;
+                        }
+
+                        // read node name and weight
+                        auto nodeName = line.substr(0, n);
+                        auto weight = std::stod(line.substr(n + 2));
+
+                        // get node
+                        auto nodeLogic = _nodes[currentNode].get();
+
+                        // save weight for node
+                        nodeLogic->weights[nodeName] = weight;
+                    }
+                }
+                
+            } else {
+                BAYESNET_THROWE(UNABLE_TO_OPEN_FILE, _file);
+            }
+        }
+
+        NodeLogic* GeneratorLogic::getNodeLogic(const std::string& node) {
+            return _nodes[node].get();
+        }
     }
 }

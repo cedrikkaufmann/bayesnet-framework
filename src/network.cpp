@@ -477,7 +477,7 @@ namespace bayesNet {
         return true;
     }
 
-    void Network::generateDefaultFuzzyRules(const std::string &file) {
+    void Network::generateDefaultFuzzyRules(const std::string &file, const std::string &generatorLogicFile) {
         // open file
         std::ofstream fuzzyRuleFile(file);
 
@@ -487,6 +487,7 @@ namespace bayesNet {
 
         // define generator logic
         // TODO: load from file
+        /*
         bayesNet::fuzzyLogic::MembershipFunction *mfGood = new bayesNet::fuzzyLogic::membershipFunctions::ZShape(0, 1);
         bayesNet::fuzzyLogic::MembershipFunction *mfProbablyGood = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(0, 1, 2);
         bayesNet::fuzzyLogic::MembershipFunction *mfProbablyBad = new bayesNet::fuzzyLogic::membershipFunctions::Triangle(1, 2, 3);
@@ -497,7 +498,12 @@ namespace bayesNet {
         generatorLogic->setMembershipFunction(bayesNet::state::PROBABLY_GOOD, mfProbablyGood);
         generatorLogic->setMembershipFunction(bayesNet::state::PROBABLY_BAD, mfProbablyBad);
         generatorLogic->setMembershipFunction(bayesNet::state::BAD, mfBad);
+        */
         // end generator logic, tbd load from file instead of static define
+
+        // read generator logic
+        file::GeneratorLogic generatorLogic(generatorLogicFile);
+        generatorLogic.parse();
 
         // write fuzzy rules
         // iterate over all network nodes
@@ -506,6 +512,33 @@ namespace bayesNet {
             auto parents = getParents(*node);
 
             if (parents.size() > 0) {
+                // get logic for node
+                auto nodeLogic = generatorLogic.getNodeLogic(node->getName());
+
+                // create fuzzy set
+                bayesNet::fuzzyLogic::FuzzySet* generatorFuzzySet;
+                
+                if (node->isBinary()) {
+                    generatorFuzzySet = new fuzzyLogic::FuzzySet(2);
+
+                    // get membership functions
+                    auto mfTrue = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::TRUE]);
+                    auto mfFalse = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::FALSE]);
+                } else {
+                    generatorFuzzySet = new fuzzyLogic::FuzzySet(4);
+
+                    // get membership functions
+                    auto mfGood = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::GOOD]);
+                    auto mfProbablyGood = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::PROBABLY_GOOD]);
+                    auto mfProbablyBad = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::PROBABLY_BAD]);
+                    auto mfBad = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::BAD]);
+
+                    generatorFuzzySet->setMembershipFunction(bayesNet::state::GOOD, mfGood);
+                    generatorFuzzySet->setMembershipFunction(bayesNet::state::PROBABLY_GOOD, mfProbablyGood);
+                    generatorFuzzySet->setMembershipFunction(bayesNet::state::PROBABLY_BAD, mfProbablyBad);
+                    generatorFuzzySet->setMembershipFunction(bayesNet::state::BAD, mfBad);
+                }
+
                 // write node header
                 fuzzyRuleFile << node->getName() << " begin\n";
                 
@@ -534,6 +567,9 @@ namespace bayesNet {
                     double quality = 0;
                    
                     for (size_t i = 0; i < currentStates.size(); i++) {
+                        // get weight for node
+                        auto weight = nodeLogic->weights[nodeNames[i]];
+
                         rule += nodeNames[i] + "=";
 
                         if (maxStates[i] == 4) {
@@ -541,22 +577,22 @@ namespace bayesNet {
                             switch (currentStates[i]) {
                             case 0: 
                                 rule += "good";
-                                quality += bayesNet::state::GOOD;
+                                quality += bayesNet::state::GOOD * weight;
                                 break;
 
                             case 1:
                                 rule += "probably_good";
-                                quality += bayesNet::state::PROBABLY_GOOD;
+                                quality += bayesNet::state::PROBABLY_GOOD * weight;
                                 break;
 
                             case 2:
                                 rule += "probably_bad";
-                                quality += bayesNet::state::PROBABLY_BAD;
+                                quality += bayesNet::state::PROBABLY_BAD * weight;
                                 break;
 
                             case 3:
                                 rule += "bad";
-                                quality += bayesNet::state::BAD;
+                                quality += bayesNet::state::BAD * weight;
                                 break;
                             
                             default:
@@ -567,10 +603,12 @@ namespace bayesNet {
                             switch (currentStates[i]) {
                             case 0:
                                 rule += "true";
+                                quality += bayesNet::state::TRUE * weight;
                                 break;
 
                             case 1:
                                 rule += "false";
+                                quality += bayesNet::state::FALSE * weight;
                                 break;
                             
                             default:
@@ -583,7 +621,7 @@ namespace bayesNet {
                         }
                     }
 
-                    std::vector<double> strength = generatorLogic->getStrength(quality / (double)currentStates.size());
+                    std::vector<double> strength = generatorFuzzySet->getStrength(quality / (double)currentStates.size());
                     size_t max = 0;
 
                     for (size_t i = 1; i < strength.size(); i++) {
@@ -592,27 +630,42 @@ namespace bayesNet {
                         }
                     }
                     
-                    switch (max) {
-                    case bayesNet::state::GOOD:
-                        rule += " then good\n";
-                        break;
+                    if (node->isBinary()) {
+                        switch (max) {
+                        case bayesNet::state::TRUE:
+                            rule += " then true\n";
+                            break;
 
-                    case bayesNet::state::PROBABLY_GOOD:
-                        rule += " then probably_good\n";
-                        break;
+                        case bayesNet::state::FALSE:
+                            rule += " then false\n";
+                            break;
+                        
+                        default:
+                            break;
+                        }
+                    } else {
+                        switch (max) {
+                        case bayesNet::state::GOOD:
+                            rule += " then good\n";
+                            break;
 
-                    case bayesNet::state::PROBABLY_BAD:
-                        rule += " then probably_bad\n";
-                        break;
+                        case bayesNet::state::PROBABLY_GOOD:
+                            rule += " then probably_good\n";
+                            break;
 
-                    case bayesNet::state::BAD:
-                        rule += " then bad\n";
-                        break;
-                    
-                    default:
-                        break;
+                        case bayesNet::state::PROBABLY_BAD:
+                            rule += " then probably_bad\n";
+                            break;
+
+                        case bayesNet::state::BAD:
+                            rule += " then bad\n";
+                            break;
+                        
+                        default:
+                            break;
+                        }
                     }
-
+                   
                     fuzzyRuleFile << rule;
                 } while (stateCounter.countUp());
 

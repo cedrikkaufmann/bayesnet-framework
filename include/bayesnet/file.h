@@ -10,6 +10,7 @@
 #include <vector>
 #include <unordered_map>
 #include <iostream>
+#include <memory>
 
 
 namespace bayesNet {
@@ -187,6 +188,28 @@ namespace bayesNet {
             
             /// Stores the rules
             std::vector<FuzzyRule *> _rules;
+        };
+ 
+
+        struct NodeLogic { 
+            NodeLogic() = default;
+            virtual ~NodeLogic() = default;
+
+            std::string mf[4];
+            std::unordered_map<std::string, double> weights;
+        };
+
+        class GeneratorLogic {
+        public:
+            GeneratorLogic(const std::string& file);
+            virtual ~GeneratorLogic() = default;
+
+            void parse();
+            NodeLogic* getNodeLogic(const std::string& node);
+
+        private:
+            std::string _file;
+            std::unordered_map<std::string, std::unique_ptr<NodeLogic> > _nodes;
         };
     }
 }
