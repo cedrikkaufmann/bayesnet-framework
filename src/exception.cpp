@@ -39,6 +39,7 @@ namespace bayesNet {
         "Unknown state value",
         "Unknown inference algorithm type",
         "Node is no sensor",
-        "Invalid rule state"
+        "Invalid rule state",
+        "Generator logic file not set"
     };
 }

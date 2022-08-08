@@ -524,6 +524,9 @@ namespace bayesNet {
                     // get membership functions
                     auto mfTrue = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::TRUE]);
                     auto mfFalse = fuzzyLogic::membershipFunctions::fromString(nodeLogic->mf[state::FALSE]);
+
+                    generatorFuzzySet->setMembershipFunction(bayesNet::state::TRUE, mfTrue);
+                    generatorFuzzySet->setMembershipFunction(bayesNet::state::FALSE, mfFalse);
                 } else {
                     generatorFuzzySet = new fuzzyLogic::FuzzySet(4);
 
@@ -671,6 +674,9 @@ namespace bayesNet {
 
                 // write node end
                 fuzzyRuleFile << "end\n\n";
+
+                // delete generator fuzzy logic
+                delete generatorFuzzySet;
             } 
         }
         

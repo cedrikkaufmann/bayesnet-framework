@@ -73,6 +73,7 @@ namespace bayesNet {
             UNKNOWN_ALGORITHM_TYPE,
             NO_SENSOR,
             INVALID_RULE_STATE,
+            GENERATOR_LOGIC_FILE_NOT_SET,
             NUM_ERRORS
         };
 

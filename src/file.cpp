@@ -627,8 +627,20 @@ namespace bayesNet {
 
         GeneratorLogic::GeneratorLogic(const std::string& file) : _file(file) {}
 
+        void GeneratorLogic::setLogicFile(const std::string& file) {
+            _file = file;
+        }
+
         void GeneratorLogic::parse() {
             setlocale(LC_ALL, "C/de_DE.UTF-8/en_US.UTF-8/C/C/C/C");
+
+            // check if filename is set
+            if (_file == "") {
+                BAYESNET_THROW(GENERATOR_LOGIC_FILE_NOT_SET);
+            }
+
+            // clear old parsing results
+            _nodes.clear();
 
             // state flags
             bool node = false;
