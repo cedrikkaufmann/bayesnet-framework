@@ -299,7 +299,7 @@ namespace bayesNet {
         }
 
         // create inference controller instance
-        fuzzyLogic::Controller inferenceCtrl(fuzzySets, &node.getFuzzyRules(), 0.01);
+        fuzzyLogic::Controller inferenceCtrl(fuzzySets, &node.getFuzzyRules(), 0);
 
         // infer cpt
         CPT cpt = inferenceCtrl.inferCPT();
