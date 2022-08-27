@@ -56,6 +56,58 @@ Conditioned belief propagation | approximative
 Mean field                     | approximative
 Gibbs sampling                 | approximative
 
+# CPT inference
+The CPT inference tool can be used to infer CPTs from a set of fuzzy rules defined in a fuzzy rule file.
+
+## Fuzzy Rule File
+An example fuzzy rule file looks like the following:
+```
+begin foo
+    if node_1=good and node=2=bad then probably_bad
+end
+
+begin bar
+    if node_3=bad and node_4=bad then bad
+    if node_3=good and node_2=probably_good then probably_good
+end
+```
+The first rule would read like this: "state of node foo is probably_bad if node_1 is good and node_2 is bad.
+
+## Fuzzy Rule Generator
+The fuzzy rule generator can be used to generate a full set of fuzzy rules based on a given generator logic. The generator logic is defined by:
+```
+foo begin
+    fuzzySet begin
+        GOOD => {"zshape": [0, 1]}
+        PROBABLY_GOOD => {"triangle": [0, 1, 2]}
+        PROBABLY_BAD => {"triangle": [1, 2, 3]}
+        BAD => {"sshape": [2, 3]}
+    end
+
+    weights begin
+        bar => 0.3
+        a => 0.5
+        b => 0.4
+    end
+end
+
+bar begin
+    fuzzySet begin
+        GOOD => {"zshape": [0, 1]}
+        PROBABLY_GOOD => {"triangle": [0, 1, 2]}
+        PROBABLY_BAD => {"triangle": [1, 2, 3]}
+        BAD => {"sshape": [2, 3]}
+    end
+
+    weights begin
+        foo => 0.3
+        d => 0.5
+        e => 0.4
+    end
+end
+```
+
+
 # Standalone BayesServer
 
 The Standalone BayesServer exposes a simple JSON based API over WebSockets.
