@@ -39,6 +39,9 @@ namespace bayesNet {
         }
 
         void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+            Q_UNUSED(option)
+            Q_UNUSED(widget)
+
             // enable anti-aliasing
             painter->setRenderHint(QPainter::Antialiasing);
             painter->setPen(Qt::NoPen);
@@ -193,7 +196,7 @@ namespace bayesNet {
             }
         }
 
-        NodeView::NodeView(bayesNet::Node *node, QWidget *parent) : _node(node), QWidget(parent) {
+        NodeView::NodeView(bayesNet::Node *node, QWidget *parent) : QWidget(parent), _node(node) {
             _layout = new QVBoxLayout();
 
             createProperties();

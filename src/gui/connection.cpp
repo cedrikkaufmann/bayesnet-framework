@@ -8,7 +8,7 @@ namespace bayesNet {
 
     namespace gui {
 
-        Connection::Connection(Node *startNode, Node *endNode, QGraphicsItem *parent) {
+        Connection::Connection(Node *startNode, Node *endNode, QGraphicsItem *parent) : QGraphicsLineItem(parent) {
             setZValue(1);
             _startNode = startNode;
             _endNode = endNode;
@@ -48,6 +48,9 @@ namespace bayesNet {
         }
 
         void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+            Q_UNUSED(option);
+            Q_UNUSED(widget);
+
             if (_startNode->collidesWithItem(_endNode))
                 return;
 

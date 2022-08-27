@@ -102,6 +102,9 @@ namespace bayesNet {
             void propertyObserveChanged();
 
         private:
+            /// Stores the node
+            bayesNet::Node *_node = nullptr;
+
             /// Stores the layout
             QVBoxLayout* _layout;
 
@@ -140,9 +143,6 @@ namespace bayesNet {
 
             /// Stores the value: node observe
             QLineEdit* _propertyValueObserve;
-
-            /// Stores the node
-            bayesNet::Node *_node;
 
             /// Stores the sensor flag
             bool _isSensor;
