@@ -204,6 +204,7 @@ namespace bayesNet {
             GeneratorLogic(const std::string& file);
             virtual ~GeneratorLogic() = default;
 
+            void setLogicFile(const std::string& file);
             void parse();
             NodeLogic* getNodeLogic(const std::string& node);
 
