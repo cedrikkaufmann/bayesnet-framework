@@ -9,7 +9,7 @@ option(BUILD_GUI "Defines whether gui applications based on Qt5 should be built"
 option(BUILD_CLI "Defines whether cli applications should be built " OFF)
 option(BUILD_STANDALONE_SERVER "Defines whether standalone bayesserver is built" OFF)
 
-# Libdai path search path
+# Libdai search path
 set(LIBDAI_PREFIX_PATH ${PROJECT_SOURCE_DIR}/libdai CACHE PATH "LIBDAI_PREFIX_PATH")
 include_directories(${LIBDAI_PREFIX_PATH}/include)
 link_directories(${LIBDAI_PREFIX_PATH}/lib)
@@ -132,13 +132,13 @@ if (BUILD_CLI)
 endif ()
 
 if (BUILD_STANDALONE_SERVER)
-        message(STATUS "Standalone Bayesserver will be built")
-
         # Look for Qt5 dependecies
         find_package(Qt5 COMPONENTS Core WebSockets)
 
         # Build GUI components if Qt5 found
         if (Qt5_FOUND)
+                message(STATUS "Standalone Bayesserver will be built")
+
                 add_executable(standalone_bayesserver)
 
                 target_sources(standalone_bayesserver PRIVATE 
@@ -165,6 +165,8 @@ if (BUILD_STANDALONE_SERVER)
                         standalone_bayesserver
                         bayesnet_lib
                 )
+        else()
+                message(WARNING "Qt5 components needed for standalone bayesserver were not found. Build process will be continued without building bayesserver.")
         endif()
 endif()
 
@@ -223,13 +225,13 @@ if (BUILD_EXAMPLES)
 endif ()
 
 if (BUILD_GUI)
-        message(STATUS "GUI will be built")
-
         # Look for Qt5 dependecies
         find_package(Qt5 COMPONENTS Core Gui Widgets)
 
         # Build GUI components if Qt5 found
         if (Qt5_FOUND)
+                message(STATUS "GUI will be built")
+
                 # GUI Library
                 add_library(
                         bayesnet_gui_lib STATIC
@@ -293,5 +295,7 @@ if (BUILD_GUI)
                 add_executable(bayesnet_editor tools/bayesnet_editor.cpp)
                 target_link_libraries(bayesnet_editor bayesnet_gui_lib)
                 add_dependencies(bayesnet_editor bayesnet_gui_lib)
-        endif ()
+        else()
+                message(WARNING "Qt5 components needed for gui tools were not found. Build process will be continued without gui tools.")
+        endif()
 endif ()
