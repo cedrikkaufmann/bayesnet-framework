@@ -25,7 +25,7 @@ namespace bayesNet {
             DIR *dir = opendir(name.c_str());
             struct dirent *dp;
 
-            while ((dp = readdir(dir)) != NULL) {
+            while ((dp = readdir(dir)) != nullptr) {
                 v.push_back(dp->d_name);
             }
 
